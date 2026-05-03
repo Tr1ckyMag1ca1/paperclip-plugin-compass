@@ -71,7 +71,7 @@ interface ApplyResult {
 export function FoundPanel(): React.ReactElement {
   const [currentSection, setCurrentSection] = useState(0);
   const [answers, setAnswers] = useState<InterviewAnswers>({});
-  const [selectedPreset, setSelectedPreset] = useState<PresetDefinition | null>(
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(
     null
   );
   const [step, setStep] = useState<FoundStep>("interview");
@@ -79,7 +79,7 @@ export function FoundPanel(): React.ReactElement {
   const [qualityCheck, setQualityCheck] = useState<QualityCheckResult | null>(
     null
   );
-  const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
+  const [applyResult, setApplyResult] = useState<any>(null);
   const [currentApplyStep, setCurrentApplyStep] = useState<string>("preflight");
 
   // Get company ID from URL params or context (in real integration, via Plugin SDK context)
@@ -103,13 +103,17 @@ export function FoundPanel(): React.ReactElement {
   const saveDraftAction = usePluginAction("saveInterviewDraft");
 
   // Apply action
-  const applyAction = usePluginAction<ApplyResult>("runApply");
+  const applyAction = usePluginAction("runApply");
 
   // Load presets
-  const { data: presets = [] } = usePluginData<PresetDefinition[]>(
+  const { data: presetsData = [] } = usePluginData<PresetDefinition[]>(
     "getPresets",
     {}
   );
+  const presets = Array.isArray(presetsData) ? presetsData : [];
+
+  // Get selected preset object from ID
+  const selectedPreset = presets.find((p) => p.id === selectedPresetId) || null;
 
   // Initialize state from draft on load
   useEffect(() => {
@@ -118,7 +122,7 @@ export function FoundPanel(): React.ReactElement {
         setAnswers(draftData.draft);
       }
       if (draftData.preset) {
-        setSelectedPreset(draftData.preset);
+        setSelectedPresetId(draftData.preset.id);
       }
     }
   }, [draftData]);
@@ -136,7 +140,7 @@ export function FoundPanel(): React.ReactElement {
         console.error("Failed to save draft:", err);
       });
     },
-    [companyId, selectedPreset, saveDraftAction]
+    [companyId, selectedPresetId, saveDraftAction, selectedPreset]
   );
 
   // Section validation: check if all required questions in section are answered
@@ -181,6 +185,9 @@ export function FoundPanel(): React.ReactElement {
     });
   }, [sections, answers]);
 
+  // Preset selected
+  const hasPresetSelected = !!selectedPresetId;
+
   // Interview section navigation
   const handleSectionNavigate = useCallback(
     (direction: "next" | "back") => {
@@ -189,7 +196,7 @@ export function FoundPanel(): React.ReactElement {
       } else if (direction === "next") {
         if (currentSection < sections.length - 1) {
           setCurrentSection((c) => c + 1);
-        } else if (allQuestionsAnswered && selectedPreset) {
+        } else if (allQuestionsAnswered && hasPresetSelected) {
           // Jump to preview (last section completed)
           const filled = fillVisionTemplate(answers);
           const quality = checkVisionQuality(filled);
@@ -199,12 +206,12 @@ export function FoundPanel(): React.ReactElement {
         }
       }
     },
-    [currentSection, sections, answers, selectedPreset, allQuestionsAnswered]
+    [currentSection, sections, answers, hasPresetSelected, allQuestionsAnswered]
   );
 
   // Handle preset selection (locked after selection)
-  const handlePresetSelect = useCallback((preset: PresetDefinition) => {
-    setSelectedPreset(preset);
+  const handlePresetSelect = useCallback((presetId: string) => {
+    setSelectedPresetId(presetId);
   }, []);
 
   // Back from preview to interview
@@ -248,16 +255,18 @@ export function FoundPanel(): React.ReactElement {
         preset: selectedPreset,
       });
 
-      setApplyResult(result);
+      if (result && typeof result === "object") {
+        setApplyResult(result);
 
-      if (result.success) {
-        setStep("complete");
-        // Clear draft on success
-        saveDraftAction({ companyId, answers: {}, preset: null }).catch(
-          (err) => console.error("Failed to clear draft:", err)
-        );
-      } else {
-        setStep("error");
+        if ((result as any).success) {
+          setStep("complete");
+          // Clear draft on success
+          saveDraftAction({ companyId, answers: {}, preset: null }).catch(
+            (err) => console.error("Failed to clear draft:", err)
+          );
+        } else {
+          setStep("error");
+        }
       }
     } catch (error) {
       const message =
@@ -284,15 +293,17 @@ export function FoundPanel(): React.ReactElement {
         preset: selectedPreset,
       });
 
-      setApplyResult(result);
+      if (result && typeof result === "object") {
+        setApplyResult(result);
 
-      if (result.success) {
-        setStep("complete");
-        saveDraftAction({ companyId, answers: {}, preset: null }).catch(
-          (err) => console.error("Failed to clear draft:", err)
-        );
-      } else {
-        setStep("error");
+        if ((result as any).success) {
+          setStep("complete");
+          saveDraftAction({ companyId, answers: {}, preset: null }).catch(
+            (err) => console.error("Failed to clear draft:", err)
+          );
+        } else {
+          setStep("error");
+        }
       }
     } catch (error) {
       const message =
@@ -317,7 +328,7 @@ export function FoundPanel(): React.ReactElement {
     // For now, reset to interview
     setStep("interview");
     setAnswers({});
-    setSelectedPreset(null);
+    setSelectedPresetId(null);
     setVision(null);
     setApplyResult(null);
     setCurrentSection(0);
@@ -362,11 +373,11 @@ export function FoundPanel(): React.ReactElement {
           {/* Section navigation rail */}
           <SectionNavRail
             sections={sections}
-            currentSection={currentSection}
+            currentSectionIndex={currentSection}
             completedSections={sections
               .slice(0, currentSection)
               .map((_, i) => i)} // Simplified: mark prior sections as done
-            onSelectSection={setCurrentSection}
+            onJumpTo={setCurrentSection}
           />
 
           {/* Interview section */}
@@ -397,7 +408,7 @@ export function FoundPanel(): React.ReactElement {
             {presets.length > 0 ? (
               <PresetSelector
                 presets={presets}
-                selected={selectedPreset}
+                selected={selectedPresetId}
                 onSelect={handlePresetSelect}
               />
             ) : (
@@ -426,7 +437,12 @@ export function FoundPanel(): React.ReactElement {
 
         {/* Vision preview (editable) */}
         <div className="flex-1 overflow-y-auto">
-          <VisionPreview vision={vision} onVisionChange={setVision} />
+          <VisionPreview
+            vision={vision}
+            preset={selectedPreset}
+            onBack={() => {}} // Not used in this layout
+            onConfirm={() => {}} // Not used in this layout
+          />
         </div>
 
         {/* Provisioning summary */}
@@ -492,25 +508,28 @@ export function FoundPanel(): React.ReactElement {
         </div>
 
         <div className="flex-1 flex items-center justify-center">
-          <ApplyProgress currentStep={currentApplyStep} />
+          <ApplyProgress
+            step={currentApplyStep as any}
+            progress={{}}
+          />
         </div>
       </div>
     );
   }
 
   // Render complete step
-  if (step === "complete" && applyResult?.success) {
+  if (step === "complete" && applyResult) {
     return (
       <div className="flex h-full flex-col gap-lg p-lg items-center justify-center">
         <div className="text-center">
-          <div className="mb-md text-4xl">🎉</div>
+          <div className="mb-md text-4xl">✓</div>
           <h2 className="text-display font-bold">Company founded!</h2>
           <p className="text-body text-foreground/70 mt-md">
-            {applyResult.agentIds?.length || 0} agents provisioned
+            {(applyResult as any).agentIds?.length || 0} agents provisioned
           </p>
-          {applyResult.issueIds && (
+          {(applyResult as any).issueIds && (
             <p className="text-body text-foreground/70">
-              {applyResult.issueIds.length} kickoff issues created
+              {(applyResult as any).issueIds.length} kickoff issues created
             </p>
           )}
         </div>
@@ -525,7 +544,7 @@ export function FoundPanel(): React.ReactElement {
           <button
             onClick={() => {
               // In real impl: navigate to company view
-              console.log("Navigate to company:", applyResult.visionDocId);
+              console.log("Navigate to company:", (applyResult as any).visionDocId);
             }}
             className="flex-1 rounded px-md py-sm text-sm font-medium bg-accent text-background hover:bg-accent/90"
           >
@@ -537,13 +556,16 @@ export function FoundPanel(): React.ReactElement {
   }
 
   // Render error step
-  if (step === "error" && applyResult && !applyResult.success) {
+  if (step === "error" && applyResult) {
     return (
       <div className="flex h-full flex-col gap-lg p-lg">
         <ApplyErrorDisplay
-          result={applyResult}
+          step={currentApplyStep}
+          errors={applyResult.blockingErrors || applyResult.errors || []}
+          rollbackApplied={applyResult.rollbackApplied}
+          rollbackErrors={applyResult.rollbackErrors}
           onRetry={handleRetryApply}
-          onBack={handleBackFromError}
+          onClose={handleBackFromError}
         />
       </div>
     );
