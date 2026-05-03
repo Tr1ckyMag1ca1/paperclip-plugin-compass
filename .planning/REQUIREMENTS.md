@@ -194,7 +194,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | ASSESS-06 | Phase 3 | Pending |
 | ASSESS-07 | Phase 3 | Pending |
 | ASSESS-08 | Phase 3 | Pending |
-| ASSESS-09 | Phase 3 | Pending |
+| ASSESS-09 | Phase 6 | Reassigned 2026-05-03 — depends on engagement memory (Phase 6) |
 | REVIVE-01 | Phase 4 | Pending |
 | REVIVE-02 | Phase 4 | Pending |
 | REVIVE-03 | Phase 4 | Pending |

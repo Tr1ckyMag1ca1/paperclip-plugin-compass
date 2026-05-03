@@ -67,7 +67,7 @@ Plan list:
 
 **Depends on:** Phase 2 (Found mode shippped so companies exist, SDK adapter mature, wakeup queueing pattern proven)
 
-**Requirements:** ASSESS-01 through ASSESS-09, XC-02, XC-03, XC-04, XC-08, XC-09
+**Requirements:** ASSESS-01 through ASSESS-08, XC-02, XC-03, XC-04, XC-08, XC-09 (ASSESS-09 reassigned to Phase 6 — depends on engagement memory)
 
 **Success Criteria** (what must be TRUE when this phase ships):
 1. Founder can trigger Assess mode on a company with VISION.md; drift report compares each VISION section vs last 30 days of issues, issue_comments, documents with confidence scoring to mitigate false positives
@@ -192,7 +192,7 @@ Plan list:
 | ASSESS-06 | Phase 3 | Assess Mode |
 | ASSESS-07 | Phase 3 | Assess Mode |
 | ASSESS-08 | Phase 3 | Assess Mode |
-| ASSESS-09 | Phase 3 | Assess Mode |
+| ASSESS-09 | Phase 6 | Engagement Memory (depends on memory infra) |
 | REVIVE-01 | Phase 4 | Revive Mode |
 | REVIVE-02 | Phase 4 | Revive Mode |
 | REVIVE-03 | Phase 4 | Revive Mode |
