@@ -43,18 +43,19 @@ export function MainPanel(): React.ReactElement {
     usePluginData<Mode | null>("getModeOverride");
 
   // Set mode override action handler (D-09, MODE-03)
-  const { trigger: setModeOverride } = usePluginAction("setModeOverride");
+  const setModeOverrideAction = usePluginAction("setModeOverride");
 
   // Handle mode override change from dropdown
   const handleModeOverride = useCallback(
     async (newMode: Mode) => {
       try {
-        await setModeOverride({ mode: newMode });
+        // Call the action with mode parameter
+        await setModeOverrideAction({ mode: newMode });
       } catch (error) {
         console.error("Failed to set mode override:", error);
       }
     },
-    [setModeOverride]
+    [setModeOverrideAction]
   );
 
   // Handle refresh button click (D-04)
@@ -72,10 +73,12 @@ export function MainPanel(): React.ReactElement {
 
   // Handle errors gracefully (D-08)
   if (inventoryError || modeError) {
+    const errorToDisplay = inventoryError || modeError;
+    const errorMessage = errorToDisplay instanceof Error
+      ? errorToDisplay.message
+      : String(errorToDisplay);
     return (
-      <ErrorBoundary
-        error={inventoryError || modeError || new Error("Unknown error")}
-      />
+      <ErrorBoundary error={new Error(errorMessage)} />
     );
   }
 
@@ -92,11 +95,7 @@ export function MainPanel(): React.ReactElement {
 
   // No inventory data available
   if (!inventory || !modeData) {
-    return (
-      <ErrorBoundary
-        error={new Error("Failed to load company inventory")}
-      />
-    );
+    return <ErrorBoundary error={new Error("Failed to load company inventory")} />;
   }
 
   const detectedMode = modeData.mode;

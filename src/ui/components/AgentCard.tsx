@@ -75,15 +75,15 @@ function getAgentStatus(
  * - "5 days ago" for older heartbeats
  * - "No recent heartbeat" if no heartbeat or not in last 30 days
  *
- * @param lastHeartbeatAt ISO 8601 timestamp or null
+ * @param lastHeartbeatAt ISO 8601 timestamp string or null
  * @returns Human-readable label
  */
-function getHeartbeatLabel(lastHeartbeatAt: string | null): string {
+function getHeartbeatLabel(lastHeartbeatAt: string | null | Date): string {
   if (!lastHeartbeatAt) {
     return "No recent heartbeat";
   }
 
-  const heartbeat = new Date(lastHeartbeatAt);
+  const heartbeat = typeof lastHeartbeatAt === 'string' ? new Date(lastHeartbeatAt) : lastHeartbeatAt;
   const now = new Date();
   const diffMs = now.getTime() - heartbeat.getTime();
   const diffMinutes = Math.floor(diffMs / (1000 * 60));

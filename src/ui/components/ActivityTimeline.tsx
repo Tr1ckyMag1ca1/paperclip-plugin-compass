@@ -42,7 +42,7 @@ export function ActivityTimeline({
                 {issue.title}
               </p>
               <span className="text-xs text-foreground/60 flex-shrink-0">
-                {formatDate(new Date(issue.createdAt || issue.created_at || Date.now()))}
+                {formatDate(new Date(issue.createdAt || Date.now()))}
               </span>
             </div>
             {issue.status && (
