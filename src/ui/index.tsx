@@ -1,22 +1,11 @@
-import React from "react";
+import { MainPanel } from "./MainPanel.js";
 
 /**
- * MainPanel — Compass diagnostic dashboard.
+ * Export MainPanel component as named export.
  *
- * Placeholder for Plan 3 implementation.
- * Per D-03, renders:
- * - Mode banner at top with override dropdown
- * - Collapsible sections: Agents, Documents, Recent Activity, VISION status
- * - Chat input panel for MODE-04 routing
+ * Matches manifest slot declaration from Plan 1:
+ * - ui.slots[0]: sidebarPanel slot with exportName: "MainPanel"
  *
- * @returns React component for sidebar panel slot
+ * Plugin SDK will load this component when Compass is opened in the sidebar.
  */
-export function MainPanel(): React.ReactElement {
-  return (
-    <div style={{ padding: "1rem", fontFamily: "sans-serif" }}>
-      <h1>Compass</h1>
-      <p>Strategic consultant for your AI company.</p>
-      <p>Loading diagnostic dashboard...</p>
-    </div>
-  );
-}
+export { MainPanel };
