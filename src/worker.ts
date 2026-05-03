@@ -752,6 +752,75 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // REPOSITION MODE HANDLERS
   // ============================
 
+  // Handler: getCurrentVision (REPO-00, D-13)
+  // Retrieve current VISION.md for interview pre-filling and cascade planning
+  ctx.data.register("getCurrentVision", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      // Load VISION.md from issues documents
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent: string | null = null;
+
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = (visionDoc as any).body || (visionDoc as any).content;
+            if (visionContent) break;
+          }
+        } catch {
+          // Skip issues that don't have documents
+          continue;
+        }
+      }
+
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found",
+        };
+      }
+
+      return {
+        success: true,
+        vision: visionContent,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to load VISION.md: ${message}`,
+      };
+    }
+  });
+
+  // Handler: getApprovalRouting (REPO-04, D-12)
+  // Retrieve approval routing configuration for this company
+  ctx.data.register("getApprovalRouting", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      // For now, default to 'founder' routing
+      // In Phase 5 v2, this would read from a config document or state
+      const routing = "founder" as "founder" | "founder+ceo";
+
+      return {
+        success: true,
+        routing,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to get approval routing: ${message}`,
+      };
+    }
+  });
+
   // Handler: classifyShift (REPO-01, D-01, D-02)
   // Classify founder-described strategic shift into affected VISION sections
   ctx.data.register("classifyShift", async (params: any) => {
