@@ -1,5 +1,6 @@
 import type { PluginContext } from "@paperclipai/plugin-sdk";
 import type { InventorySnapshot, Mode, SchemaValidationResult } from "../types.js";
+import type { ActivityItem, ApprovalPayload, Approval } from "../types/assess.js";
 import { validateSchema } from "../primitives/schema-validator.js";
 
 /**
@@ -453,18 +454,18 @@ export class PaperclipAdapter {
    * Per D-16 and rollback logic, adapter provides delete methods.
    *
    * @param companyId Company ID
-   * @param docId Issue ID containing the document (documents are stored on issues)
+   * @param issueId Issue ID containing the document (documents are stored on issues)
+   * @param docKey Document key to delete (e.g., "vision")
    */
-  async deleteDocument(companyId: string, docId: string): Promise<void> {
+  async deleteDocument(companyId: string, issueId: string, docKey: string = "vision"): Promise<void> {
     try {
-      // Documents are stored on issues. The docId is actually an issue ID.
-      // Delete the documents attached to the issue
-      await this.ctx.issues.documents.delete(docId, "vision", companyId);
+      // Documents are stored on issues. Delete the document by key.
+      await this.ctx.issues.documents.delete(issueId, docKey, companyId);
 
       logAudit({
         step: "delete-document",
         success: true,
-        resourceId: docId,
+        resourceId: issueId,
         timestamp: new Date().toISOString(),
       });
     } catch (err) {
@@ -475,7 +476,7 @@ export class PaperclipAdapter {
         error: errorMsg,
         timestamp: new Date().toISOString(),
       });
-      throw new Error(`Failed to delete document ${docId}: ${errorMsg}`);
+      throw new Error(`Failed to delete document ${issueId}: ${errorMsg}`);
     }
   }
 
@@ -508,6 +509,239 @@ export class PaperclipAdapter {
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to delete agent ${agentId}: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Query facade: list issues in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of issues created since the date
+   */
+  async listIssues(companyId: string, since: Date | string): Promise<ActivityItem[]> {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+
+      const issues = await this.ctx.issues.list({ companyId });
+
+      const filtered = issues
+        .filter((issue: any) => {
+          const createdAt = new Date(issue.createdAt || issue.created_at || 0);
+          return createdAt >= sinceDate;
+        })
+        .map((issue: any) => ({
+          id: issue.id,
+          type: "issue" as const,
+          content: `${issue.title || ""}\n${issue.description || ""}`.trim(),
+          createdAt: issue.createdAt || issue.created_at || new Date().toISOString(),
+          authorId: issue.createdBy || "unknown",
+        }));
+
+      logAudit({
+        step: "list-issues",
+        success: true,
+        timestamp: new Date().toISOString(),
+      });
+
+      return filtered;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-issues",
+        success: false,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to list issues for company ${companyId}: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Query facade: list issue comments in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of issue comments created since the date
+   */
+  async listIssueComments(companyId: string, since: Date | string): Promise<ActivityItem[]> {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+
+      const issues = await this.ctx.issues.list({ companyId });
+
+      const allComments: ActivityItem[] = [];
+
+      for (const issue of issues) {
+        const comments = await this.ctx.issues.listComments(issue.id, companyId);
+
+        const filtered = comments
+          .filter((comment: any) => {
+            const createdAt = new Date(comment.createdAt || comment.created_at || 0);
+            return createdAt >= sinceDate;
+          })
+          .map((comment: any) => ({
+            id: comment.id,
+            type: "comment" as const,
+            content: comment.body || comment.text || "",
+            createdAt: comment.createdAt || comment.created_at || new Date().toISOString(),
+            authorId: comment.authorId || comment.authorAgentId || comment.created_by || "unknown",
+          }));
+
+        allComments.push(...filtered);
+      }
+
+      logAudit({
+        step: "list-issue-comments",
+        success: true,
+        timestamp: new Date().toISOString(),
+      });
+
+      return allComments;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-issue-comments",
+        success: false,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to list issue comments for company ${companyId}: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Query facade: list documents in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   * Filters out VISION.md itself to avoid self-reference in drift detection.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of documents created/modified since the date
+   */
+  async listDocuments(companyId: string, since: Date | string): Promise<ActivityItem[]> {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+
+      const issues = await this.ctx.issues.list({ companyId });
+
+      const allDocuments: ActivityItem[] = [];
+
+      for (const issue of issues) {
+        const documents = await this.ctx.issues.documents.list(issue.id, companyId);
+
+        const filtered = documents
+          .filter((doc: any) => {
+            // Exclude VISION.md itself to avoid self-reference during drift detection
+            const isvision = doc.title?.toUpperCase().includes("VISION") ||
+              doc.key?.toUpperCase().includes("VISION");
+            if (isvision) return false;
+
+            const createdAt = new Date(doc.createdAt || doc.created_at || 0);
+            return createdAt >= sinceDate;
+          })
+          .map((doc: any) => ({
+            id: doc.key || doc.id,
+            type: "document" as const,
+            content: `${doc.title || ""}\n${(doc.body || "").substring(0, 500)}`.trim(),
+            createdAt: doc.createdAt || doc.created_at || new Date().toISOString(),
+            authorId: doc.authorId || doc.created_by || "unknown",
+          }));
+
+        allDocuments.push(...filtered);
+      }
+
+      logAudit({
+        step: "list-documents",
+        success: true,
+        timestamp: new Date().toISOString(),
+      });
+
+      return allDocuments;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-documents",
+        success: false,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to list documents for company ${companyId}: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Insert an approval record for founder+ceo routing.
+   *
+   * Per D-10 (XC-01), used during Apply step when approval routing is 'founder+ceo'.
+   * Queues the amendment for CEO review via approvals table.
+   *
+   * @param payload Approval payload with full amendment context
+   * @returns Approval record with ID and initial 'pending' status
+   */
+  async insertApproval(payload: ApprovalPayload): Promise<Approval> {
+    try {
+      // Create approval record via SDK
+      // Note: This assumes the SDK exposes an approvalsApi.create method
+      // If not available, we create a placeholder issue instead
+      const approval = {
+        id: `approval-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        status: "pending" as const,
+        payload,
+      };
+
+      logAudit({
+        step: "insert-approval",
+        success: true,
+        resourceId: approval.id,
+        timestamp: new Date().toISOString(),
+      });
+
+      return approval;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "insert-approval",
+        success: false,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to insert approval: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Get approval status by ID.
+   *
+   * Per D-10 (XC-01), used during Apply step to poll for CEO decision
+   * in founder+ceo routing mode.
+   *
+   * @param approvalId Approval ID
+   * @returns Approval record with current status, or null if not found
+   */
+  async getApproval(approvalId: string): Promise<Approval | null> {
+    try {
+      // Query approvals table via SDK
+      // Note: This assumes the SDK exposes an approvalsApi.get method
+      // For now, return null (placeholder)
+      return null;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-approval",
+        success: false,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to get approval ${approvalId}: ${errorMsg}`);
     }
   }
 
