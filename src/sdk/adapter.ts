@@ -155,18 +155,82 @@ export class PaperclipAdapter {
   }
 
   /**
+   * Get an issue by ID.
+   *
+   * Per XC-01, all reads route through adapter.
+   * Used by action handlers and sample-pivot to load issue details.
+   *
+   * @param issueId Issue ID to load
+   * @param companyId Company ID (required by SDK)
+   * @returns Issue object with full details
+   */
+  async getIssue(issueId: string, companyId?: string): Promise<any> {
+    try {
+      // If companyId not provided, we'll attempt without it first (SDK may handle it)
+      // This is a best-effort approach to support both signatures
+      const issue = companyId
+        ? await (this.ctx.issues as any).get(issueId, companyId)
+        : await (this.ctx.issues as any).get(issueId);
+
+      logAudit({
+        step: "get-issue",
+        success: true,
+        resourceId: issueId,
+        timestamp: new Date().toISOString(),
+      });
+
+      return issue;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-issue",
+        success: false,
+        resourceId: issueId,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to get issue ${issueId}: ${errorMsg}`);
+    }
+  }
+
+  /**
    * Write a document (e.g., VISION.md) to the company as an issue with documents.
    *
    * Per D-16 (XC-01), all writes route through this chokepoint.
    * VISION.md is stored as an issue document via ctx.issues.documents API.
    *
+   * Supports two signatures:
+   * 1. writeDocument(companyId, title, body) — legacy signature
+   * 2. writeDocument(companyId, key, options) — new signature with idempotency key
+   *
    * @param companyId Company ID
-   * @param title Document title (e.g., "VISION.md")
-   * @param body Document body (markdown)
+   * @param titleOrKey Document title or idempotency key
+   * @param bodyOrOptions Document body (string) or options object { title, body, idempotency_key }
    * @returns Issue ID (parent container) for audit trail
    */
-  async writeDocument(companyId: string, title: string, body: string): Promise<string> {
+  async writeDocument(
+    companyId: string,
+    titleOrKey: string,
+    bodyOrOptions?: string | { title: string; body: string; idempotency_key?: string }
+  ): Promise<string> {
     try {
+      let title: string;
+      let body: string;
+      let docKey: string;
+
+      // Handle both signatures
+      if (typeof bodyOrOptions === "string") {
+        // Legacy signature: writeDocument(companyId, title, body)
+        title = titleOrKey;
+        body = bodyOrOptions;
+        docKey = title.toLowerCase().replace(/\s+/g, "-").replace(/\.md$/i, "");
+      } else {
+        // New signature: writeDocument(companyId, key, options)
+        docKey = titleOrKey;
+        title = bodyOrOptions?.title || titleOrKey;
+        body = bodyOrOptions?.body || "";
+      }
+
       // 1. Create a root issue to hold the document
       const issue = await this.ctx.issues.create({
         companyId,
@@ -175,7 +239,6 @@ export class PaperclipAdapter {
       });
 
       // 2. Attach the document to the issue using documents API
-      const docKey = title.toLowerCase().replace(/\s+/g, "-").replace(/\.md$/i, "");
       await this.ctx.issues.documents.upsert({
         issueId: issue.id,
         key: docKey,
@@ -201,7 +264,7 @@ export class PaperclipAdapter {
         error: errorMsg,
         timestamp: new Date().toISOString(),
       });
-      throw new Error(`Failed to write document "${title}": ${errorMsg}`);
+      throw new Error(`Failed to write document: ${errorMsg}`);
     }
   }
 

@@ -122,6 +122,25 @@ export interface ActionQueue {
 }
 
 /**
+ * ActionResult — outcome of executing a single action.
+ *
+ * Per D-10: returned to UI for display and used to update queue status.
+ */
+export interface ActionResult {
+  /** Whether the action succeeded */
+  success: boolean;
+
+  /** Human-readable summary of what happened */
+  summary: string;
+
+  /** Error message (if success=false) */
+  error?: string;
+
+  /** Type-specific result data (e.g., created issue IDs) */
+  result?: Record<string, unknown>;
+}
+
+/**
  * StallClassification — output of classifyStall pure function.
  *
  * Per D-02, produced by src/revive/classify.ts using hard rules.
