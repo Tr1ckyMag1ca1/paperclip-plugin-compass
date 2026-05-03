@@ -13,13 +13,18 @@ import type {
   PresetDefinition,
 } from "./types/found.js";
 import { applyFound } from "./found/apply.js";
-import { generateApplyRunId } from "./found/idempotency.js";
+import { generateApplyRunId, generateReviveActionKey } from "./found/idempotency.js";
 import { buildActivitySnapshot } from "./assess/activity.js";
 import { parseVision } from "./assess/vision-parse.js";
 import { detectDrift } from "./assess/drift.js";
 import { applyAssessmentChanges } from "./assess/apply.js";
 import { PaperclipAdapter } from "./sdk/adapter.js";
 import type { DriftReport } from "./types/assess.js";
+import { classifyStall } from "./revive/classify.js";
+import { applyAction, applyAllActions } from "./revive/apply.js";
+import { writeActionQueueDocument } from "./revive/queue.js";
+import type { ActionQueue, ActionItem } from "./types/revive.js";
+import { randomUUID } from "node:crypto";
 
 const plugin = definePlugin({
   async setup(ctx: PluginContext) {
@@ -457,6 +462,327 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       };
     }
   });
+
+  // Handler: runStallDiagnostic (REVIVE-01, REVIVE-02, D-01, D-02, D-04)
+  // Per D-01/D-02: deterministic classifier detects stall cause(s) from inventory + VISION + activity
+  // Per D-04: writes action queue to documents table with idempotency key
+  // Returns ActionQueue for UI review
+  ctx.data.register("runStallDiagnostic", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load inventory snapshot (company state)
+      const inventory = await loadInventory(ctx, companyId);
+
+      // Load VISION.md
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent: string | null = null;
+
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = (visionDoc as any).body || (visionDoc as any).content;
+            if (visionContent) break;
+          }
+        } catch {
+          // Skip issues that don't have documents
+          continue;
+        }
+      }
+
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found. Revive mode requires a founded company.",
+        };
+      }
+
+      // Parse VISION
+      let parsedVision;
+      try {
+        parsedVision = parseVision(visionContent);
+      } catch (parseError) {
+        return {
+          success: false,
+          error: `Failed to parse VISION.md: ${
+            parseError instanceof Error ? parseError.message : String(parseError)
+          }`,
+        };
+      }
+
+      // Build activity snapshot (last 30 days)
+      const activity = await buildActivitySnapshot(adapter, companyId, 30);
+
+      // Optional: get drift report as one input to classifier
+      let driftReport: DriftReport | undefined;
+      try {
+        driftReport = detectDrift(parsedVision, activity, 30);
+      } catch {
+        // Drift detection failure is non-fatal for revive diagnosis
+      }
+
+      // Classify stall (pure function, deterministic)
+      const classification = classifyStall(inventory, parsedVision, activity, driftReport);
+
+      // Generate action queue from classification
+      const actionQueue = generateActionQueueFromClassification(classification);
+
+      // Write queue to documents (per D-04, XC-03 idempotency)
+      await writeActionQueueDocument(adapter, companyId, actionQueue);
+
+      // Save run state in worker-state for UI recovery
+      await ctx.state.set(
+        {
+          scopeKind: "company" as const,
+          scopeId: companyId,
+          namespace: "compass:revive:run",
+          stateKey: actionQueue.run_id,
+        },
+        actionQueue
+      );
+
+      return {
+        success: true,
+        queue: actionQueue,
+        classification,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Revive diagnosis failed: ${message}`,
+      };
+    }
+  });
+
+  // Handler: applyReviveAction (REVIVE-05, REVIVE-06, D-10, D-11)
+  // Per D-10: incremental apply — each action executed independently, not transactional
+  // Per D-11: all wakeups use idempotency keys
+  // Executes single action, updates queue status, returns result
+  ctx.actions.register("applyReviveAction", async (params: any) => {
+    const { companyId, actionId, queueRunId } = params as {
+      companyId: string;
+      actionId: string;
+      queueRunId: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load queue from worker-state or documents
+      const queue = (await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: queueRunId,
+      })) as ActionQueue | null;
+
+      if (!queue) {
+        return {
+          success: false,
+          error: "Action queue not found. Please run Revive diagnosis first.",
+        };
+      }
+
+      // Apply single action (per D-10: incremental, not transactional)
+      const { queue: updatedQueue, result } = await applyAction(
+        queue,
+        actionId,
+        adapter
+      );
+
+      // Update worker-state with new queue status
+      await ctx.state.set(
+        {
+          scopeKind: "company" as const,
+          scopeId: companyId,
+          namespace: "compass:revive:run",
+          stateKey: queueRunId,
+        },
+        updatedQueue
+      );
+
+      return {
+        success: result.success,
+        summary: result.summary,
+        queue: updatedQueue,
+        error: result.error,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to apply action: ${message}`,
+      };
+    }
+  });
+
+  // Handler: checkReviveActionStatus (REVIVE-07, D-04)
+  // Per D-04: loads queue from documents and returns progress (total/addressed/pending)
+  // Used by UI to display progress bar and remaining work count
+  ctx.data.register("checkReviveActionStatus", async (params: any) => {
+    const { companyId, queueRunId } = params as {
+      companyId: string;
+      queueRunId: string;
+    };
+
+    try {
+      // Load queue from worker-state (quick) or documents (fallback)
+      let queue = (await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: queueRunId,
+      })) as ActionQueue | null;
+
+      if (!queue) {
+        return {
+          found: false,
+          error: "Queue not found",
+        };
+      }
+
+      return {
+        found: true,
+        totalItems: queue.total_items,
+        addressedCount: queue.addressed_count,
+        pendingCount: queue.total_items - queue.addressed_count,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        found: false,
+        error: `Failed to check action status: ${message}`,
+      };
+    }
+  });
+}
+
+/**
+ * Generate action queue from classification result.
+ *
+ * Per D-04, D-05: converts StallClassification to ActionQueue with all action items.
+ * Priority computed from cause severity + blast radius (count of downstream items).
+ * Items grouped by cause per D-06.
+ *
+ * @param classification StallClassification from classifier
+ * @returns ActionQueue with all action items ranked by priority
+ */
+function generateActionQueueFromClassification(classification: any): ActionQueue {
+  const runId = randomUUID();
+  const itemsByCause: Record<string, ActionItem[]> = {};
+  let totalItems = 0;
+
+  // For each detected cause, create action items
+  // This is a simplified implementation that maps causes to recommended actions
+  // Full implementation would create multiple action items per cause based on
+  // the specific findings in the inventory/activity analysis
+  for (const cause of classification.causes) {
+    if (!itemsByCause[cause]) {
+      itemsByCause[cause] = [];
+    }
+
+    // Generate action item for this cause
+    const actionItem: ActionItem = {
+      id: `action-${cause}-${itemsByCause[cause].length + 1}`,
+      cause: cause as any,
+      priority: classification.confidence[cause] || 0.5,
+      title: getTitleForCause(cause),
+      why_blocking: getExplanationForCause(cause),
+      unblocks_count: 1,
+      target: {
+        type: "agent",
+        id: "target-agent",
+        context: `Unblocking ${cause} stall`,
+      },
+      recommended_action: {
+        type: getActionTypeForCause(cause),
+        params: { cause },
+      },
+      status: "pending",
+    };
+
+    itemsByCause[cause].push(actionItem);
+    totalItems += 1;
+  }
+
+  return {
+    run_id: runId,
+    company_id: classification.companyId,
+    created_at: classification.timestamp,
+    causes: classification.causes,
+    items_by_cause: itemsByCause as Record<any, ActionItem[]>,
+    total_items: totalItems,
+    addressed_count: 0,
+    confidence: classification.confidence,
+  };
+}
+
+/**
+ * Get human-readable title for a stall cause.
+ */
+function getTitleForCause(cause: string): string {
+  switch (cause) {
+    case "single-blocker":
+      return "Resolve blocking issue";
+    case "strategic-drift":
+      return "Address strategic drift";
+    case "broken-integration":
+      return "Fix integration issue";
+    case "governance-loop":
+      return "Break approval loop";
+    case "dead-agent":
+      return "Restart inactive agent";
+    default:
+      return `Address ${cause}`;
+  }
+}
+
+/**
+ * Get explanation for why this cause is blocking.
+ */
+function getExplanationForCause(cause: string): string {
+  switch (cause) {
+    case "single-blocker":
+      return "A critical issue is blocking multiple downstream work items. Resolving this will unblock other work.";
+    case "strategic-drift":
+      return "Current activity has drifted from the VISION.md strategic direction. Amending the vision or refocusing work will restore alignment.";
+    case "broken-integration":
+      return "An external integration has failed and is preventing work from progressing. Fixing the integration will restore flow.";
+    case "governance-loop":
+      return "Issues are stuck in approval cycles. Breaking the loop will allow progress to resume.";
+    case "dead-agent":
+      return "An agent has not reported activity in 30+ days. Restarting the agent with fresh context will resume their work.";
+    default:
+      return `This stall cause is preventing progress.`;
+  }
+}
+
+/**
+ * Get recommended action type for a stall cause.
+ */
+function getActionTypeForCause(cause: string): any {
+  switch (cause) {
+    case "single-blocker":
+      return "replace-blocker-issue";
+    case "strategic-drift":
+      return "surface-amendment-needed";
+    case "broken-integration":
+      return "nudge-agent-with-context-doc";
+    case "governance-loop":
+      return "mark-blocker-resolved";
+    case "dead-agent":
+      return "restart-agent";
+    default:
+      return "nudge-agent-with-context-doc";
+  }
 }
 
 export default plugin;

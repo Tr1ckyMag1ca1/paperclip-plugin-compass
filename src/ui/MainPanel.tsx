@@ -10,6 +10,7 @@ import { ChatPanel } from "./components/ChatPanel.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.js";
 import { AssessPanel } from "./assess/AssessPanel.js";
 import { FoundPanel } from "./found/FoundPanel.js";
+import { RevivePanel } from "./revive/RevivePanel.js";
 
 /**
  * MainPanel — Root UI component for Compass diagnostic dashboard.
@@ -105,7 +106,7 @@ export function MainPanel(): React.ReactElement {
   const companyId = inventory?.companyId || "";
   const visionExists = inventory?.visionExists ?? false;
 
-  // Route to mode-specific panels based on currentMode (ASSESS-02)
+  // Route to mode-specific panels based on currentMode (ASSESS-02, REVIVE-01)
   if (currentMode === "Assess") {
     return (
       <AssessPanel
@@ -118,6 +119,15 @@ export function MainPanel(): React.ReactElement {
 
   if (currentMode === "Found") {
     return <FoundPanel />;
+  }
+
+  if (currentMode === "Revive") {
+    return (
+      <RevivePanel
+        companyId={companyId}
+        companyName="Company"
+      />
+    );
   }
 
   // Default diagnostic dashboard for "probe" mode or other modes
