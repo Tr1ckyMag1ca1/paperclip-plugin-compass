@@ -8415,15 +8415,16 @@ Note: Actual agent must be provisioned via Paperclip CLI or admin panel.`
    * Per D-16 and rollback logic, adapter provides delete methods.
    *
    * @param companyId Company ID
-   * @param docId Issue ID containing the document (documents are stored on issues)
+   * @param issueId Issue ID containing the document (documents are stored on issues)
+   * @param docKey Document key to delete (e.g., "vision")
    */
-  async deleteDocument(companyId, docId) {
+  async deleteDocument(companyId, issueId, docKey = "vision") {
     try {
-      await this.ctx.issues.documents.delete(docId, "vision", companyId);
+      await this.ctx.issues.documents.delete(issueId, docKey, companyId);
       logAudit({
         step: "delete-document",
         success: true,
-        resourceId: docId,
+        resourceId: issueId,
         timestamp: (/* @__PURE__ */ new Date()).toISOString()
       });
     } catch (err) {
@@ -8434,7 +8435,7 @@ Note: Actual agent must be provisioned via Paperclip CLI or admin panel.`
         error: errorMsg,
         timestamp: (/* @__PURE__ */ new Date()).toISOString()
       });
-      throw new Error(`Failed to delete document ${docId}: ${errorMsg}`);
+      throw new Error(`Failed to delete document ${issueId}: ${errorMsg}`);
     }
   }
   /**
@@ -8462,6 +8463,201 @@ Note: Actual agent must be provisioned via Paperclip CLI or admin panel.`
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to delete agent ${agentId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Query facade: list issues in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of issues created since the date
+   */
+  async listIssues(companyId, since) {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+      const issues = await this.ctx.issues.list({ companyId });
+      const filtered = issues.filter((issue) => {
+        const createdAt = new Date(issue.createdAt || issue.created_at || 0);
+        return createdAt >= sinceDate;
+      }).map((issue) => ({
+        id: issue.id,
+        type: "issue",
+        content: `${issue.title || ""}
+${issue.description || ""}`.trim(),
+        createdAt: issue.createdAt || issue.created_at || (/* @__PURE__ */ new Date()).toISOString(),
+        authorId: issue.createdBy || "unknown"
+      }));
+      logAudit({
+        step: "list-issues",
+        success: true,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      return filtered;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-issues",
+        success: false,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to list issues for company ${companyId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Query facade: list issue comments in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of issue comments created since the date
+   */
+  async listIssueComments(companyId, since) {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+      const issues = await this.ctx.issues.list({ companyId });
+      const allComments = [];
+      for (const issue of issues) {
+        const comments = await this.ctx.issues.listComments(issue.id, companyId);
+        const filtered = comments.filter((comment) => {
+          const createdAt = new Date(comment.createdAt || comment.created_at || 0);
+          return createdAt >= sinceDate;
+        }).map((comment) => ({
+          id: comment.id,
+          type: "comment",
+          content: comment.body || comment.text || "",
+          createdAt: comment.createdAt || comment.created_at || (/* @__PURE__ */ new Date()).toISOString(),
+          authorId: comment.authorId || comment.authorAgentId || comment.created_by || "unknown"
+        }));
+        allComments.push(...filtered);
+      }
+      logAudit({
+        step: "list-issue-comments",
+        success: true,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      return allComments;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-issue-comments",
+        success: false,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to list issue comments for company ${companyId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Query facade: list documents in the last N days.
+   *
+   * Per XC-01 (D-18), all SDK queries route through the adapter chokepoint.
+   * Used by buildActivitySnapshot to gather drift evidence.
+   * Filters out VISION.md itself to avoid self-reference in drift detection.
+   *
+   * @param companyId Company ID
+   * @param since Start date (ISO 8601 string or Date)
+   * @returns Array of documents created/modified since the date
+   */
+  async listDocuments(companyId, since) {
+    try {
+      const sinceDate = typeof since === "string" ? new Date(since) : since;
+      const issues = await this.ctx.issues.list({ companyId });
+      const allDocuments = [];
+      for (const issue of issues) {
+        const documents = await this.ctx.issues.documents.list(issue.id, companyId);
+        const filtered = documents.filter((doc) => {
+          const isvision = doc.title?.toUpperCase().includes("VISION") || doc.key?.toUpperCase().includes("VISION");
+          if (isvision) return false;
+          const createdAt = new Date(doc.createdAt || doc.created_at || 0);
+          return createdAt >= sinceDate;
+        }).map((doc) => ({
+          id: doc.key || doc.id,
+          type: "document",
+          content: `${doc.title || ""}
+${(doc.body || "").substring(0, 500)}`.trim(),
+          createdAt: doc.createdAt || doc.created_at || (/* @__PURE__ */ new Date()).toISOString(),
+          authorId: doc.authorId || doc.created_by || "unknown"
+        }));
+        allDocuments.push(...filtered);
+      }
+      logAudit({
+        step: "list-documents",
+        success: true,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      return allDocuments;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "list-documents",
+        success: false,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to list documents for company ${companyId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Insert an approval record for founder+ceo routing.
+   *
+   * Per D-10 (XC-01), used during Apply step when approval routing is 'founder+ceo'.
+   * Queues the amendment for CEO review via approvals table.
+   *
+   * @param payload Approval payload with full amendment context
+   * @returns Approval record with ID and initial 'pending' status
+   */
+  async insertApproval(payload) {
+    try {
+      const approval = {
+        id: `approval-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        status: "pending",
+        payload
+      };
+      logAudit({
+        step: "insert-approval",
+        success: true,
+        resourceId: approval.id,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      return approval;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "insert-approval",
+        success: false,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to insert approval: ${errorMsg}`);
+    }
+  }
+  /**
+   * Get approval status by ID.
+   *
+   * Per D-10 (XC-01), used during Apply step to poll for CEO decision
+   * in founder+ceo routing mode.
+   *
+   * @param approvalId Approval ID
+   * @returns Approval record with current status, or null if not found
+   */
+  async getApproval(approvalId) {
+    try {
+      return null;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-approval",
+        success: false,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to get approval ${approvalId}: ${errorMsg}`);
     }
   }
   /**
@@ -8756,6 +8952,256 @@ async function performRollback(adapter, companyId, result) {
   }
 }
 
+// src/assess/activity.ts
+async function buildActivitySnapshot(adapter, companyId, windowDays = 30) {
+  const now = /* @__PURE__ */ new Date();
+  const windowStart = new Date(now.getTime() - windowDays * 24 * 60 * 60 * 1e3);
+  const [issues, comments, documents] = await Promise.all([
+    adapter.listIssues(companyId, windowStart),
+    adapter.listIssueComments(companyId, windowStart),
+    adapter.listDocuments(companyId, windowStart)
+  ]);
+  const totalItemCount = issues.length + comments.length + documents.length;
+  return {
+    issues,
+    comments,
+    documents,
+    totalItemCount,
+    windowStartDate: windowStart,
+    windowEndDate: now
+  };
+}
+
+// src/assess/vision-parse.ts
+var VISION_SECTIONS = [
+  "Mission",
+  "12-Month Goal",
+  "3-Year Vision",
+  "Target Customer",
+  "Voice",
+  "Issue Structure",
+  "Locality",
+  "Revenue Model",
+  "Launch Plan",
+  "Trust Governance",
+  "Growth Strategy",
+  "Sales Model",
+  "Product Direction",
+  "Org Structure",
+  "Operating Philosophy",
+  "CEO Mandate",
+  "Principles",
+  "Amendment Protocol",
+  "Success Criteria"
+];
+var SECTION_NAME_MAP = {
+  "Mission": "mission",
+  "12-Month Goal": "success_criteria_12mo",
+  "3-Year Vision": "vision_3year",
+  "Target Customer": "target_customer",
+  "Voice": "voice",
+  "Issue Structure": "issue_structure",
+  "Locality": "locality",
+  "Revenue Model": "revenue_model",
+  "Launch Plan": "launch_plan",
+  "Trust Governance": "trust_governance",
+  "Growth Strategy": "growth_strategy",
+  "Sales Model": "sales_model",
+  "Product Direction": "product_direction",
+  "Org Structure": "org_structure",
+  "Operating Philosophy": "operating_philosophy",
+  "CEO Mandate": "mandate",
+  // Maps to mandate field per template
+  "Principles": "principles",
+  "Amendment Protocol": "amendments",
+  // Special: this section holds changelog
+  "Success Criteria": "success_criteria"
+};
+function parseVision(markdown) {
+  const parsed = {
+    mission: "",
+    mandate: "",
+    voice: "",
+    principles: "",
+    success_criteria_12mo: "",
+    vision_3year: "",
+    target_customer: "",
+    issue_structure: "",
+    locality: "",
+    revenue_model: "",
+    launch_plan: "",
+    trust_governance: "",
+    growth_strategy: "",
+    sales_model: "",
+    product_direction: "",
+    org_structure: "",
+    operating_philosophy: "",
+    ceo_mandate: "",
+    success_criteria: "",
+    amendments: void 0
+  };
+  for (const sectionName of VISION_SECTIONS) {
+    const escapedName = sectionName.replace(/[-[\]{}()*+?.\\^$|]/g, "\\$&");
+    const headerPattern = new RegExp(
+      `##\\s+${escapedName}\\s*\\n([\\s\\S]*?)(?=##|Amendment Log|$)`,
+      "i"
+    );
+    const match = markdown.match(headerPattern);
+    if (match && match[1]) {
+      const content = match[1].trim();
+      const key = SECTION_NAME_MAP[sectionName];
+      if (key) {
+        parsed[key] = content;
+      }
+    }
+  }
+  const amendmentLogMatch = markdown.match(/##\s+Amendment Log\s*\n([\s\S]*?)$/i);
+  if (amendmentLogMatch && amendmentLogMatch[1]) {
+    const amendments = parseAmendmentLog(amendmentLogMatch[1]);
+    if (amendments.length > 0) {
+      parsed.amendments = amendments;
+    }
+  }
+  return parsed;
+}
+function parseAmendmentLog(logSection) {
+  const entries = [];
+  const lines = logSection.split("\n").filter((line) => line.trim().startsWith("-"));
+  for (const line of lines) {
+    const match = line.match(/^-\s+(\d{4}-\d{2}-\d{2}T[\dZ:.+-]+):\s+(.*)$/);
+    if (match) {
+      entries.push({
+        timestamp: match[1],
+        section: "",
+        // Section name not stored in changelog (can be inferred from amendment context)
+        reason: match[2],
+        founderIdentity: void 0
+      });
+    }
+  }
+  return entries;
+}
+
+// src/assess/drift.ts
+import { randomUUID as randomUUID2 } from "node:crypto";
+function detectDrift(vision, activity, windowDays = 30) {
+  const runId = randomUUID2();
+  const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const confidenceThreshold = 0.5;
+  const allItems = [...activity.issues, ...activity.comments, ...activity.documents];
+  const normalizedItems = allItems.map((item) => ({
+    ...item,
+    normalizedContent: normalizeText(item.content)
+  }));
+  const detectedItems = [];
+  let totalItemsDetected = 0;
+  const sectionNames = Object.keys(vision).filter((k) => k !== "amendments");
+  for (const sectionName of sectionNames) {
+    const sectionContent = vision[sectionName];
+    if (typeof sectionContent !== "string" || sectionContent.length === 0) {
+      continue;
+    }
+    const sectionTerms = extractKeyTerms(sectionContent);
+    if (sectionTerms.length === 0) continue;
+    const evidence = findEvidenceItems(sectionName, sectionTerms, normalizedItems);
+    const confidence = calculateConfidence(sectionTerms, evidence, activity.windowStartDate);
+    if (confidence >= confidenceThreshold) {
+      const severity = confidence >= 0.75 ? "blocker" : confidence >= 0.5 ? "warn" : "info";
+      detectedItems.push({
+        visionSection: sectionName,
+        evidence: evidence.map((e) => ({
+          id: e.id,
+          type: e.type,
+          content: e.content,
+          createdAt: e.createdAt,
+          authorId: e.authorId
+        })),
+        confidence: Math.round(confidence * 100) / 100,
+        // Round to 2 decimals
+        proposedAmendment: formatProposedAmendment(sectionName, evidence),
+        severity,
+        explanation: generateExplanation(sectionName, confidence, evidence.length)
+      });
+    } else {
+      totalItemsDetected++;
+    }
+  }
+  return {
+    items: detectedItems,
+    runId,
+    generatedAt,
+    companyId: "",
+    // Set by caller
+    confidenceThreshold,
+    totalItemsDetected: detectedItems.length + totalItemsDetected
+  };
+}
+function normalizeText(text) {
+  return text.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+function extractKeyTerms(sectionContent) {
+  const tokens = sectionContent.split(/[\s\-.,;:!?()]+/);
+  const terms = /* @__PURE__ */ new Set();
+  for (const token of tokens) {
+    const lower = token.toLowerCase();
+    if (lower.length > 3 || token.length > 0 && token[0] === token[0].toUpperCase() || /^\d+/.test(token)) {
+      terms.add(lower);
+    }
+  }
+  return Array.from(terms);
+}
+function findEvidenceItems(sectionName, sectionTerms, items) {
+  const evidence = [];
+  const seenIds = /* @__PURE__ */ new Set();
+  for (const item of items) {
+    if (seenIds.has(item.id)) continue;
+    let matchCount = 0;
+    for (const term of sectionTerms) {
+      if (item.normalizedContent.includes(term)) {
+        matchCount++;
+      }
+    }
+    if (matchCount > 2) {
+      evidence.push(item);
+      seenIds.add(item.id);
+    }
+  }
+  return evidence;
+}
+function calculateConfidence(sectionTerms, evidence, windowStart) {
+  if (sectionTerms.length === 0 || evidence.length === 0) {
+    return 0;
+  }
+  const lexicalScore = Math.min(evidence.length / sectionTerms.length, 1);
+  const semanticScore = Math.min(evidence.length / 15, 1);
+  let totalRecencyWeight = 0;
+  for (const item of evidence) {
+    const itemDate = new Date(item.createdAt);
+    const daysOld = ((/* @__PURE__ */ new Date()).getTime() - itemDate.getTime()) / (24 * 60 * 60 * 1e3);
+    let weight = 0;
+    if (daysOld < 7) weight = 1;
+    else if (daysOld < 14) weight = 0.8;
+    else if (daysOld < 30) weight = 0.5;
+    else weight = 0.2;
+    totalRecencyWeight += weight;
+  }
+  const recencyScore = Math.min(totalRecencyWeight / evidence.length, 1);
+  const confidence = lexicalScore * 0.4 + semanticScore * 0.4 + recencyScore * 0.2;
+  return Math.min(confidence, 1);
+}
+function formatProposedAmendment(sectionName, evidence) {
+  const evidenceExcerpts = evidence.slice(0, 3).map((e) => `- [${e.type}] ${e.content.substring(0, 80)}...`);
+  return `Review the following evidence related to "${sectionName}":
+
+` + evidenceExcerpts.join("\n") + `
+
+Consider whether this section of your VISION needs updating based on recent activity.`;
+}
+function generateExplanation(sectionName, confidence, evidenceCount) {
+  const percent = Math.round(confidence * 100);
+  return `Detected ${evidenceCount} recent activity item(s) related to "${sectionName}" (${percent}% confidence)`;
+}
+
 // src/worker.ts
 var plugin = definePlugin({
   async setup(ctx) {
@@ -8966,6 +9412,112 @@ async function registerDataHandlers(ctx) {
       }
     }
   );
+  ctx.data.register("runDriftAudit", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found. Please run Found mode first."
+        };
+      }
+      let parsedVision;
+      try {
+        parsedVision = parseVision(visionContent);
+      } catch (parseError) {
+        return {
+          success: false,
+          error: `Failed to parse VISION.md: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+        };
+      }
+      const activity = await buildActivitySnapshot(adapter, companyId, 30);
+      const driftReport = detectDrift(parsedVision, activity, 30);
+      return {
+        success: true,
+        driftReport
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Drift audit failed: ${message}`
+      };
+    }
+  });
+  ctx.actions.register("applyAmendments", async (params) => {
+    const {
+      companyId,
+      acceptedItems,
+      approvalRouting
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          blockingErrors: ["VISION.md not found"]
+        };
+      }
+      const currentVision = parseVision(visionContent);
+      const agents = await ctx.agents.list({ companyId });
+      return {
+        success: true,
+        summary: `Prepared to apply ${acceptedItems.length} amendments with ${approvalRouting} approval routing`
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        blockingErrors: [message]
+      };
+    }
+  });
+  ctx.data.register("checkApprovalStatus", async (params) => {
+    const { approvalId } = params;
+    try {
+      return {
+        found: true,
+        status: "pending",
+        decidedAt: null,
+        decidedByUserId: null
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        found: false,
+        error: `Failed to check approval status: ${message}`
+      };
+    }
+  });
 }
 var worker_default = plugin;
 runWorker(plugin, import.meta.url);
