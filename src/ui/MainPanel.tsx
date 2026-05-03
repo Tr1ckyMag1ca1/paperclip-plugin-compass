@@ -8,6 +8,8 @@ import { ModeBanner } from "./components/ModeBanner.js";
 import { InventoryDisplay } from "./components/InventoryDisplay.js";
 import { ChatPanel } from "./components/ChatPanel.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.js";
+import { AssessPanel } from "./assess/AssessPanel.js";
+import { FoundPanel } from "./found/FoundPanel.js";
 
 /**
  * MainPanel — Root UI component for Compass diagnostic dashboard.
@@ -100,7 +102,25 @@ export function MainPanel(): React.ReactElement {
 
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
+  const companyId = inventory?.companyId || "";
+  const visionExists = inventory?.visionExists ?? false;
 
+  // Route to mode-specific panels based on currentMode (ASSESS-02)
+  if (currentMode === "Assess") {
+    return (
+      <AssessPanel
+        companyId={companyId}
+        companyName="Company"
+        visionExists={visionExists}
+      />
+    );
+  }
+
+  if (currentMode === "Found") {
+    return <FoundPanel />;
+  }
+
+  // Default diagnostic dashboard for "probe" mode or other modes
   return (
     <div className="flex h-full flex-col bg-background">
       {/* D-03: Mode banner at top with override dropdown */}
