@@ -39,8 +39,8 @@ export function MainPanel(): React.ReactElement {
     usePluginData<{ mode: Mode; inventory: InventorySnapshot }>("getDetectedMode");
 
   // Fetch stored mode override (D-09, MODE-03)
-  const { data: overrideData, loading: overrideLoading } =
-    usePluginData<{ override: Mode | null }>("getModeOverride");
+  const { data: storedOverride, loading: overrideLoading } =
+    usePluginData<Mode | null>("getModeOverride");
 
   // Set mode override action handler (D-09, MODE-03)
   const { trigger: setModeOverride } = usePluginAction("setModeOverride");
@@ -80,7 +80,7 @@ export function MainPanel(): React.ReactElement {
   }
 
   // Loading state
-  if (inventoryLoading || modeLoading || overrideLoading) {
+  if (inventoryLoading || modeLoading || overrideLoading || storedOverride === undefined) {
     return (
       <div className="flex items-center justify-center p-lg min-h-[400px]">
         <div className="text-center">
@@ -100,7 +100,6 @@ export function MainPanel(): React.ReactElement {
   }
 
   const detectedMode = modeData.mode;
-  const storedOverride = overrideData?.override ?? null;
   const currentMode = storedOverride || detectedMode;
 
   return (

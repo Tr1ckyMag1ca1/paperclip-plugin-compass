@@ -104,7 +104,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       namespace: "mode-override",
       stateKey: "current",
     });
-    return { override: (override as Mode | null) ?? null };
+    return (override as Mode | null) ?? null;
   });
 }
 
