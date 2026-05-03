@@ -48,37 +48,49 @@ export function QuestionRenderer({
     }
   }
 
+  const inputId = `question-${question.id}`;
+  const errorId = `error-${question.id}`;
+  const descriptionId = `description-${question.id}`;
+
   return (
     <div className="space-y-sm">
-      <label className="text-label font-normal">
+      <label htmlFor={inputId} className="text-label font-normal">
         {question.prompt}
-        {question.required && <span className="text-accent ml-xs">*</span>}
+        {question.required && <span className="text-accent ml-xs" aria-label="required">*</span>}
+        {!question.required && <span className="text-foreground/70 ml-xs">(Optional)</span>}
       </label>
 
       {question.type === "free-text-short" && (
         <input
+          id={inputId}
           type="text"
           value={value}
           onChange={handleChange}
           maxLength={200}
           placeholder={question.hint || ""}
+          aria-required={question.required}
+          aria-describedby={question.hint ? descriptionId : undefined}
           className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent"
         />
       )}
 
       {question.type === "free-text-long" && (
         <textarea
+          id={inputId}
           value={value}
           onChange={handleChange}
           maxLength={2000}
           rows={4}
           placeholder={question.hint || ""}
+          aria-required={question.required}
+          aria-describedby={question.hint ? descriptionId : undefined}
           className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
         />
       )}
 
       {question.type === "single-choice" && (
-        <div className="space-y-sm">
+        <fieldset className="space-y-sm">
+          <legend className="sr-only">{question.prompt}</legend>
           {question.options?.map(opt => (
             <label key={opt} className="flex gap-sm items-center cursor-pointer">
               <input
@@ -87,16 +99,18 @@ export function QuestionRenderer({
                 value={opt}
                 checked={value === opt}
                 onChange={handleChange}
+                aria-required={question.required}
                 className="cursor-pointer"
               />
               <span className="text-body">{opt}</span>
             </label>
           ))}
-        </div>
+        </fieldset>
       )}
 
       {question.type === "multi-choice" && (
-        <div className="space-y-sm">
+        <fieldset className="space-y-sm">
+          <legend className="sr-only">{question.prompt}</legend>
           {question.options?.map(opt => (
             <label key={opt} className="flex gap-sm items-center cursor-pointer">
               <input
@@ -104,29 +118,31 @@ export function QuestionRenderer({
                 value={opt}
                 checked={value.split(",").filter(Boolean).includes(opt)}
                 onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
+                aria-required={question.required}
                 className="cursor-pointer"
               />
               <span className="text-body">{opt}</span>
             </label>
           ))}
-        </div>
+        </fieldset>
       )}
 
       {question.type === "conditional-follow-up" && (
-        <div className="space-y-sm">
-          <textarea
-            value={value}
-            onChange={handleChange}
-            maxLength={2000}
-            rows={3}
-            placeholder={question.hint || ""}
-            className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-          />
-        </div>
+        <textarea
+          id={inputId}
+          value={value}
+          onChange={handleChange}
+          maxLength={2000}
+          rows={3}
+          placeholder={question.hint || ""}
+          aria-required={question.required}
+          aria-describedby={question.hint ? descriptionId : undefined}
+          className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+        />
       )}
 
       {question.hint && (
-        <p className="text-label text-foreground/70 mt-xs">{question.hint}</p>
+        <p id={descriptionId} className="text-label text-foreground/70 mt-xs">{question.hint}</p>
       )}
     </div>
   );
