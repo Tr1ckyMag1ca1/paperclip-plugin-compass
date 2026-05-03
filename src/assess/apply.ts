@@ -29,7 +29,8 @@ import {
   type CascadePlan,
   type CascadeResult,
 } from "./cascade.js";
-import { serializeVision, type ParsedVision } from "./vision-parse.js";
+import { serializeVision } from "./vision-parse.js";
+import type { ParsedVision } from "../types/assess.js";
 import { generateApplyRunId } from "../found/idempotency.js";
 import type { Agent } from "../types.js";
 
