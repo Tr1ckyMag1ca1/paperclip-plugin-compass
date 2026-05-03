@@ -149,17 +149,86 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Empty until roadmap creation. Will be populated by `gsd-roadmapper`.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | | |
+| SKEL-01 | Phase 1 | Pending |
+| SKEL-02 | Phase 1 | Pending |
+| SKEL-03 | Phase 1 | Pending |
+| SKEL-04 | Phase 1 | Pending |
+| SKEL-05 | Phase 1 | Pending |
+| SKEL-06 | Phase 1 | Pending |
+| SKEL-07 | Phase 1 | Pending |
+| SKEL-08 | Phase 1 | Pending |
+| SKEL-09 | Phase 1 | Pending |
+| SKEL-10 | Phase 1 | Pending |
+| SKEL-11 | Phase 1 | Pending |
+| SKEL-12 | Phase 1 | Pending |
+| INV-01 | Phase 1 | Pending |
+| INV-02 | Phase 1 | Pending |
+| INV-03 | Phase 1 | Pending |
+| INV-04 | Phase 1 | Pending |
+| INV-05 | Phase 1 | Pending |
+| INV-06 | Phase 1 | Pending |
+| INV-07 | Phase 1 | Pending |
+| MODE-01 | Phase 1 | Pending |
+| MODE-02 | Phase 1 | Pending |
+| MODE-03 | Phase 1 | Pending |
+| MODE-04 | Phase 1 | Pending |
+| FOUND-01 | Phase 2 | Pending |
+| FOUND-02 | Phase 2 | Pending |
+| FOUND-03 | Phase 2 | Pending |
+| FOUND-04 | Phase 2 | Pending |
+| FOUND-05 | Phase 2 | Pending |
+| FOUND-06 | Phase 2 | Pending |
+| FOUND-07 | Phase 2 | Pending |
+| FOUND-08 | Phase 2 | Pending |
+| FOUND-09 | Phase 2 | Pending |
+| FOUND-10 | Phase 2 | Pending |
+| FOUND-11 | Phase 2 | Pending |
+| FOUND-12 | Phase 2 | Pending |
+| ASSESS-01 | Phase 3 | Pending |
+| ASSESS-02 | Phase 3 | Pending |
+| ASSESS-03 | Phase 3 | Pending |
+| ASSESS-04 | Phase 3 | Pending |
+| ASSESS-05 | Phase 3 | Pending |
+| ASSESS-06 | Phase 3 | Pending |
+| ASSESS-07 | Phase 3 | Pending |
+| ASSESS-08 | Phase 3 | Pending |
+| ASSESS-09 | Phase 3 | Pending |
+| REVIVE-01 | Phase 4 | Pending |
+| REVIVE-02 | Phase 4 | Pending |
+| REVIVE-03 | Phase 4 | Pending |
+| REVIVE-04 | Phase 4 | Pending |
+| REVIVE-05 | Phase 4 | Pending |
+| REVIVE-06 | Phase 4 | Pending |
+| REVIVE-07 | Phase 4 | Pending |
+| REPO-01 | Phase 5 | Pending |
+| REPO-02 | Phase 5 | Pending |
+| REPO-03 | Phase 5 | Pending |
+| REPO-04 | Phase 5 | Pending |
+| REPO-05 | Phase 5 | Pending |
+| MEM-01 | Phase 6 | Pending |
+| MEM-02 | Phase 6 | Pending |
+| MEM-03 | Phase 6 | Pending |
+| MEM-04 | Phase 6 | Pending |
+| MEM-05 | Phase 6 | Pending |
+| MEM-06 | Phase 6 | Pending |
+| XC-01 | Phase 1 | Pending |
+| XC-02 | Phase 2 | Pending |
+| XC-03 | Phase 2 | Pending |
+| XC-04 | Phase 2 | Pending |
+| XC-05 | Phase 2 | Pending |
+| XC-06 | Phase 1 | Pending |
+| XC-07 | Phase 2 | Pending |
+| XC-08 | Phase 3 | Pending |
+| XC-09 | Phase 6 | Pending |
+| XC-10 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 67 total
-- Mapped to phases: 0
-- Unmapped: 67 ⚠️ (roadmapper to resolve)
+- v1 requirements: 72 total
+- Mapped to phases: 72
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after initial definition*
+*Last updated: 2026-05-02 after roadmap creation*
