@@ -104,3 +104,43 @@ export function isValidAssessIdempotencyKey(key: string): boolean {
   const pattern = /^compass:assess:[^:]+:[^:]+:[^:]+$/;
   return pattern.test(key);
 }
+
+/**
+ * Generate an idempotency key for Revive mode action execution.
+ *
+ * Per D-11 (XC-03), Revive actions (replace-blocker, reassign, nudge, etc.)
+ * use revive-namespaced idempotency keys to distinguish from Found/Assess mode.
+ *
+ * Format: compass:revive:${company_id}:${action_id}:${attempt}
+ * - company_id: the company being revived
+ * - action_id: the specific action being executed (e.g., "action-single-blocker-1")
+ * - attempt: the attempt number (1, 2, 3...) for retries
+ *
+ * Same inputs always produce same key (deterministic).
+ *
+ * @param companyId Company ID (e.g., "acme-corp-123")
+ * @param actionId Action ID (e.g., "action-single-blocker-1")
+ * @param attempt Attempt number for this action (e.g., 1)
+ * @returns Idempotency key in format compass:revive:{company}:{actionId}:{attempt}
+ */
+export function generateReviveActionKey(
+  companyId: string,
+  actionId: string,
+  attempt: number
+): string {
+  return `compass:revive:${companyId}:${actionId}:${attempt}`;
+}
+
+/**
+ * Validate a revive-mode idempotency key format.
+ *
+ * Per XC-03, key must match: compass:revive:[non-empty]:[non-empty]:[non-empty]
+ * Used before queuing to catch malformed keys early.
+ *
+ * @param key Idempotency key to validate
+ * @returns True if key matches expected revive format, false otherwise
+ */
+export function isValidReviveIdempotencyKey(key: string): boolean {
+  const pattern = /^compass:revive:[^:]+:[^:]+:[^:]+$/;
+  return pattern.test(key);
+}
