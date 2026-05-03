@@ -14,6 +14,9 @@ import {
   deriveSuccessCriteria,
   deriveAmendmentProtocol,
   deriveOperatingPhilosophy,
+  deriveMandateStatement,
+  deriveCompetitiveAdvantage,
+  deriveMarketOpportunity,
 } from "./derive.js";
 
 // Import template via esbuild text loader (?raw query)
@@ -43,6 +46,9 @@ export function fillVisionTemplate(answers: InterviewAnswers): FilledVision {
   const successCriteria = deriveSuccessCriteria(answers);
   const amendmentProtocol = deriveAmendmentProtocol();
   const operatingPhilosophy = deriveOperatingPhilosophy(answers);
+  const mandateStatement = deriveMandateStatement(answers);
+  const competitiveAdvantage = deriveCompetitiveAdvantage(answers);
+  const marketOpportunity = deriveMarketOpportunity(answers);
 
   // Build slots object: direct answers + derived slots
   const slots: Record<string, string> = {
@@ -68,7 +74,7 @@ export function fillVisionTemplate(answers: InterviewAnswers): FilledVision {
       "",
 
     // From ceo-autonomy section
-    mandate: answers["ceo-mandate-decisions"] || "",
+    mandate: mandateStatement || answers["ceo-mandate-decisions"] || "",
 
     // From vision-and-identity section
     voice: answers["company-voice"] || "",
@@ -79,6 +85,8 @@ export function fillVisionTemplate(answers: InterviewAnswers): FilledVision {
     success_criteria: successCriteria,
     operating_philosophy: operatingPhilosophy,
     amendment_protocol: amendmentProtocol,
+    competitive_advantage: competitiveAdvantage,
+    market_opportunity: marketOpportunity,
 
     // Optional/placeholder slots (may not be filled)
     company_name: answers["company-name"] || "[Company Name]",

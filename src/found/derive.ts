@@ -13,7 +13,7 @@ import type { InterviewAnswers } from "../types/found.js";
 /**
  * Derive the Principles slot from interview answers.
  *
- * Aggregates voice, core-principles, and red-lines into 3-5 bullet-pointed principles.
+ * Aggregates voice, red-lines, and company culture into 3-5 bullet-pointed principles.
  * Returns markdown-formatted bullet list.
  *
  * @param answers Interview answers from all sections
@@ -22,29 +22,29 @@ import type { InterviewAnswers } from "../types/found.js";
 export function derivePrinciples(answers: InterviewAnswers): string {
   const principles: string[] = [];
 
-  // Parse core-principles from vision-and-identity section
-  const corePrinciples = answers["core-principles"] || "";
-  if (corePrinciples.trim()) {
-    // If principles are already comma or newline separated, split and clean
-    const lines = corePrinciples.split(/[\n,;]/).map((p) => p.trim());
-    principles.push(...lines.filter((p) => p.length > 0));
-  }
-
-  // Extract key insights from voice (add as implicit principle)
-  const voice = answers["company-voice"] || "";
+  // Extract voice from brand-voice field
+  const voice = answers["brand-voice"] || "";
   if (voice.trim()) {
-    // Add voice as a summary principle if not already covered
-    // E.g., "Bold and transparent" → principle about communication style
-    if (!principles.some((p) => p.toLowerCase().includes("voice"))) {
-      principles.push(`${voice}-first culture`);
-    }
+    principles.push(voice.trim());
   }
 
-  // Extract red-lines as implicit principles
+  // Extract culture principle from company-culture field
+  const culture = answers["company-culture"] || "";
+  if (culture.trim()) {
+    principles.push(culture.trim());
+  }
+
+  // Extract red-lines as implicit principle (what we'll never do)
   const redLines = answers["red-lines"] || "";
   if (redLines.trim()) {
-    // Add as negative principle (what we'll never do)
     principles.push(`Never: ${redLines}`);
+  }
+
+  // Add any additional core principles if present
+  const corePrinciples = answers["core-principles"] || "";
+  if (corePrinciples.trim()) {
+    const lines = corePrinciples.split(/[\n,;]/).map((p) => p.trim());
+    principles.push(...lines.filter((p) => p.length > 0));
   }
 
   // Deduplicate and limit to 5
@@ -69,16 +69,15 @@ export function derivePrinciples(answers: InterviewAnswers): string {
 /**
  * Derive the 12-Month Goal slot from interview answers.
  *
- * Combines revenue target, customer count, and growth timeline into a single
+ * Combines revenue target, customer count into a single
  * time-bound, measurable goal statement.
  *
  * @param answers Interview answers from all sections
  * @returns Single sentence, time-bound 12-month goal
  */
 export function derive12MonthGoal(answers: InterviewAnswers): string {
-  const revenueTarget = answers["revenue-target"] || "";
+  const revenueTarget = answers["target-revenue-12mo"] || "";
   const customerCountTarget = answers["customer-count-target"] || "";
-  const growthTarget = answers["monthly-growth-target"] || "";
 
   const parts: string[] = [];
 
@@ -94,35 +93,38 @@ export function derive12MonthGoal(answers: InterviewAnswers): string {
     }
   }
 
-  if (growthTarget.trim() && !parts.join("").toLowerCase().includes(growthTarget.toLowerCase())) {
-    parts.push(`growing at ${growthTarget}`);
-  }
-
   if (parts.length === 0) {
     return ""; // No targets provided
   }
 
   const goal = parts.join(" and ");
-  // Capitalize and add timeline
-  return `${goal.charAt(0).toUpperCase() + goal.slice(1)} by end of 2026.`;
+  // Capitalize and add timeline (current year + 1) with explicit "12 months"
+  const nextYear = new Date().getFullYear() + 1;
+  return `${goal.charAt(0).toUpperCase() + goal.slice(1)} over the next 12 months, by end of ${nextYear}.`;
 }
 
 /**
  * Derive the Success Criteria slot from interview answers.
  *
- * Computes 2-3 concrete, measurable success criteria from long-term vision
+ * Computes 4-6 concrete, measurable success criteria from long-term vision
  * and financial targets.
  *
  * @param answers Interview answers from all sections
  * @returns Markdown-formatted list of success criteria
  */
 export function deriveSuccessCriteria(answers: InterviewAnswers): string {
+  // Long-term vision is required to derive success criteria
+  const longTermVision = answers["long-term-vision"] || "";
+  if (!longTermVision.trim()) {
+    return ""; // Cannot derive without vision
+  }
+
   const criteria: string[] = [];
 
-  // From long-term vision: metric-driven success
-  const longTermVision = answers["long-term-vision"] || "";
-  const successDefinition = answers["success-definition"] || "";
-  const revenueTarget = answers["revenue-target"] || "";
+  const revenueTarget = answers["target-revenue-12mo"] || "";
+  const customerCount = answers["customer-count-target"] || "";
+  const northStar = answers["north-star-metric"] || "";
+  const successStory = answers["success-story"] || "";
 
   // Extract revenue as first criterion
   if (revenueTarget.trim()) {
@@ -131,39 +133,44 @@ export function deriveSuccessCriteria(answers: InterviewAnswers): string {
   }
 
   // Extract customer scale from answers
-  const customerCount = answers["customer-count-target"] || "";
   if (customerCount.trim()) {
-    criteria.push(`Serve ${customerCount.trim()}`);
+    criteria.push(`Serve ${customerCount.trim()} customers`);
   }
 
   // Extract market position or impact from long-term vision
-  if (longTermVision.includes("top") || longTermVision.includes("leader") || longTermVision.includes("#1")) {
-    criteria.push("Establish market leadership or top 3 position");
-  } else if (successDefinition.trim()) {
-    // Use custom success definition if available
-    const success = successDefinition.trim();
-    if (success.length < 100) {
-      criteria.push(success);
-    } else {
-      // Truncate long success definitions to first sentence
-      const firstSentence = success.split(/[.!?]/)[0];
-      if (firstSentence.length > 0) {
-        criteria.push(firstSentence.trim());
-      }
-    }
+  if (longTermVision.includes("leading") || longTermVision.includes("leader") || longTermVision.includes("#1") || longTermVision.includes("top")) {
+    criteria.push("Establish market leadership position");
   }
+
+  // Add north-star metric as criterion
+  if (northStar.trim()) {
+    criteria.push(`Reach ${northStar.toLowerCase()} targets`);
+  }
+
+  // Add success story aspiration
+  if (successStory.trim()) {
+    criteria.push(successStory.trim());
+  }
+
+  // Add cultural/operational criterion
+  criteria.push("Build a healthy, sustainable company culture");
 
   if (criteria.length === 0) {
     return ""; // No success criteria derived
   }
 
-  // Ensure at least 2 criteria
-  if (criteria.length === 1 && successDefinition.trim()) {
-    criteria.push("Build a healthy, sustainable company culture");
+  // Deduplicate
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (const c of criteria) {
+    if (!seen.has(c)) {
+      seen.add(c);
+      unique.push(c);
+    }
   }
 
-  // Format as markdown bullet list
-  return criteria.slice(0, 4).map((c) => `- ${c}`).join("\n");
+  // Format as markdown bullet list, limit to 6
+  return unique.slice(0, 6).map((c) => `- ${c}`).join("\n");
 }
 
 /**
@@ -232,4 +239,100 @@ export function deriveOperatingPhilosophy(answers: InterviewAnswers): string {
   }
 
   return parts.join(" ");
+}
+
+/**
+ * Derive the Mandate Statement from interview answers.
+ *
+ * Combines mission + target-market into a single compelling mandate sentence.
+ * Example: "Make AI accessible to everyone for SMBs and startups."
+ *
+ * @param answers Interview answers from all sections
+ * @returns Single sentence combining mission and target market
+ */
+export function deriveMandateStatement(answers: InterviewAnswers): string {
+  const mission = answers["mission"] || "";
+  const targetMarket = answers["target-market"] || "";
+
+  if (!mission.trim() || !targetMarket.trim()) {
+    return ""; // Both required
+  }
+
+  // Build mandate: "mission for target-market"
+  const missionTrimmed = mission.trim();
+  const marketTrimmed = targetMarket.trim();
+
+  // Choose preposition based on mission structure
+  const missionLower = missionTrimmed.toLowerCase();
+  let preposition = "for";
+  if (missionLower.startsWith("be") || missionLower.startsWith("become")) {
+    preposition = "as the";
+  } else if (missionLower.includes("serve") || missionLower.includes("provide")) {
+    preposition = "to";
+  }
+
+  // Format: use mission and market as-is (preserve case), add preposition
+  return `${missionTrimmed} ${preposition} ${marketTrimmed}.`;
+}
+
+/**
+ * Derive the Competitive Advantage statement from interview answers.
+ *
+ * Combines technology-moat + core-features into a concise competitive advantage statement.
+ * Example: "Speed and ease, powered by proprietary fine-tuning pipeline."
+ *
+ * @param answers Interview answers from all sections
+ * @returns 1-2 sentence competitive advantage statement
+ */
+export function deriveCompetitiveAdvantage(answers: InterviewAnswers): string {
+  const moat = answers["technology-moat"] || "";
+  const advantage = answers["competitive-advantage"] || "";
+
+  if (!moat.trim()) {
+    return ""; // Moat required
+  }
+
+  // If both moat and explicit advantage are provided, combine them
+  if (advantage.trim()) {
+    const combined = `${advantage.trim()}, powered by ${moat.trim()}`;
+    // Ensure it ends with punctuation
+    if (!combined.endsWith(".") && !combined.endsWith("!") && !combined.endsWith("?")) {
+      return `${combined}.`;
+    }
+    return combined;
+  }
+
+  // Otherwise just return moat with punctuation
+  const moatTrimmed = moat.trim();
+  if (!moatTrimmed.endsWith(".") && !moatTrimmed.endsWith("!") && !moatTrimmed.endsWith("?")) {
+    return `${moatTrimmed}.`;
+  }
+  return moatTrimmed;
+}
+
+/**
+ * Derive the Market Opportunity statement from interview answers.
+ *
+ * Extracts TAM (Total Addressable Market) from market-size answer.
+ * Example: "$20B TAM in content creation and AI tooling"
+ *
+ * @param answers Interview answers from all sections
+ * @returns Market opportunity statement with TAM
+ */
+export function deriveMarketOpportunity(answers: InterviewAnswers): string {
+  const marketSize = answers["market-size"] || "";
+
+  if (!marketSize.trim()) {
+    return ""; // Market size required
+  }
+
+  const size = marketSize.trim();
+
+  // If already contains "TAM", return as-is
+  if (size.toUpperCase().includes("TAM")) {
+    return size;
+  }
+
+  // Otherwise, wrap with TAM context
+  return `TAM: ${size}`;
 }
