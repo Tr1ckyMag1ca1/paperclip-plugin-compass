@@ -956,6 +956,58 @@ export class PaperclipAdapter {
   }
 
   /**
+   * Get a document by company ID and key.
+   *
+   * Per D-01 (XC-01), reads from documents table by key.
+   * Used by memory module to load engagement history.
+   *
+   * @param companyId Company ID
+   * @param docKey Document key (e.g., "compass-engagement-history")
+   * @returns Document body as string, or null if not found
+   */
+  async getDocumentByKey(companyId: string, docKey: string): Promise<string | null> {
+    try {
+      const issues = await this.ctx.issues.list({ companyId });
+
+      for (const issue of issues) {
+        const documents = await this.ctx.issues.documents.list(issue.id, companyId);
+
+        for (const doc of documents) {
+          if ((doc.key || doc.id) === docKey) {
+            logAudit({
+              step: "get-document-by-key",
+              success: true,
+              resourceId: docKey,
+              timestamp: new Date().toISOString(),
+            });
+            return (doc as any).body || "";
+          }
+        }
+      }
+
+      // Document not found
+      return null;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-document-by-key",
+        success: false,
+        resourceId: docKey,
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Failed to get document ${docKey}: ${errorMsg}`);
+    }
+  }
+
+
+  /**
+   * NOTE: Routine management (getRoutines, createRoutine, deleteRoutine, runRoutine)
+   * is deferred to Phase 6 Wave 2 pending Plugin SDK extension for routines table.
+   * For now, routines are stored in ScheduledRoutine[] array within EngagementHistory.
+   */
+
+  /**
    * Get the audit log (for debugging and rollback sequencing).
    *
    * @returns Array of audit log entries

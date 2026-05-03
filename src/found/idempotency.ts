@@ -190,3 +190,43 @@ export function isValidRepositionIdempotencyKey(key: string): boolean {
   const pattern = /^compass:reposition:[^:]+:[^:]+:[^:]+$/;
   return pattern.test(key);
 }
+
+/**
+ * Generate an idempotency key for memory finding records.
+ *
+ * Per XC-03 (D-06, Phase 6), finding records use memory-namespaced idempotency
+ * keys to prevent duplicate recordFindings calls on retry.
+ *
+ * Format: compass:memory:${company_id}:${run_id}:finding:${index}
+ * - company_id: the company being engaged
+ * - run_id: UUID of the Apply run that generated findings
+ * - index: 0-based index of the finding in the findings array
+ *
+ * Same inputs always produce same key (deterministic).
+ *
+ * @param companyId Company ID
+ * @param runId Apply run UUID
+ * @param findingIndex Index of finding in the findings array
+ * @returns Idempotency key in format compass:memory:{company}:{runId}:finding:{index}
+ */
+export function generateMemoryFindingKey(
+  companyId: string,
+  runId: string,
+  findingIndex: number
+): string {
+  return `compass:memory:${companyId}:${runId}:finding:${findingIndex}`;
+}
+
+/**
+ * Validate a memory-mode idempotency key format.
+ *
+ * Per XC-03, key must match: compass:memory:[non-empty]:[non-empty]:finding:[number]
+ * Used before recording findings to catch malformed keys early.
+ *
+ * @param key Idempotency key to validate
+ * @returns True if key matches expected memory format, false otherwise
+ */
+export function isValidMemoryIdempotencyKey(key: string): boolean {
+  const pattern = /^compass:memory:[^:]+:[^:]+:finding:\d+$/;
+  return pattern.test(key);
+}
