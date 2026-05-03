@@ -24,6 +24,7 @@ import type { PluginContext } from "@paperclipai/plugin-sdk";
 import type { FilledVision, PresetDefinition } from "../types/found.js";
 import { PaperclipAdapter, type AuditLogEntry } from "../sdk/adapter.js";
 import { preflight, type PreflightResult } from "./preflight.js";
+import { checkVisionQuality } from "./quality-check.js";
 import { generateIdempotencyKey, generateApplyRunId } from "./idempotency.js";
 
 /**
@@ -47,7 +48,10 @@ export interface ApplyResult {
   /** Number of wakeups queued (if successful) */
   wakeupCount?: number;
 
-  /** Blocking errors that prevented completion */
+  /** Blocking errors that prevented completion (from quality check or preflight) */
+  blockingErrors?: string[];
+
+  /** Blocking errors that prevented completion (from preflight/validation) */
   errors?: string[];
 
   /** True if rollback completed successfully; false if rollback errors occurred */
@@ -94,11 +98,29 @@ export async function applyFound(
   const applyRunId = generateApplyRunId();
   const result: ApplyResult = { success: false };
 
+  // 0. Quality check VISION before proceeding
+  try {
+    const quality = checkVisionQuality(vision);
+    if (!quality.isValid) {
+      result.blockingErrors = quality.errors.length > 0
+        ? quality.errors
+        : [`Missing required slots: ${quality.missingRequiredSlots.join(", ")}`];
+      result.auditLog = adapter.getAuditLog();
+      return result;
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    result.blockingErrors = [`Quality check failed: ${msg}`];
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+
   // 1. Initialize and run preflight
   try {
     const preflightResult = await preflight(ctx, companyId, preset, vision);
 
     if (!preflightResult.valid) {
+      result.blockingErrors = preflightResult.errors;
       result.errors = preflightResult.errors;
       result.preflightResult = preflightResult;
       result.auditLog = adapter.getAuditLog();
@@ -111,6 +133,7 @@ export async function applyFound(
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
+    result.blockingErrors = [`Preflight failed: ${msg}`];
     result.errors = [`Preflight failed: ${msg}`];
     result.auditLog = adapter.getAuditLog();
     return result;

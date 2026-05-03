@@ -77,7 +77,7 @@ export function fillVisionTemplate(answers: InterviewAnswers): FilledVision {
     mandate: mandateStatement || answers["ceo-mandate-decisions"] || "",
 
     // From vision-and-identity section
-    voice: answers["company-voice"] || "",
+    voice: answers["brand-voice"] || answers["company-voice"] || "",
 
     // Derived slots
     goal_12mo: goal12mo,
