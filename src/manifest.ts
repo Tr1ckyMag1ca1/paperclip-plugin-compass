@@ -1,7 +1,7 @@
 import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 
 const manifest: PaperclipPluginManifestV1 = {
-  id: "@paperclipai/paperclip-plugin-compass",
+  id: "paperclip-plugin-compass",
   apiVersion: 1,
   version: "0.1.0",
   displayName: "Compass",

@@ -15,13 +15,13 @@ Plugin chassis adapted from [yesterday-ai/paperclip-plugin-company-wizard](https
 ### npm Registry
 
 ```bash
-npm install @paperclipai/paperclip-plugin-compass
+npm install paperclip-plugin-compass
 ```
 
 Then register in your Paperclip instance:
 
 ```bash
-paperclip plugins add @paperclipai/paperclip-plugin-compass
+paperclip plugins add paperclip-plugin-compass
 ```
 
 ### Paperclip Plugin Manager
