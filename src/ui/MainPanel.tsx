@@ -12,6 +12,7 @@ import { AssessPanel } from "./assess/AssessPanel.js";
 import { FoundPanel } from "./found/FoundPanel.js";
 import { RevivePanel } from "./revive/RevivePanel.js";
 import { RepositionPanel } from "./reposition/RepositionPanel.js";
+import { HistoryPanel, HistoryTabBadge } from "./memory/index.js";
 
 /**
  * MainPanel — Root UI component for Compass diagnostic dashboard.
@@ -20,8 +21,9 @@ import { RepositionPanel } from "./reposition/RepositionPanel.js";
  * MainPanel orchestrates:
  * 1. Mode banner with override dropdown (MODE-03, D-09)
  * 2. Inventory display with collapsible sections (INV-04, D-03)
- * 3. Manual refresh button (D-04)
- * 4. Chat input shell for keyword routing (MODE-04, D-07)
+ * 3. Tab navigation with History tab (D-10, MEM-04)
+ * 4. Manual refresh button (D-04)
+ * 5. Chat input shell for keyword routing (MODE-04, D-07)
  *
  * Uses Plugin SDK hooks:
  * - usePluginData("getInventory") → fetches company snapshot on load
@@ -29,10 +31,70 @@ import { RepositionPanel } from "./reposition/RepositionPanel.js";
  * - usePluginData("getModeOverride") → retrieves stored override (D-09)
  * - usePluginAction("setModeOverride") → persists founder's mode choice
  *
+ * Per D-10: History tab is a sibling to mode panels, with tab badge showing finding count.
+ * Per D-11: Other components can call onViewHistory to jump to History tab.
+ *
  * @returns React component for sidebar panel slot
  */
+type TabType = "mode" | "history";
+
+/**
+ * HistoryTabBar — Tab navigation with finding count badge
+ * Per D-10: Shows tab buttons for mode and history, with badge showing count.
+ */
+function HistoryTabBar({
+  selectedTab,
+  onSelectTab,
+  currentMode,
+  companyId,
+}: {
+  selectedTab: TabType;
+  onSelectTab: (tab: TabType) => void;
+  currentMode: Mode;
+  companyId: string;
+}): React.ReactElement {
+  // Fetch history to get finding count for badge
+  const { data: historyData } = usePluginData<any>("memory.load", {
+    companyId,
+  });
+
+  const findingCount = historyData?.history?.findings?.length || 0;
+  const hasOpenFindings = (historyData?.history?.findings || []).some(
+    (f: any) => f.status === "open"
+  );
+
+  return (
+    <div className="border-b px-lg py-sm flex gap-sm">
+      <button
+        onClick={() => onSelectTab("mode")}
+        className={`text-label font-medium px-md py-sm rounded transition-colors ${
+          selectedTab === "mode"
+            ? "bg-accent text-accent-foreground"
+            : "text-foreground/60 hover:text-foreground"
+        }`}
+      >
+        {currentMode}
+      </button>
+      <button
+        onClick={() => onSelectTab("history")}
+        className={`text-label font-medium px-md py-sm rounded transition-colors flex items-center gap-sm ${
+          selectedTab === "history"
+            ? "bg-accent text-accent-foreground"
+            : "text-foreground/60 hover:text-foreground"
+        }`}
+      >
+        History
+        {findingCount > 0 && (
+          <HistoryTabBadge count={findingCount} hasOpenFindings={hasOpenFindings} />
+        )}
+      </button>
+    </div>
+  );
+}
+
 export function MainPanel(): React.ReactElement {
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<TabType>("mode");
 
   // Fetch inventory snapshot on plugin open (D-04)
   const { data: inventory, loading: inventoryLoading, error: inventoryError } =
@@ -75,6 +137,11 @@ export function MainPanel(): React.ReactElement {
     }
   }, []);
 
+  // Handle view history navigation (D-10, D-11)
+  const handleViewHistory = useCallback(() => {
+    setSelectedTab("history");
+  }, []);
+
   // Handle errors gracefully (D-08)
   if (inventoryError || modeError) {
     const errorToDisplay = inventoryError || modeError;
@@ -107,41 +174,58 @@ export function MainPanel(): React.ReactElement {
   const companyId = inventory?.companyId || "";
   const visionExists = inventory?.visionExists ?? false;
 
-  // Route to mode-specific panels based on currentMode (ASSESS-02, REVIVE-01)
-  if (currentMode === "Assess") {
+  // Render tab-based interface (D-10: History tab sibling to mode panels)
+  const renderContent = () => {
+    if (selectedTab === "history") {
+      return (
+        <HistoryPanel
+          companyId={companyId}
+        />
+      );
+    }
+
+    // Render mode-specific panel (ASSESS-02, REVIVE-01)
+    if (currentMode === "Assess") {
+      return (
+        <AssessPanel
+          companyId={companyId}
+          companyName="Company"
+          visionExists={visionExists}
+        />
+      );
+    }
+
+    if (currentMode === "Found") {
+      return <FoundPanel />;
+    }
+
+    if (currentMode === "Revive") {
+      return (
+        <RevivePanel
+          companyId={companyId}
+          companyName="Company"
+        />
+      );
+    }
+
+    if (currentMode === "Reposition") {
+      return (
+        <RepositionPanel
+          companyId={companyId}
+          companyName="Company"
+          visionExists={visionExists}
+        />
+      );
+    }
+
+    // Default diagnostic dashboard for "probe" mode or other modes
     return (
-      <AssessPanel
-        companyId={companyId}
-        companyName="Company"
-        visionExists={visionExists}
-      />
+      <div className="flex-1 overflow-y-auto">
+        <InventoryDisplay inventory={inventory} />
+      </div>
     );
-  }
+  };
 
-  if (currentMode === "Found") {
-    return <FoundPanel />;
-  }
-
-  if (currentMode === "Revive") {
-    return (
-      <RevivePanel
-        companyId={companyId}
-        companyName="Company"
-      />
-    );
-  }
-
-  if (currentMode === "Reposition") {
-    return (
-      <RepositionPanel
-        companyId={companyId}
-        companyName="Company"
-        visionExists={visionExists}
-      />
-    );
-  }
-
-  // Default diagnostic dashboard for "probe" mode or other modes
   return (
     <div className="flex h-full flex-col bg-background">
       {/* D-03: Mode banner at top with override dropdown */}
@@ -152,24 +236,34 @@ export function MainPanel(): React.ReactElement {
         onOverrideChange={handleModeOverride}
       />
 
-      {/* Collapsible sections for inventory (D-03) */}
+      {/* Tab bar with History tab (D-10, MEM-04) */}
+      <HistoryTabBar
+        selectedTab={selectedTab}
+        onSelectTab={setSelectedTab}
+        currentMode={currentMode}
+        companyId={companyId}
+      />
+
+      {/* Content area */}
       <div className="flex-1 overflow-y-auto">
-        <InventoryDisplay inventory={inventory} />
+        {renderContent()}
       </div>
 
-      {/* Manual refresh button (D-04) */}
-      <div className="border-t px-lg py-md">
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="inline-flex items-center gap-sm rounded px-md py-sm text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50"
-        >
-          {refreshing ? "Refreshing..." : "Refresh"}
-        </button>
-      </div>
+      {/* Manual refresh button (D-04) - only show in mode tab */}
+      {selectedTab === "mode" && (
+        <div className="border-t px-lg py-md">
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="inline-flex items-center gap-sm rounded px-md py-sm text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50"
+          >
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
+      )}
 
-      {/* Chat input shell (D-07, MODE-04) */}
-      <ChatPanel detectedMode={currentMode} />
+      {/* Chat input shell (D-07, MODE-04) - only show in mode tab */}
+      {selectedTab === "mode" && <ChatPanel detectedMode={currentMode} />}
     </div>
   );
 }
