@@ -9,9 +9,11 @@
  * - Quarterly: `0 9 1 1,4,7,10 *` (9am, 1st of Q1/Q2/Q3/Q4)
  * - Monthly: `0 9 1 * *` (9am, 1st of every month)
  * - Custom: validated user-provided cron expression
+ *
+ * Note: createRoutine UUID generation is worker-side only (uses node:crypto).
+ * UI imports only validation and parsing functions.
  */
 
-import { randomUUID } from "node:crypto";
 import type { ScheduledRoutine } from "../types/memory.js";
 
 /**
@@ -90,59 +92,37 @@ export function parseCronExpression(cronString: string): ParsedCron {
 }
 
 /**
- * Create a routine with optional preset mapping.
+ * Get cron expression from preset.
  *
- * Per D-15: Accepts frequency preset ("quarterly" | "monthly" | "custom")
- * and maps to cron expression:
+ * Per D-15: Maps preset names to cron expressions:
  * - "quarterly" → `0 9 1 1,4,7,10 *`
  * - "monthly" → `0 9 1 * *`
- * - "custom" → cronString passed directly and validated
+ * - "custom" → validated user-provided cron
  *
- * @param name Human-readable routine name
- * @param mode Mode to run (Assess or Revive)
- * @param frequencyPreset Frequency preset or custom cron
- * @param cronString Optional cron expression (required if frequencyPreset is "custom")
- * @returns Typed ScheduledRoutine
+ * @param frequencyPreset Preset name or "custom"
+ * @param cronString Cron expression (required if frequencyPreset is "custom")
+ * @returns Cron expression string
  */
-export function createRoutine(
-  name: string,
-  mode: "Assess" | "Revive",
+export function getCronFromPreset(
   frequencyPreset: "quarterly" | "monthly" | "custom",
   cronString?: string
-): ScheduledRoutine {
-  let cron: string;
-
+): string {
   switch (frequencyPreset) {
     case "quarterly":
-      cron = "0 9 1 1,4,7,10 *"; // 9am, 1st of Q1/Q2/Q3/Q4
-      break;
+      return "0 9 1 1,4,7,10 *"; // 9am, 1st of Q1/Q2/Q3/Q4
     case "monthly":
-      cron = "0 9 1 * *"; // 9am, 1st of every month
-      break;
+      return "0 9 1 * *"; // 9am, 1st of every month
     case "custom":
       if (!cronString) {
         throw new Error("Custom frequency requires cronString");
       }
-      cron = cronString;
-      if (!validateCronExpression(cron)) {
-        throw new Error(`Invalid custom cron expression: ${cron}`);
+      if (!validateCronExpression(cronString)) {
+        throw new Error(`Invalid custom cron expression: ${cronString}`);
       }
-      break;
+      return cronString;
     default:
       throw new Error(`Unknown frequency preset: ${frequencyPreset}`);
   }
-
-  const now = new Date().toISOString();
-
-  return {
-    id: randomUUID(),
-    name,
-    mode,
-    cron,
-    last_run_at: null,
-    last_finding_ids: [],
-    created_at: now,
-  };
 }
 
 /**

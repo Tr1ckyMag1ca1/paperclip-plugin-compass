@@ -30,7 +30,7 @@ export {
 export {
   validateCronExpression,
   parseCronExpression,
-  createRoutine,
+  getCronFromPreset,
   validateRoutineSchedule,
   shouldRunRoutine,
 } from "./routine.js";

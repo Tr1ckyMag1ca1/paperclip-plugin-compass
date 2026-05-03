@@ -18,6 +18,7 @@ import { ConfirmationModal } from "../found/ConfirmationModal.js";
 import { ApplyProgress } from "../found/ApplyProgress.js";
 import { ApplyErrorDisplay } from "../found/ApplyErrorDisplay.js";
 import { useAssessRunState } from "./AssessRunState.js";
+import { ContextRefreshBanner, PriorFindingsLink } from "../memory/index.js";
 import type { DriftReport } from "../../types/assess.js";
 
 type PanelState =
@@ -299,12 +300,29 @@ export function AssessPanel({
         )}
 
         {panelState === "report" && run && (
-          <DriftReportPanel
-            report={run.driftReport}
-            acceptedState={run.acceptedItems}
-            onAcceptItem={handleAcceptItem}
-            onRejectItem={handleRejectItem}
-          />
+          <>
+            {/* Context refresh banner per D-08 */}
+            {run.driftReport && (
+              <ContextRefreshBanner
+                priorOpenFindingsCount={
+                  (run.driftReport as any)?.contextRefreshPreamble?.priorOpenFindingsCount || 0
+                }
+                deduplicatedCount={
+                  (run.driftReport as any)?.contextRefreshPreamble?.deduplicatedCount || 0
+                }
+                onViewFindings={() => {
+                  // TODO: Emit event to switch to History tab pre-filtered
+                  console.log("View prior findings clicked");
+                }}
+              />
+            )}
+            <DriftReportPanel
+              report={run.driftReport}
+              acceptedState={run.acceptedItems}
+              onAcceptItem={handleAcceptItem}
+              onRejectItem={handleRejectItem}
+            />
+          </>
         )}
 
         {panelState === "applying" && (
