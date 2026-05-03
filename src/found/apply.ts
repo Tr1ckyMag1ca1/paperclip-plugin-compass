@@ -18,6 +18,10 @@
  *
  * All writes route through adapter (XC-01 chokepoint). Idempotency keys prevent
  * duplicate runs on retry (XC-03).
+ *
+ * NOTE: Assess mode (Phase 3 Plan 2) reuses this orchestrator pattern in src/assess/apply.ts
+ * with amendments + cascade instead of agents + issues. The preflight → sequential → rollback
+ * structure is fundamental to XC-02 and is replicated for the assessment flow.
  */
 
 import type { PluginContext } from "@paperclipai/plugin-sdk";
