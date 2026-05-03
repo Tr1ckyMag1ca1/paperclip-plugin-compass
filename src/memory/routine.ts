@@ -196,6 +196,37 @@ export function shouldRunRoutine(routine: ScheduledRoutine, currentTime: Date = 
 }
 
 /**
+ * Create a new ScheduledRoutine for testing.
+ *
+ * Per D-13: Factory function for creating routines with preset or custom cron.
+ * Note: Worker uses crypto.randomUUID() for ID generation; tests use this factory.
+ *
+ * @param name Routine name
+ * @param mode Assess or Revive
+ * @param cronPreset quarterly, monthly, or custom
+ * @param customCron Cron expression (required if cronPreset is custom)
+ * @returns New ScheduledRoutine
+ */
+export function createRoutine(
+  name: string,
+  mode: "Assess" | "Revive",
+  cronPreset: "quarterly" | "monthly" | "custom",
+  customCron?: string
+): ScheduledRoutine {
+  const cron = getCronFromPreset(cronPreset, customCron);
+
+  return {
+    id: globalThis.crypto.randomUUID(),
+    name,
+    mode,
+    cron,
+    created_at: new Date().toISOString(),
+    last_run_at: null,
+    last_finding_ids: [],
+  };
+}
+
+/**
  * Helper: Check if a value matches a cron field.
  *
  * Handles:

@@ -33,6 +33,7 @@ export {
   getCronFromPreset,
   validateRoutineSchedule,
   shouldRunRoutine,
+  createRoutine,
 } from "./routine.js";
 
 export { cronToReadable } from "./cron-readable.js";
