@@ -3,7 +3,7 @@
 **Project:** Paperclip Plugin — Strategic Consultant for AI Company Lifecycle  
 **Granularity:** Coarse (6 phases, each a self-contained milestone)  
 **Coverage:** 72/72 requirements mapped  
-**Last updated:** 2026-05-02
+**Last updated:** 2026-05-03
 
 ## Phases
 
@@ -31,7 +31,12 @@
 4. Free-form chat input (e.g., "assess this company") routes to the correct mode via lightweight keyword classifier
 5. Plugin passes TypeScript strict mode, Vitest harness wired, README credits Aron Prins, CODEOWNERS + DECISIONS.md established, MIT licensed
 
-**Plans:** TBD
+**Plans:** 3 plans in 2 waves
+
+Plan list:
+- [ ] 01-01-PLAN.md — Project bootstrap & SDK adapter (wave 1)
+- [ ] 01-02-PLAN.md — Core logic & inventory (wave 1)
+- [ ] 01-03-PLAN.md — UI dashboard & testing (wave 2)
 
 ---
 
@@ -220,7 +225,7 @@
 **Coverage:**
 - v1 requirements: 72 total
 - Mapped to phases: 72
-- Unmapped: 0
+- Unmapped: 0 ✓
 
 ---
 
@@ -228,13 +233,14 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Skeleton + Inventory + Mode Detection | 0/1 | Not started | - |
-| 2. Found Mode | 0/1 | Not started | - |
-| 3. Assess Mode | 0/1 | Not started | - |
-| 4. Revive Mode | 0/1 | Not started | - |
-| 5. Reposition Mode | 0/1 | Not started | - |
-| 6. Engagement Memory + Scheduled Check-ins | 0/1 | Not started | - |
+| 1. Skeleton + Inventory + Mode Detection | 0/3 | Planned | — |
+| 2. Found Mode | 0/1 | Not started | — |
+| 3. Assess Mode | 0/1 | Not started | — |
+| 4. Revive Mode | 0/1 | Not started | — |
+| 5. Reposition Mode | 0/1 | Not started | — |
+| 6. Engagement Memory + Scheduled Check-ins | 0/1 | Not started | — |
 
 ---
 
-*Roadmap created: 2026-05-02 by gsd-roadmapper*
+*Roadmap created: 2026-05-02*  
+*Plans created: 2026-05-03*
