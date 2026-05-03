@@ -463,11 +463,11 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
     }
   });
 
-  // Handler: runStallDiagnostic (REVIVE-01, REVIVE-02, D-01, D-02, D-04)
+  // Handler: classifyStall (REVIVE-01, REVIVE-02, D-01, D-02, D-04)
   // Per D-01/D-02: deterministic classifier detects stall cause(s) from inventory + VISION + activity
   // Per D-04: writes action queue to documents table with idempotency key
   // Returns ActionQueue for UI review
-  ctx.data.register("runStallDiagnostic", async (params: any) => {
+  ctx.data.register("classifyStall", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -660,6 +660,84 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       return {
         found: false,
         error: `Failed to check action status: ${message}`,
+      };
+    }
+  });
+
+  // Handler: loadReviveRunState (D-15)
+  // Per D-15: loads persisted revive run state from worker-state for UI recovery
+  // Used by ReviveRunState hook to restore queue on panel reload
+  ctx.actions.register("loadReviveRunState", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      // Load the most recent revive run state from worker-state
+      const state = await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: "current",
+      });
+
+      if (state && typeof state === "object") {
+        // Return the queue object
+        return state;
+      }
+
+      // Otherwise return null if not found
+      return null;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load revive run state:", message);
+      return null;
+    }
+  });
+
+  // Handler: updateReviveRunState (D-15)
+  // Per D-15: persists revive run state to worker-state for recovery across reloads
+  // Used by ReviveRunState hook to save queue on each update
+  ctx.actions.register("updateReviveRunState", async (params: any) => {
+    const stateUpdates = params as Record<string, any>;
+
+    try {
+      // Parse state updates and write to worker-state
+      for (const [key, value] of Object.entries(stateUpdates)) {
+        // Keys are formatted as: compass:revive:run:{companyId}
+        if (key.startsWith("compass:revive:run:")) {
+          const companyId = key.replace("compass:revive:run:", "");
+
+          if (value === undefined || value === null) {
+            // Delete the state
+            await ctx.state.delete({
+              scopeKind: "company" as const,
+              scopeId: companyId,
+              namespace: "compass:revive:run",
+              stateKey: "current",
+            });
+          } else {
+            // Set/update the state
+            await ctx.state.set(
+              {
+                scopeKind: "company" as const,
+                scopeId: companyId,
+                namespace: "compass:revive:run",
+                stateKey: "current",
+              },
+              value
+            );
+          }
+        }
+      }
+
+      return { success: true };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to update revive run state:", message);
+      return {
+        success: false,
+        error: message,
       };
     }
   });
