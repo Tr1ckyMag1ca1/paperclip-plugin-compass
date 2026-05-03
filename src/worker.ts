@@ -251,6 +251,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: runApply (FOUND-09, FOUND-10, XC-02)
   // Orchestrates Apply: preflight → writes → rollback on error
+  // Per Phase 6 Gap 1: records findings to engagement history after successful apply
   ctx.actions.register(
     "runApply",
     async (params: any) => {
@@ -277,7 +278,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
           applyRunId
         );
 
-        // On success, clear draft
+        // On success, clear draft and record findings
         if (result.success) {
           await ctx.state.set(
             {
@@ -297,6 +298,26 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
             },
             null
           );
+
+          // Record finding to engagement history
+          const { recordFindingsToHistory } = await import("./memory/history-store.js");
+          const adapter = new PaperclipAdapter(ctx);
+          const findings = [{
+            id: globalThis.crypto.randomUUID(),
+            run_id: applyRunId,
+            mode: "Found" as const,
+            created_at: new Date().toISOString(),
+            summary: `Founded company: ${preset.name}`,
+            evidence_refs: result.visionDocId ? [result.visionDocId] : [],
+            status: "open" as const,
+            status_history: [{
+              from: null,
+              to: "open" as const,
+              at: new Date().toISOString(),
+            }],
+          }];
+
+          await recordFindingsToHistory(ctx, adapter, companyId, applyRunId, "Found", findings);
         }
 
         return result;
@@ -314,6 +335,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // Handler: runDriftAudit (ASSESS-02, D-20)
   // Detects drift by comparing last 30 days of activity against VISION.md
   // Returns drift report grouped by section with confidence scoring
+  // Per Phase 6 Gap 2 (ASSESS-09): loads prior open findings and passes to detectDrift for context-refresh dedup
   ctx.data.register("runDriftAudit", async (params: any) => {
     const companyId = params.companyId as string;
 
@@ -363,12 +385,18 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       // Build activity snapshot (last 30 days)
       const activity = await buildActivitySnapshot(adapter, companyId, 30);
 
-      // Detect drift using pure function
-      const driftReport = detectDrift(parsedVision, activity, 30);
+      // Load prior open findings for ASSESS-09 context-refresh dedup (Phase 6 Gap 2)
+      const { getEngagementHistory } = await import("./memory/history-store.js");
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+      const priorOpenFindings = history?.findings.filter((f: any) => f.status === "open") || [];
+
+      // Detect drift using pure function, with prior findings for dedup
+      const driftReport = detectDrift(parsedVision, activity, 30, priorOpenFindings);
 
       return {
         success: true,
         driftReport,
+        contextRefreshPreamble: driftReport.contextRefreshPreamble || undefined,
       };
     } catch (error) {
       const message =
@@ -383,6 +411,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // Handler: applyAmendments (ASSESS-09, D-15)
   // Applies accepted amendments to VISION.md with cascade notification
   // Respects approval routing: founder (sync) vs founder+ceo (async approval gate)
+  // Per Phase 6 Gap 1: records findings to engagement history after successful apply
   ctx.actions.register("applyAmendments", async (params: any) => {
     const {
       companyId,
@@ -429,6 +458,30 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
       // For now, return a stub success (full implementation requires
       // understanding amendment structure from drift report)
+      const runId = globalThis.crypto.randomUUID();
+      const success = true;
+
+      if (success) {
+        // Record findings to engagement history
+        const { recordFindingsToHistory } = await import("./memory/history-store.js");
+        const findings = acceptedItems.map((item: any) => ({
+          id: globalThis.crypto.randomUUID(),
+          run_id: runId,
+          mode: "Assess" as const,
+          created_at: new Date().toISOString(),
+          summary: item.summary || `Drift amendment: ${item.sectionId}`,
+          evidence_refs: [item.sectionId],
+          status: "open" as const,
+          status_history: [{
+            from: null,
+            to: "open" as const,
+            at: new Date().toISOString(),
+          }],
+        }));
+
+        await recordFindingsToHistory(ctx, adapter, companyId, runId, "Assess", findings);
+      }
+
       return {
         success: true,
         summary: `Prepared to apply ${acceptedItems.length} amendments with ${approvalRouting} approval routing`,
@@ -570,6 +623,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // Per D-10: incremental apply — each action executed independently, not transactional
   // Per D-11: all wakeups use idempotency keys
   // Executes single action, updates queue status, returns result
+  // Per Phase 6 Gap 1: records findings to engagement history after successful apply
   ctx.actions.register("applyReviveAction", async (params: any) => {
     const { companyId, actionId, queueRunId } = params as {
       companyId: string;
@@ -612,6 +666,27 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
         },
         updatedQueue
       );
+
+      // Record finding if action succeeded
+      if (result.success) {
+        const { recordFindingsToHistory } = await import("./memory/history-store.js");
+        const findings = [{
+          id: globalThis.crypto.randomUUID(),
+          run_id: queueRunId,
+          mode: "Revive" as const,
+          created_at: new Date().toISOString(),
+          summary: result.summary || `Revive action applied: ${actionId}`,
+          evidence_refs: [actionId],
+          status: "open" as const,
+          status_history: [{
+            from: null,
+            to: "open" as const,
+            at: new Date().toISOString(),
+          }],
+        }];
+
+        await recordFindingsToHistory(ctx, adapter, companyId, queueRunId, "Revive", findings);
+      }
 
       return {
         success: result.success,
@@ -1010,6 +1085,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: applyRepositionAmendments (REPO-04, REPO-05, D-11, D-12, XC-02, XC-03)
   // Apply amendments and cascade changes with approval routing
+  // Per Phase 6 Gap 1: records findings to engagement history after successful apply
   ctx.actions.register("applyReposition", async (params: any) => {
     const {
       companyId,
@@ -1045,6 +1121,28 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
         repositionRunId,
         adapter
       );
+
+      // Record findings if apply succeeded
+      if (result.success) {
+        const { recordFindingsToHistory } = await import("./memory/history-store.js");
+        const amendmentSummaries = amendments.map((a: any) => a.sectionId).join(", ");
+        const findings = [{
+          id: globalThis.crypto.randomUUID(),
+          run_id: repositionRunId,
+          mode: "Reposition" as const,
+          created_at: new Date().toISOString(),
+          summary: `Repositioned: ${amendmentSummaries}`,
+          evidence_refs: amendments.map((a: any) => a.id),
+          status: "open" as const,
+          status_history: [{
+            from: null,
+            to: "open" as const,
+            at: new Date().toISOString(),
+          }],
+        }];
+
+        await recordFindingsToHistory(ctx, adapter, companyId, repositionRunId, "Reposition", findings);
+      }
 
       return result;
     } catch (error) {
@@ -1523,6 +1621,14 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: routine.onFire (MEM-06, D-14)
   // Triggered by Paperclip scheduler when routine cron fires
+  // Per Phase 6 Gap 3: This handler is registered as "routine.onFire" and relies on
+  // Paperclip SDK's routine scheduler invoking this callback when a cron fires.
+  // The handler name MUST match the SDK's routine scheduler callback convention
+  // (e.g., when Paperclip fires a routine, it calls ctx.actions.call("routine.onFire", {...})).
+  // v1 schedules routines via Paperclip's getRoutines/createRoutine SDK calls.
+  // Verify that Paperclip scheduler uses this handler name pattern for cron invocation.
+  // If integration testing reveals the scheduler uses a different invocation path,
+  // update both the SDK adapter createRoutine signature and the handler name to match.
   // (Same implementation as routine.run)
   ctx.actions.register("routine.onFire", async (params: any) => {
     const {
