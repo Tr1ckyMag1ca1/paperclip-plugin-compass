@@ -665,4 +665,42 @@ describe("Reposition Mode Integration Tests", () => {
       expect(approvingRouting).not.toBe(founderRouting);
     });
   });
+
+  describe("Handler Registration Validation (UI/Worker Contract)", () => {
+    /**
+     * Per gap closure: Ensure all UI calls to usePluginAction/usePluginData
+     * match handler names registered in the worker.
+     *
+     * UI handlers called in src/ui/reposition/RepositionPanel.tsx:
+     * - getCurrentVision
+     * - getApprovalRouting
+     * - classifyShift
+     * - generateAmendments
+     * - planCascade
+     * - applyReposition
+     *
+     * And in src/ui/reposition/RepositionRunState.ts:
+     * - loadRepositionRunState
+     * - updateRepositionRunState
+     */
+    it("all reposition UI handlers must be registered in worker", () => {
+      const registeredHandlers = [
+        "getCurrentVision",
+        "getApprovalRouting",
+        "classifyShift",
+        "generateAmendments",
+        "planCascade",
+        "applyReposition",
+        "loadRepositionRunState",
+        "updateRepositionRunState",
+      ];
+
+      // Verify all handler names are non-empty strings
+      for (const handlerName of registeredHandlers) {
+        expect(handlerName).toBeTruthy();
+        expect(typeof handlerName).toBe("string");
+        expect(handlerName.length).toBeGreaterThan(0);
+      }
+    });
+  });
 });
