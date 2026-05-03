@@ -7,6 +7,13 @@ import manifest from "./manifest.js";
 import { loadInventory } from "./primitives/inventory.js";
 import { detectMode, classifyChatInput } from "./primitives/mode-detect.js";
 import type { Mode } from "./types.js";
+import type {
+  InterviewAnswers,
+  FilledVision,
+  PresetDefinition,
+} from "./types/found.js";
+import { applyFound } from "./found/apply.js";
+import { generateApplyRunId } from "./found/idempotency.js";
 
 const plugin = definePlugin({
   async setup(ctx: PluginContext) {
@@ -106,6 +113,186 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
     });
     return (override as Mode | null) ?? null;
   });
+
+  // Handler: loadInterviewDraft (FOUND-03, D-12)
+  // Loads interview draft from worker-state (founder-scoped, survives reload)
+  ctx.data.register(
+    "loadInterviewDraft",
+    async (params: any) => {
+      const companyId = params.companyId as string;
+      const draft = await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:found:draft",
+        stateKey: "current",
+      });
+      const preset = await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:found:preset",
+        stateKey: "current",
+      });
+      return {
+        draft: (draft as InterviewAnswers | null) ?? null,
+        preset: (preset as PresetDefinition | null) ?? null,
+      };
+    }
+  );
+
+  // Handler: saveInterviewDraft (FOUND-03, D-12)
+  // Saves interview draft and selected preset to worker-state
+  ctx.actions.register("saveInterviewDraft", async (params: any) => {
+    const {
+      companyId,
+      answers,
+      preset,
+    } = params as {
+      companyId: string;
+      answers: InterviewAnswers;
+      preset: PresetDefinition | null;
+    };
+
+    // Save answers
+    await ctx.state.set(
+      {
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:found:draft",
+        stateKey: "current",
+      },
+      answers
+    );
+
+    // Save preset selection
+    await ctx.state.set(
+      {
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:found:preset",
+        stateKey: "current",
+      },
+      preset
+    );
+
+    return { success: true };
+  });
+
+  // Handler: getPresets (FOUND-07, D-14)
+  // Returns array of available founding presets
+  ctx.data.register("getPresets", async (_params: any) => {
+    // Hardcoded presets (from Phase 1 planning, can be extended)
+    const presets: PresetDefinition[] = [
+      {
+        id: "founding-team",
+        name: "Founding Team (5 agents)",
+        description: "CEO, Product, Growth, Engineer, Designer",
+        agents: [
+          { id: "agent-ceo", name: "CEO", role: "Chief Executive Officer" },
+          {
+            id: "agent-product",
+            name: "Product",
+            role: "Chief Product Officer",
+          },
+          {
+            id: "agent-growth",
+            name: "Growth",
+            role: "Chief Growth Officer",
+          },
+          {
+            id: "agent-engineer",
+            name: "Engineer",
+            role: "VP Engineering",
+          },
+          {
+            id: "agent-designer",
+            name: "Designer",
+            role: "Head of Design",
+          },
+        ],
+      },
+      {
+        id: "lean-team",
+        name: "Lean Team (3 agents)",
+        description: "CEO, Product, Engineer",
+        agents: [
+          { id: "agent-ceo", name: "CEO", role: "Chief Executive Officer" },
+          {
+            id: "agent-product",
+            name: "Product",
+            role: "Chief Product Officer",
+          },
+          {
+            id: "agent-engineer",
+            name: "Engineer",
+            role: "VP Engineering",
+          },
+        ],
+      },
+    ];
+    return presets;
+  });
+
+  // Handler: runApply (FOUND-09, FOUND-10, XC-02)
+  // Orchestrates Apply: preflight → writes → rollback on error
+  ctx.actions.register(
+    "runApply",
+    async (params: any) => {
+      const {
+        companyId,
+        vision,
+        preset,
+      } = params as {
+        companyId: string;
+        vision: FilledVision;
+        preset: PresetDefinition;
+      };
+
+      try {
+        // Generate run ID for idempotency
+        const applyRunId = generateApplyRunId();
+
+        // Call Apply orchestrator
+        const result = await applyFound(
+          ctx,
+          companyId,
+          vision,
+          preset,
+          applyRunId
+        );
+
+        // On success, clear draft
+        if (result.success) {
+          await ctx.state.set(
+            {
+              scopeKind: "company" as const,
+              scopeId: companyId,
+              namespace: "compass:found:draft",
+              stateKey: "current",
+            },
+            null
+          );
+          await ctx.state.set(
+            {
+              scopeKind: "company" as const,
+              scopeId: companyId,
+              namespace: "compass:found:preset",
+              stateKey: "current",
+            },
+            null
+          );
+        }
+
+        return result;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Unknown error occurred";
+        return {
+          success: false,
+          blockingErrors: [message],
+        };
+      }
+    }
+  );
 }
 
 export default plugin;
