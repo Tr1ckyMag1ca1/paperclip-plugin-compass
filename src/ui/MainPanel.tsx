@@ -11,6 +11,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary.js";
 import { AssessPanel } from "./assess/AssessPanel.js";
 import { FoundPanel } from "./found/FoundPanel.js";
 import { RevivePanel } from "./revive/RevivePanel.js";
+import { RepositionPanel } from "./reposition/RepositionPanel.js";
 
 /**
  * MainPanel — Root UI component for Compass diagnostic dashboard.
@@ -126,6 +127,16 @@ export function MainPanel(): React.ReactElement {
       <RevivePanel
         companyId={companyId}
         companyName="Company"
+      />
+    );
+  }
+
+  if (currentMode === "Reposition") {
+    return (
+      <RepositionPanel
+        companyId={companyId}
+        companyName="Company"
+        visionExists={visionExists}
       />
     );
   }

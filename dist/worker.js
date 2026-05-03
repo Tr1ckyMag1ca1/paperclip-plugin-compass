@@ -8165,24 +8165,71 @@ var PaperclipAdapter = class {
     );
   }
   /**
+   * Get an issue by ID.
+   *
+   * Per XC-01, all reads route through adapter.
+   * Used by action handlers and sample-pivot to load issue details.
+   *
+   * @param issueId Issue ID to load
+   * @param companyId Company ID (required by SDK)
+   * @returns Issue object with full details
+   */
+  async getIssue(issueId, companyId) {
+    try {
+      const issue = companyId ? await this.ctx.issues.get(issueId, companyId) : await this.ctx.issues.get(issueId);
+      logAudit({
+        step: "get-issue",
+        success: true,
+        resourceId: issueId,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      return issue;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-issue",
+        success: false,
+        resourceId: issueId,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to get issue ${issueId}: ${errorMsg}`);
+    }
+  }
+  /**
    * Write a document (e.g., VISION.md) to the company as an issue with documents.
    *
    * Per D-16 (XC-01), all writes route through this chokepoint.
    * VISION.md is stored as an issue document via ctx.issues.documents API.
    *
+   * Supports two signatures:
+   * 1. writeDocument(companyId, title, body) — legacy signature
+   * 2. writeDocument(companyId, key, options) — new signature with idempotency key
+   *
    * @param companyId Company ID
-   * @param title Document title (e.g., "VISION.md")
-   * @param body Document body (markdown)
+   * @param titleOrKey Document title or idempotency key
+   * @param bodyOrOptions Document body (string) or options object { title, body, idempotency_key }
    * @returns Issue ID (parent container) for audit trail
    */
-  async writeDocument(companyId, title, body) {
+  async writeDocument(companyId, titleOrKey, bodyOrOptions) {
     try {
+      let title;
+      let body;
+      let docKey;
+      if (typeof bodyOrOptions === "string") {
+        title = titleOrKey;
+        body = bodyOrOptions;
+        docKey = title.toLowerCase().replace(/\s+/g, "-").replace(/\.md$/i, "");
+      } else {
+        docKey = titleOrKey;
+        title = bodyOrOptions?.title || titleOrKey;
+        body = bodyOrOptions?.body || "";
+      }
       const issue = await this.ctx.issues.create({
         companyId,
         title,
         description: `Document: ${title}`
       });
-      const docKey = title.toLowerCase().replace(/\s+/g, "-").replace(/\.md$/i, "");
       await this.ctx.issues.documents.upsert({
         issueId: issue.id,
         key: docKey,
@@ -8206,7 +8253,7 @@ var PaperclipAdapter = class {
         error: errorMsg,
         timestamp: (/* @__PURE__ */ new Date()).toISOString()
       });
-      throw new Error(`Failed to write document "${title}": ${errorMsg}`);
+      throw new Error(`Failed to write document: ${errorMsg}`);
     }
   }
   /**
@@ -8661,6 +8708,128 @@ ${(doc.body || "").substring(0, 500)}`.trim(),
     }
   }
   /**
+   * Close an issue with a reason.
+   *
+   * Per D-13, used in Revive mode to mark a blocker as resolved with explanation.
+   * Routes through SDK updateIssue and adds a closing comment.
+   * Per XC-01, all writes route through adapter chokepoint.
+   *
+   * @param issueId Issue ID to close
+   * @param reason Human-readable reason for closure (will be added as final comment)
+   */
+  async closeIssue(issueId, reason) {
+    try {
+      if (this.ctx.issues && typeof this.ctx.issues.updateIssue === "function") {
+        await this.ctx.issues.updateIssue(issueId, {
+          status: "done"
+        });
+      } else {
+        throw new Error(
+          "SDK does not expose issue.updateIssue method for closing issues"
+        );
+      }
+      if (this.ctx.issues && typeof this.ctx.issues.addComment === "function") {
+        await this.ctx.issues.addComment(issueId, {
+          body: `Closed by Compass Revive: ${reason}`
+        });
+      }
+      logAudit({
+        step: "close-issue",
+        success: true,
+        resourceId: issueId,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "close-issue",
+        success: false,
+        resourceId: issueId,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to close issue ${issueId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Add a comment to an issue.
+   *
+   * Per D-13, used in Revive mode to provide context or explanations.
+   * Routes through SDK addComment API.
+   * Per XC-01, all writes route through adapter chokepoint.
+   *
+   * @param issueId Issue ID to comment on
+   * @param body Comment body (markdown)
+   */
+  async addIssueComment(issueId, body) {
+    try {
+      if (this.ctx.issues && typeof this.ctx.issues.addComment === "function") {
+        await this.ctx.issues.addComment(issueId, {
+          body
+        });
+      } else {
+        throw new Error(
+          "SDK does not expose issues.addComment method"
+        );
+      }
+      logAudit({
+        step: "add-issue-comment",
+        success: true,
+        resourceId: issueId,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "add-issue-comment",
+        success: false,
+        resourceId: issueId,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to add comment to issue ${issueId}: ${errorMsg}`);
+    }
+  }
+  /**
+   * Update an issue with partial fields.
+   *
+   * Per D-13, used in Revive mode to reassign, retitle, or change status.
+   * Routes through SDK updateIssue API.
+   * Per XC-01, all writes route through adapter chokepoint.
+   * Logs which fields were changed in the audit trail.
+   *
+   * @param issueId Issue ID to update
+   * @param patch Partial issue object with fields to update (title, status, assigneeAgentId, etc.)
+   */
+  async updateIssue(issueId, patch) {
+    try {
+      if (this.ctx.issues && typeof this.ctx.issues.updateIssue === "function") {
+        await this.ctx.issues.updateIssue(issueId, patch);
+      } else {
+        throw new Error(
+          "SDK does not expose issues.updateIssue method"
+        );
+      }
+      const changedFields = Object.keys(patch).join(", ");
+      logAudit({
+        step: "update-issue",
+        success: true,
+        resourceId: issueId,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "update-issue",
+        success: false,
+        resourceId: issueId,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to update issue ${issueId}: ${errorMsg}`);
+    }
+  }
+  /**
    * Get the audit log (for debugging and rollback sequencing).
    *
    * @returns Array of audit log entries
@@ -8784,6 +8953,12 @@ function generateIdempotencyKey(companyId, agentId, applyRunId) {
 }
 function generateApplyRunId() {
   return randomUUID();
+}
+function generateReviveActionKey(companyId, actionId, attempt) {
+  return `compass:revive:${companyId}:${actionId}:${attempt}`;
+}
+function generateRepositionIdempotencyKey(companyId, repositionRunId, agentId) {
+  return `compass:reposition:${companyId}:${repositionRunId}:${agentId}`;
 }
 
 // src/found/apply.ts
@@ -9081,6 +9256,25 @@ function parseAmendmentLog(logSection) {
   }
   return entries;
 }
+function serializeVision(parsed) {
+  const lines = [];
+  for (const sectionName of VISION_SECTIONS) {
+    const key = SECTION_NAME_MAP[sectionName];
+    if (!key) continue;
+    const content = parsed[key] || "";
+    lines.push(`## ${sectionName}`);
+    lines.push(content || "");
+    lines.push("");
+  }
+  if (parsed.amendments && parsed.amendments.length > 0) {
+    lines.push("## Amendment Log");
+    for (const entry of parsed.amendments) {
+      const logLine = `- ${entry.timestamp}: ${entry.reason}`;
+      lines.push(logLine);
+    }
+  }
+  return lines.join("\n").trim() + "\n";
+}
 
 // src/assess/drift.ts
 import { randomUUID as randomUUID2 } from "node:crypto";
@@ -9202,7 +9396,1377 @@ function generateExplanation(sectionName, confidence, evidenceCount) {
   return `Detected ${evidenceCount} recent activity item(s) related to "${sectionName}" (${percent}% confidence)`;
 }
 
+// src/revive/classify.ts
+function classifyStall(snapshot, vision, activity, driftReport) {
+  const companyId = snapshot.companyId;
+  const timestamp = (/* @__PURE__ */ new Date()).toISOString();
+  const confidenceByScore = {
+    "single-blocker": scoreBlockerSeverity(snapshot, activity),
+    "strategic-drift": scoreDriftConfidence(driftReport),
+    "broken-integration": scoreIntegrationHealth(snapshot, activity),
+    "governance-loop": scoreGovernanceLoop(activity),
+    "dead-agent": scoreAgentHealth(snapshot, activity)
+  };
+  const causes = Object.entries(confidenceByScore).filter(([_, score]) => score > 0).sort((a, b) => b[1] - a[1]).map(([cause]) => cause);
+  return {
+    companyId,
+    causes,
+    confidence: confidenceByScore,
+    timestamp
+  };
+}
+function scoreBlockerSeverity(snapshot, activity) {
+  const STUCK_THRESHOLD_DAYS = 14;
+  const DOWNSTREAM_THRESHOLD = 3;
+  const MAX_AGE_DAYS = 30;
+  const now = /* @__PURE__ */ new Date();
+  let maxScore = 0;
+  for (const issue of snapshot.recentIssues) {
+    const createdAt = new Date(issue.createdAt);
+    const ageInDays = (now.getTime() - createdAt.getTime()) / (1e3 * 60 * 60 * 24);
+    if (ageInDays < STUCK_THRESHOLD_DAYS) {
+      continue;
+    }
+    let downstreamCount = 0;
+    for (const other of snapshot.recentIssues) {
+      if (other.id !== issue.id && (other.description?.includes(issue.id) || other.title?.includes(issue.id))) {
+        downstreamCount++;
+      }
+    }
+    if (downstreamCount >= DOWNSTREAM_THRESHOLD) {
+      const ageScore = Math.min(ageInDays / MAX_AGE_DAYS, 1);
+      const downstreamFactor = Math.min(downstreamCount / DOWNSTREAM_THRESHOLD, 1);
+      const score = ageScore * downstreamFactor;
+      if (score > maxScore) {
+        maxScore = score;
+      }
+    }
+  }
+  return Math.min(maxScore, 1);
+}
+function scoreDriftConfidence(driftReport) {
+  if (!driftReport) {
+    return 0;
+  }
+  const HIGH_CONFIDENCE_THRESHOLD = 0.7;
+  const ITEM_COUNT_THRESHOLD = 3;
+  const highConfidenceItems = driftReport.items.filter(
+    (item) => item.confidence >= HIGH_CONFIDENCE_THRESHOLD
+  );
+  if (highConfidenceItems.length === 0) {
+    return 0;
+  }
+  const countScore = Math.min(
+    highConfidenceItems.length / ITEM_COUNT_THRESHOLD,
+    1
+  );
+  const avgConfidence = highConfidenceItems.reduce((sum, item) => sum + item.confidence, 0) / highConfidenceItems.length;
+  const confidenceScore = avgConfidence;
+  const score = 0.5 * countScore + 0.5 * confidenceScore;
+  return Math.min(score, 1);
+}
+function scoreIntegrationHealth(snapshot, activity) {
+  const ERROR_KEYWORDS = [
+    "integration",
+    "sdk",
+    "adapter",
+    "connection",
+    "error"
+  ];
+  let keywordHits = 0;
+  const maxHits = 10;
+  for (const comment of activity.comments) {
+    const content = comment.content.toLowerCase();
+    for (const keyword of ERROR_KEYWORDS) {
+      const regex = new RegExp(keyword, "gi");
+      const matches = content.match(regex);
+      if (matches) {
+        keywordHits += matches.length;
+      }
+    }
+  }
+  if (keywordHits === 0) {
+    return 0;
+  }
+  return Math.min(keywordHits / maxHits, 1);
+}
+function scoreGovernanceLoop(activity) {
+  const CYCLE_THRESHOLD = 3;
+  const MAX_CYCLES = 5;
+  let cycleCount = 0;
+  for (const comment of activity.comments) {
+    const content = comment.content.toLowerCase();
+    if (content.includes("needs review") || content.includes("in review") || content.includes("pending review")) {
+      cycleCount++;
+    }
+  }
+  if (cycleCount < CYCLE_THRESHOLD) {
+    return 0;
+  }
+  const excessCycles = cycleCount - CYCLE_THRESHOLD;
+  const maxExcess = MAX_CYCLES - CYCLE_THRESHOLD;
+  const score = excessCycles / maxExcess;
+  return Math.min(score, 1);
+}
+function scoreAgentHealth(snapshot, activity) {
+  const NO_HEARTBEAT_THRESHOLD_DAYS = 30;
+  const MAX_AGE_DAYS = 60;
+  const now = /* @__PURE__ */ new Date();
+  let maxScore = 0;
+  for (const agent of snapshot.agents) {
+    const lastHeartbeat = agent.lastHeartbeatAt ? new Date(agent.lastHeartbeatAt) : null;
+    if (!lastHeartbeat) {
+      const ageInDays = MAX_AGE_DAYS;
+      let assignedOpenIssues = 0;
+      for (const issue of snapshot.recentIssues) {
+        if (issue.assigneeAgentId === agent.id && (issue.status === "todo" || issue.status === "in_progress")) {
+          assignedOpenIssues++;
+        }
+      }
+      if (assignedOpenIssues > 0) {
+        const ageScore = Math.min(ageInDays / MAX_AGE_DAYS, 1);
+        const assignedFactor = Math.min(assignedOpenIssues / 2, 1);
+        const score = ageScore * assignedFactor;
+        if (score > maxScore) {
+          maxScore = score;
+        }
+      }
+    } else {
+      const ageInDays = (now.getTime() - lastHeartbeat.getTime()) / (1e3 * 60 * 60 * 24);
+      if (ageInDays < NO_HEARTBEAT_THRESHOLD_DAYS) {
+        continue;
+      }
+      let assignedOpenIssues = 0;
+      for (const issue of snapshot.recentIssues) {
+        if (issue.assigneeAgentId === agent.id && (issue.status === "todo" || issue.status === "in_progress")) {
+          assignedOpenIssues++;
+        }
+      }
+      if (assignedOpenIssues > 0) {
+        const ageScore = Math.min(ageInDays / MAX_AGE_DAYS, 1);
+        const assignedFactor = Math.min(assignedOpenIssues / 2, 1);
+        const score = ageScore * assignedFactor;
+        if (score > maxScore) {
+          maxScore = score;
+        }
+      }
+    }
+  }
+  return Math.min(maxScore, 1);
+}
+
+// src/revive/sample-pivot.ts
+async function executeSamplePivot(actionItem, adapter) {
+  const issueId = actionItem.target.id;
+  const companyId = actionItem.recommended_action.params.issue_id ? void 0 : actionItem.recommended_action.params.company_id;
+  const actualIssueId = actionItem.recommended_action.params.issue_id || issueId;
+  const actualCompanyId = actionItem.recommended_action.params.company_id || companyId;
+  if (!actualIssueId) {
+    return {
+      success: false,
+      error: "Sample-pivot requires issue_id (in target.id or params.issue_id)",
+      summary: "Sample-pivot failed"
+    };
+  }
+  if (!actualCompanyId) {
+    return {
+      success: false,
+      error: "Sample-pivot requires company_id (in params.company_id)",
+      summary: "Sample-pivot failed"
+    };
+  }
+  try {
+    const originalIssue = await adapter.getIssue(actualIssueId);
+    const sampleIssueId = await adapter.createIssue(
+      actualCompanyId,
+      `[SAMPLE] ${originalIssue.title}`,
+      originalIssue.description || "Original draft for critique",
+      originalIssue.assigneeAgentId
+    );
+    const productionIssueId = await adapter.createIssue(
+      actualCompanyId,
+      `[PRODUCTION] ${originalIssue.title}`,
+      "",
+      // Blank for post-critique version
+      originalIssue.assigneeAgentId
+    );
+    const linkComment = `
+This issue has been reframed using the sample-pivot pattern:
+
+- **[SAMPLE]** Issue #${sampleIssueId}: Current draft for critique
+- **[PRODUCTION]** Issue #${productionIssueId}: Blank production-quality version to fill in after critique
+
+See SAMPLE_PIVOT.md for explanation of this pattern.
+    `;
+    await adapter.addIssueComment(actualIssueId, linkComment);
+    await createSamplePivotDocs(adapter, actualCompanyId);
+    return {
+      success: true,
+      summary: `Sample-pivot created: sample issue #${sampleIssueId}, production issue #${productionIssueId}`,
+      result: {
+        sampleIssueId,
+        productionIssueId,
+        linkCommentId: "added"
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Sample-pivot failed"
+    };
+  }
+}
+async function createSamplePivotDocs(adapter, companyId) {
+  const docKey = `compass:revive:sample-pivot:${companyId}`;
+  const samplePivotDoc = {
+    title: "SAMPLE_PIVOT.md",
+    body: `# Sample-Pivot Pattern
+
+When your company is stuck on work quality, the sample-pivot pattern unsticks you:
+
+## How It Works
+
+1. **Sample Issue** \u2014 Your current draft, marked [SAMPLE]. This is work-in-progress for critique.
+2. **Production Issue** \u2014 A blank issue, marked [PRODUCTION]. This is where the improved version goes after critique.
+
+Both issues are linked. After critique feedback on the sample, you write the production-quality version in the production issue.
+
+## Why This Works
+
+- **Decouples feedback from implementation** \u2014 Critique happens on sample first, not during production write
+- **Prevents scope creep** \u2014 Sample stays as-is; production is a fresh start
+- **Captures learning** \u2014 Sample becomes a reference point for what *not* to repeat
+
+## Example
+
+- Sample Issue #123: "Draft feature request \u2014 quick notes"
+- Production Issue #124: "Blank for production-quality feature request"
+
+After critique feedback on #123, team writes polished version in #124.
+
+---
+
+*This document was auto-generated by Compass Revive Mode. Edit freely; Compass respects your changes.*
+    `,
+    idempotency_key: docKey
+  };
+  await adapter.writeDocument(companyId, docKey, samplePivotDoc);
+}
+
+// src/revive/actions.ts
+var replaceBlockerIssueHandler = async (item, adapter) => {
+  try {
+    const issueId = item.target.id;
+    const companyId = item.recommended_action.params.company_id;
+    if (!issueId) {
+      return {
+        success: false,
+        error: "Action requires target.id (issue_id)",
+        summary: "Replace blocker issue failed"
+      };
+    }
+    const originalIssue = await adapter.getIssue(issueId);
+    const newIssueId = await adapter.createIssue(
+      companyId,
+      `[REDRAFTED] ${originalIssue.title}`,
+      `Originally blocked: ${originalIssue.description?.substring(0, 200)}...
+
+Redrafted to unblock progress.`,
+      originalIssue.assigneeAgentId
+    );
+    const linkComment = `
+This issue has been replaced with a fresh redraft to unblock progress.
+
+**Original (blocked):** This issue
+**Replacement:** Issue #${newIssueId}
+
+The replacement issue has the same context and assignee, but fresh title and description to reset focus.
+    `;
+    await adapter.addIssueComment(issueId, linkComment);
+    return {
+      success: true,
+      summary: `Issue #${issueId} replaced with Issue #${newIssueId}`,
+      result: {
+        originalIssueId: issueId,
+        newIssueId
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Replace blocker issue failed"
+    };
+  }
+};
+var reassignIssueHandler = async (item, adapter) => {
+  try {
+    const issueId = item.target.id;
+    const newAgentId = item.recommended_action.params.new_agent_id;
+    const companyId = item.recommended_action.params.company_id;
+    if (!issueId || !newAgentId) {
+      return {
+        success: false,
+        error: "Action requires target.id (issue_id) and new_agent_id",
+        summary: "Reassign issue failed"
+      };
+    }
+    await adapter.updateIssue(issueId, {
+      assigneeAgentId: newAgentId
+    });
+    const reassignComment = `
+This issue has been reassigned to unblock progress.
+
+**New assignee:** Agent ${newAgentId}
+
+This agent has been screened for capacity and expertise. They'll receive a wakeup notification with context about this issue.
+    `;
+    await adapter.addIssueComment(issueId, reassignComment);
+    const idempotencyKey = generateReviveActionKey(companyId, item.id, 1);
+    await adapter.queueWakeup(
+      companyId,
+      newAgentId,
+      idempotencyKey,
+      `Reassigned issue: ${item.title}`
+    );
+    return {
+      success: true,
+      summary: `Issue #${issueId} reassigned to agent ${newAgentId}`,
+      result: {
+        issueId,
+        newAgentId
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Reassign issue failed"
+    };
+  }
+};
+var nudgeAgentHandler = async (item, adapter) => {
+  try {
+    const agentId = item.target.id;
+    const companyId = item.recommended_action.params.company_id;
+    const contextSummary = item.recommended_action.params.context_summary || item.why_blocking;
+    if (!agentId) {
+      return {
+        success: false,
+        error: "Action requires target.id (agent_id)",
+        summary: "Nudge agent failed"
+      };
+    }
+    const docKey = `compass:revive:context:${item.id}`;
+    await adapter.writeDocument(companyId, docKey, {
+      title: `Context: ${item.title}`,
+      body: `# Context for This Work
+
+## Why You're Stuck
+
+${contextSummary}
+
+## What Unblocks Progress
+
+This action provides briefing on the situation. Review the context above, and if you have questions or blockers, reach out to the founder or team lead.
+
+---
+
+*Generated by Compass Revive Mode at ${(/* @__PURE__ */ new Date()).toISOString()}*
+      `,
+      idempotency_key: docKey
+    });
+    const idempotencyKey = generateReviveActionKey(companyId, item.id, 1);
+    await adapter.queueWakeup(
+      companyId,
+      agentId,
+      idempotencyKey,
+      `Context briefing: ${item.title}`
+    );
+    return {
+      success: true,
+      summary: `Agent ${agentId} notified with context briefing and queued for wake`,
+      result: {
+        agentId,
+        contextDocKey: docKey
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Nudge agent failed"
+    };
+  }
+};
+var pivotToSampleHandler = async (item, adapter) => {
+  try {
+    return await executeSamplePivot(item, adapter);
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Pivot to sample failed"
+    };
+  }
+};
+var markResolvedHandler = async (item, adapter) => {
+  try {
+    const issueId = item.target.id;
+    const companyId = item.recommended_action.params.company_id;
+    const reason = item.recommended_action.params.reason || "Blocker has been resolved";
+    if (!issueId) {
+      return {
+        success: false,
+        error: "Action requires target.id (issue_id)",
+        summary: "Mark resolved failed"
+      };
+    }
+    await adapter.closeIssue(issueId, reason);
+    return {
+      success: true,
+      summary: `Issue #${issueId} marked resolved and closed`,
+      result: {
+        issueId,
+        reason
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Mark resolved failed"
+    };
+  }
+};
+var restartAgentHandler = async (item, adapter) => {
+  try {
+    const agentId = item.target.id;
+    const companyId = item.recommended_action.params.company_id;
+    if (!agentId) {
+      return {
+        success: false,
+        error: "Action requires target.id (agent_id)",
+        summary: "Restart agent failed"
+      };
+    }
+    const idempotencyKey = generateReviveActionKey(companyId, item.id, 1);
+    await adapter.queueWakeup(
+      companyId,
+      agentId,
+      idempotencyKey,
+      `Agent restart: ${item.title}. Check VISION.md and recent issues for current context.`
+    );
+    return {
+      success: true,
+      summary: `Agent ${agentId} queued for restart with reset context`,
+      result: {
+        agentId,
+        resetPrompt: "Check VISION.md and recent issues for current context"
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Restart agent failed"
+    };
+  }
+};
+var surfaceAmendmentHandler = async (item, adapter) => {
+  return {
+    success: true,
+    summary: `This action requires strategic decision: switch to Assess mode to review and amend VISION.md or relevant section. Compass cannot auto-fix drift \u2014 only you can decide the right direction.`,
+    result: {
+      nextStep: "Switch to Assess mode",
+      targetItem: item.target.id
+    }
+  };
+};
+var handlers = {
+  "replace-blocker-issue": replaceBlockerIssueHandler,
+  "reassign-issue": reassignIssueHandler,
+  "nudge-agent-with-context-doc": nudgeAgentHandler,
+  "pivot-to-sample": pivotToSampleHandler,
+  "mark-blocker-resolved": markResolvedHandler,
+  "restart-agent": restartAgentHandler,
+  "surface-amendment-needed": surfaceAmendmentHandler
+};
+async function executeAction(actionItem, adapter) {
+  const handler = handlers[actionItem.recommended_action.type];
+  if (!handler) {
+    return {
+      success: false,
+      error: `Unknown action type: ${actionItem.recommended_action.type}`,
+      summary: "Action execution failed"
+    };
+  }
+  try {
+    return await handler(actionItem, adapter);
+  } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+      summary: "Action execution failed"
+    };
+  }
+}
+
+// src/revive/queue.ts
+function serializeActionQueue(queue) {
+  return JSON.stringify(queue, null, 2);
+}
+async function writeActionQueueDocument(adapter, companyId, queue) {
+  const docKey = `compass:revive:action-queue:${queue.run_id}`;
+  const serialized = serializeActionQueue(queue);
+  await adapter.writeDocument(companyId, docKey, {
+    title: `Revive Action Queue \u2014 ${queue.run_id}`,
+    body: serialized,
+    idempotency_key: docKey
+  });
+}
+
+// src/revive/apply.ts
+async function applyAction(queue, actionId, adapter) {
+  let actionItem;
+  let causeKey;
+  for (const cause in queue.items_by_cause) {
+    const item = queue.items_by_cause[cause]?.find(
+      (a) => a.id === actionId
+    );
+    if (item) {
+      actionItem = item;
+      causeKey = cause;
+      break;
+    }
+  }
+  if (!actionItem || !causeKey) {
+    return {
+      queue,
+      result: {
+        success: false,
+        error: `Action ${actionId} not found in queue`,
+        summary: "Action not found"
+      }
+    };
+  }
+  if (actionItem.status !== "pending") {
+    return {
+      queue,
+      result: {
+        success: false,
+        error: `Action already ${actionItem.status}`,
+        summary: `Action already ${actionItem.status}`
+      }
+    };
+  }
+  try {
+    const result = await executeAction(actionItem, adapter);
+    if (result.success) {
+      actionItem.status = "addressed";
+      queue.addressed_count += 1;
+      await writeActionQueueDocument(adapter, queue.company_id, queue);
+      return { queue, result };
+    } else {
+      const revertAction = {
+        id: `${actionId}:revert`,
+        cause: actionItem.cause,
+        priority: 1,
+        // High priority: undo is urgent
+        title: `[REVERT] ${actionItem.title}`,
+        why_blocking: `Undo failed action: ${result.error || "unknown error"}`,
+        unblocks_count: 0,
+        target: actionItem.target,
+        recommended_action: {
+          type: "surface-amendment-needed",
+          // Placeholder; can be "undo-writes" if needed
+          params: {
+            original_action_id: actionId,
+            error: result.error
+          }
+        },
+        status: "pending",
+        dismissal_reason: "Created as revert for failed action"
+      };
+      if (!queue.items_by_cause[actionItem.cause]) {
+        queue.items_by_cause[actionItem.cause] = [];
+      }
+      queue.items_by_cause[actionItem.cause].push(revertAction);
+      queue.total_items += 1;
+      actionItem.status = "dismissed";
+      await writeActionQueueDocument(adapter, queue.company_id, queue);
+      return { queue, result };
+    }
+  } catch (error) {
+    const revertAction = {
+      id: `${actionId}:revert`,
+      cause: actionItem.cause,
+      priority: 1,
+      title: `[REVERT] ${actionItem.title}`,
+      why_blocking: `Undo failed action: ${String(error)}`,
+      unblocks_count: 0,
+      target: actionItem.target,
+      recommended_action: {
+        type: "surface-amendment-needed",
+        params: {
+          original_action_id: actionId,
+          error: String(error)
+        }
+      },
+      status: "pending",
+      dismissal_reason: "Created as revert for thrown error"
+    };
+    if (!queue.items_by_cause[actionItem.cause]) {
+      queue.items_by_cause[actionItem.cause] = [];
+    }
+    queue.items_by_cause[actionItem.cause].push(revertAction);
+    queue.total_items += 1;
+    actionItem.status = "dismissed";
+    await writeActionQueueDocument(adapter, queue.company_id, queue);
+    return {
+      queue,
+      result: {
+        success: false,
+        error: String(error),
+        summary: "Action execution threw error"
+      }
+    };
+  }
+}
+
+// src/reposition/shift-classify.ts
+function classifyShift(description, _currentVision) {
+  if (!description || description.trim().length === 0) {
+    return {
+      affectedSections: [],
+      confidence: 0,
+      rationale: "No shift intent provided"
+    };
+  }
+  const normalized = description.toLowerCase();
+  const affectedSections = /* @__PURE__ */ new Set();
+  const detectedKeywords = [];
+  const keywordGroups = {
+    // Rebrand shift: focus on voice, visual identity, positioning
+    rebrand: ["voice", "product_direction", "target_customer"],
+    "brand-refresh": ["voice", "product_direction"],
+    "reposition-brand": ["voice", "product_direction", "target_customer"],
+    "visual-identity": ["voice"],
+    "brand-voice": ["voice"],
+    "tone-shift": ["voice"],
+    // Pivot shift: change target customer, mission, or principles
+    pivot: ["target_customer", "mission", "principles"],
+    "narrow-focus": ["target_customer", "mission"],
+    "expand-target": ["target_customer", "revenue_model", "success_criteria"],
+    "change-customer": ["target_customer", "mission", "revenue_model"],
+    "customer-shift": ["target_customer", "mission"],
+    "market-shift": ["target_customer", "revenue_model"],
+    // Scale shift: increase revenue, growth strategy, success criteria
+    scale: ["growth_strategy", "revenue_model", "success_criteria"],
+    "scale-up": ["growth_strategy", "revenue_model"],
+    "grow-revenue": ["revenue_model", "success_criteria"],
+    "growth-acceleration": ["growth_strategy", "success_criteria"],
+    "expand-globally": ["growth_strategy", "target_customer"],
+    // Tighten shift: strengthen governance, principles
+    tighten: ["principles", "voice"],
+    "strengthen-governance": ["principles", "mandate", "trust_governance"],
+    "governance-tighten": ["principles", "mandate"],
+    "risk-mitigation": ["principles"],
+    "compliance-focus": ["principles", "mandate", "trust_governance"],
+    // Compliance and regulatory
+    compliance: ["principles", "mandate", "trust_governance"],
+    regulatory: ["principles", "mandate"],
+    "government-work": ["target_customer", "revenue_model"],
+    enterprise: ["target_customer", "revenue_model", "success_criteria"],
+    "b2b-focus": ["target_customer", "revenue_model", "sales_model"],
+    "b2c-pivot": ["target_customer", "revenue_model", "success_criteria"],
+    // Business model changes
+    "subscription-model": ["revenue_model", "success_criteria"],
+    "freemium-model": ["revenue_model", "growth_strategy"],
+    "licensing-model": ["revenue_model", "sales_model"],
+    marketplace: ["target_customer", "revenue_model", "sales_model"],
+    // Governance and structure
+    governance: ["principles", "mandate", "trust_governance"],
+    "approval-process": ["trust_governance"],
+    "decision-making": ["principles", "mandate"],
+    transparency: ["principles", "voice"],
+    // Industry/vertical shifts
+    vertical: ["target_customer", "mission"],
+    "vertical-focus": ["target_customer", "mission"],
+    "industry-focus": ["target_customer", "revenue_model"],
+    niche: ["target_customer", "mission"],
+    // Messaging and positioning
+    messaging: ["voice", "product_direction"],
+    positioning: ["voice", "product_direction", "target_customer"],
+    "value-prop": ["product_direction", "target_customer"],
+    differentiation: ["voice", "product_direction"],
+    // Operations and culture
+    culture: ["principles", "voice"],
+    "operating-philosophy": ["principles", "mandate"],
+    values: ["principles", "voice"],
+    ethics: ["principles"],
+    sustainability: ["principles", "mission"],
+    // Aggressive or defensive
+    acquisition: ["growth_strategy", "revenue_model"],
+    consolidation: ["growth_strategy"],
+    divestiture: ["growth_strategy", "mission"],
+    shutdown: ["mission"],
+    exit: ["success_criteria", "mission"]
+  };
+  for (const [keyword, sections] of Object.entries(keywordGroups)) {
+    if (normalized.includes(keyword)) {
+      detectedKeywords.push(keyword);
+      sections.forEach((s) => affectedSections.add(s));
+    }
+  }
+  let confidence;
+  const detectedCount = detectedKeywords.length;
+  if (detectedCount === 0) {
+    confidence = 0;
+  } else if (detectedCount === 1) {
+    confidence = 0.4;
+  } else if (detectedCount === 2) {
+    confidence = 0.6;
+  } else if (detectedCount === 3) {
+    confidence = 0.75;
+  } else if (detectedCount >= 4) {
+    confidence = 0.85;
+  } else {
+    confidence = 0;
+  }
+  confidence = Math.round(confidence * 100) / 100;
+  const affectedArray = Array.from(affectedSections).sort();
+  return {
+    affectedSections: affectedArray,
+    confidence,
+    rationale: detectedKeywords.length > 0 ? `Detected keywords: ${detectedKeywords.join(", ")} \u2192 ${affectedArray.join(", ")}` : "No recognized shift keywords found"
+  };
+}
+
+// src/found/derive.ts
+function derivePrinciples(answers) {
+  const principles = [];
+  const voice = answers["brand-voice"] || "";
+  if (voice.trim()) {
+    principles.push(voice.trim());
+  }
+  const culture = answers["company-culture"] || "";
+  if (culture.trim()) {
+    principles.push(culture.trim());
+  }
+  const redLines = answers["red-lines"] || "";
+  if (redLines.trim()) {
+    principles.push(`Never: ${redLines}`);
+  }
+  const corePrinciples = answers["core-principles"] || "";
+  if (corePrinciples.trim()) {
+    const lines = corePrinciples.split(/[\n,;]/).map((p) => p.trim());
+    principles.push(...lines.filter((p) => p.length > 0));
+  }
+  const seen = /* @__PURE__ */ new Set();
+  const unique = [];
+  for (const p of principles) {
+    if (!seen.has(p)) {
+      seen.add(p);
+      unique.push(p);
+    }
+  }
+  const final = unique.slice(0, 5);
+  if (final.length === 0) {
+    return "";
+  }
+  return final.map((p) => `- ${p}`).join("\n");
+}
+function derive12MonthGoal(answers) {
+  const revenueTarget = answers["target-revenue-12mo"] || "";
+  const customerCountTarget = answers["customer-count-target"] || "";
+  const parts = [];
+  if (revenueTarget.trim()) {
+    parts.push(`reach ${revenueTarget}`);
+  }
+  if (customerCountTarget.trim()) {
+    if (parts.length > 0) {
+      parts[parts.length - 1] += ` with ${customerCountTarget}`;
+    } else {
+      parts.push(`acquire ${customerCountTarget}`);
+    }
+  }
+  if (parts.length === 0) {
+    return "";
+  }
+  const goal = parts.join(" and ");
+  const nextYear = (/* @__PURE__ */ new Date()).getFullYear() + 1;
+  return `${goal.charAt(0).toUpperCase() + goal.slice(1)} over the next 12 months, by end of ${nextYear}.`;
+}
+function deriveSuccessCriteria(answers) {
+  const longTermVision = answers["long-term-vision"] || "";
+  if (!longTermVision.trim()) {
+    return "";
+  }
+  const criteria = [];
+  const revenueTarget = answers["target-revenue-12mo"] || "";
+  const customerCount = answers["customer-count-target"] || "";
+  const northStar = answers["north-star-metric"] || "";
+  const successStory = answers["success-story"] || "";
+  if (revenueTarget.trim()) {
+    const rev = revenueTarget.trim();
+    criteria.push(`Reach ${rev} in annual recurring revenue`);
+  }
+  if (customerCount.trim()) {
+    criteria.push(`Serve ${customerCount.trim()} customers`);
+  }
+  if (longTermVision.includes("leading") || longTermVision.includes("leader") || longTermVision.includes("#1") || longTermVision.includes("top")) {
+    criteria.push("Establish market leadership position");
+  }
+  if (northStar.trim()) {
+    criteria.push(`Reach ${northStar.toLowerCase()} targets`);
+  }
+  if (successStory.trim()) {
+    criteria.push(successStory.trim());
+  }
+  criteria.push("Build a healthy, sustainable company culture");
+  if (criteria.length === 0) {
+    return "";
+  }
+  const seen = /* @__PURE__ */ new Set();
+  const unique = [];
+  for (const c of criteria) {
+    if (!seen.has(c)) {
+      seen.add(c);
+      unique.push(c);
+    }
+  }
+  return unique.slice(0, 6).map((c) => `- ${c}`).join("\n");
+}
+function deriveAmendmentProtocol(answers) {
+  return `## How This Gets Updated
+
+**Default rule: NO.**
+
+Changes to this document require:
+1. Dated changelog entry (month/year minimum)
+2. Explicit founder approval
+3. CEO may request a full re-interview if material changes proposed
+
+Amend only when there is genuine strategic shift \u2014 not for incremental progress updates.`;
+}
+function deriveOperatingPhilosophy(answers) {
+  const ceoDecisions = answers["ceo-mandate-decisions"] || "";
+  const approvalDecisions = answers["approval-decisions"] || "";
+  const decisionStyle = answers["decision-making-style"] || "";
+  const operatingStyle = answers["operating-philosophy"] || "";
+  const parts = [];
+  if (ceoDecisions.trim()) {
+    const scope = ceoDecisions.split("\n")[0].toLowerCase();
+    parts.push(`The CEO has full autonomy over ${scope}.`);
+  }
+  if (approvalDecisions.trim()) {
+    const approvals = approvalDecisions.split("\n")[0].toLowerCase();
+    parts.push(`Decisions requiring founder approval include ${approvals}.`);
+  }
+  if (decisionStyle.trim()) {
+    parts.push(`We make decisions ${decisionStyle.toLowerCase()}.`);
+  } else if (operatingStyle.trim()) {
+    parts.push(`${operatingStyle}`);
+  }
+  if (parts.length === 0) {
+    return "";
+  }
+  return parts.join(" ");
+}
+function deriveMandateStatement(answers) {
+  const mission = answers["mission"] || "";
+  const targetMarket = answers["target-market"] || "";
+  if (!mission.trim() || !targetMarket.trim()) {
+    return "";
+  }
+  const missionTrimmed = mission.trim();
+  const marketTrimmed = targetMarket.trim();
+  const missionLower = missionTrimmed.toLowerCase();
+  let preposition = "for";
+  if (missionLower.startsWith("be") || missionLower.startsWith("become")) {
+    preposition = "as the";
+  } else if (missionLower.includes("serve") || missionLower.includes("provide")) {
+    preposition = "to";
+  }
+  return `${missionTrimmed} ${preposition} ${marketTrimmed}.`;
+}
+function deriveCompetitiveAdvantage(answers) {
+  const moat = answers["technology-moat"] || "";
+  const advantage = answers["competitive-advantage"] || "";
+  if (!moat.trim()) {
+    return "";
+  }
+  if (advantage.trim()) {
+    const combined = `${advantage.trim()}, powered by ${moat.trim()}`;
+    if (!combined.endsWith(".") && !combined.endsWith("!") && !combined.endsWith("?")) {
+      return `${combined}.`;
+    }
+    return combined;
+  }
+  const moatTrimmed = moat.trim();
+  if (!moatTrimmed.endsWith(".") && !moatTrimmed.endsWith("!") && !moatTrimmed.endsWith("?")) {
+    return `${moatTrimmed}.`;
+  }
+  return moatTrimmed;
+}
+function deriveMarketOpportunity(answers) {
+  const marketSize = answers["market-size"] || "";
+  if (!marketSize.trim()) {
+    return "";
+  }
+  const size = marketSize.trim();
+  if (size.toUpperCase().includes("TAM")) {
+    return size;
+  }
+  return `TAM: ${size}`;
+}
+
+// raw-md:/Users/nicholasrhodes/Development/Paperclip/paperclip-plugin-compass/src/content/vision-template.md
+var vision_template_default = "# {{company_name}} \u2014 VISION\n\n## Mission\n{{mission}}\n\n## 12-Month Goal\n{{goal_12mo}}\n\n## 3-Year Vision\n{{vision_3yr}}\n\n## Target Customer\n{{target_customer}}\n\n## Voice\n{{voice}}\n\n## Issue Structure\n{{issue_structure}}\n\n## Locality\n{{locality}}\n\n## Revenue Model\n{{revenue_model}}\n\n## Launch Plan\n{{launch_plan}}\n\n## Trust Governance\n{{trust_governance}}\n\n## Growth Strategy\n{{growth_strategy}}\n\n## Sales Model\n{{sales_model}}\n\n## Product Direction\n{{product_direction}}\n\n## Org Structure\n{{org_structure}}\n\n## Operating Philosophy\n{{operating_philosophy}}\n\n## CEO Mandate\n{{mandate}}\n\n## Principles\n{{principles}}\n\n## Amendment Protocol\n{{amendment_protocol}}\n\n## Success Criteria\n{{success_criteria}}\n";
+
+// src/found/template-fill.ts
+function fillVisionTemplate(answers) {
+  let body = vision_template_default;
+  const principles = derivePrinciples(answers);
+  const goal12mo = derive12MonthGoal(answers);
+  const successCriteria = deriveSuccessCriteria(answers);
+  const amendmentProtocol = deriveAmendmentProtocol();
+  const operatingPhilosophy = deriveOperatingPhilosophy(answers);
+  const mandateStatement = deriveMandateStatement(answers);
+  const competitiveAdvantage = deriveCompetitiveAdvantage(answers);
+  const marketOpportunity = deriveMarketOpportunity(answers);
+  const slots = {
+    // From big-picture section
+    mission: answers["mission"] || "",
+    vision_3yr: answers["long-term-vision"] || "",
+    // From revenue-and-customers section
+    target_customer: answers["target-customer"] || "",
+    revenue_model: answers["revenue-model"] || "",
+    // From growth-and-marketing section
+    growth_strategy: (answers["customer-acquisition"] ? `${answers["customer-acquisition"]}
+
+Channels: ${answers["growth-channels"]}` : "") || "",
+    sales_model: (answers["competition"] ? `Main competitors: ${answers["competition"]}
+
+Differentiation: ${answers["differentiation"]}` : answers["differentiation"]) || "",
+    // From product-direction section
+    product_direction: (answers["product-description"] ? `${answers["product-description"]}
+
+12-month priorities: ${answers["product-roadmap-12mo"]}` : "") || "",
+    // From ceo-autonomy section
+    mandate: mandateStatement || answers["ceo-mandate-decisions"] || "",
+    // From vision-and-identity section
+    voice: answers["brand-voice"] || answers["company-voice"] || "",
+    // Derived slots
+    goal_12mo: goal12mo,
+    principles,
+    success_criteria: successCriteria,
+    operating_philosophy: operatingPhilosophy,
+    amendment_protocol: amendmentProtocol,
+    competitive_advantage: competitiveAdvantage,
+    market_opportunity: marketOpportunity,
+    // Optional/placeholder slots (may not be filled)
+    company_name: answers["company-name"] || "[Company Name]",
+    issue_structure: answers["issue-structure"] || "",
+    locality: answers["locality"] || "",
+    launch_plan: answers["launch-plan"] || "",
+    trust_governance: answers["trust-governance"] || "",
+    org_structure: answers["org-structure"] || ""
+  };
+  Object.entries(slots).forEach(([key, value]) => {
+    const hyphenKey = key.replace(/_/g, "-");
+    body = body.replace(new RegExp(`{{${key}}}`, "g"), value || "");
+    if (hyphenKey !== key) {
+      body = body.replace(new RegExp(`{{${hyphenKey}}}`, "g"), value || "");
+    }
+  });
+  const emptyMatches = body.match(/{{(\w+)}}/g) || [];
+  const slotsEmpty = emptyMatches.map((m) => m.replace(/[{}]/g, ""));
+  const slotsUsed = Object.keys(slots);
+  return {
+    body,
+    slotsUsed,
+    slotsEmpty
+  };
+}
+
+// src/reposition/amend.ts
+async function generateAmendments(currentVision, interviewAnswers, affectedSections) {
+  if (!currentVision) {
+    throw new Error("No current VISION found");
+  }
+  if (!interviewAnswers || Object.keys(interviewAnswers).length === 0) {
+    throw new Error("No interview answers provided");
+  }
+  if (!affectedSections || affectedSections.length === 0) {
+    return [];
+  }
+  const principles = derivePrinciples(interviewAnswers);
+  const goal12mo = derive12MonthGoal(interviewAnswers);
+  const successCriteria = deriveSuccessCriteria(interviewAnswers);
+  const amendmentProtocol = deriveAmendmentProtocol();
+  const operatingPhilosophy = deriveOperatingPhilosophy(interviewAnswers);
+  const mandateStatement = deriveMandateStatement(interviewAnswers);
+  const competitiveAdvantage = deriveCompetitiveAdvantage(interviewAnswers);
+  const marketOpportunity = deriveMarketOpportunity(interviewAnswers);
+  const filledVision = fillVisionTemplate(interviewAnswers);
+  const qualityCheck = checkVisionQuality(filledVision);
+  if (!qualityCheck.isValid) {
+    const missingSlots = qualityCheck.missingRequiredSlots || [];
+    throw new Error(
+      `Quality check failed: missing required slots: ${missingSlots.join(", ")}`
+    );
+  }
+  const parsedNewVision = await parseVision(filledVision.body);
+  const amendments = [];
+  for (const sectionId of affectedSections) {
+    const currentContent = currentVision[sectionId] || "";
+    const newContent = parsedNewVision[sectionId] || "";
+    if (currentContent !== newContent) {
+      amendments.push({
+        section: sectionId,
+        currentContent,
+        proposedContent: newContent,
+        reason: `Repositioning: updated ${sectionId} per founder shift intent`
+      });
+    }
+  }
+  return amendments;
+}
+
+// src/assess/cascade.ts
+function determineAffectedRoles(section) {
+  const sectionRoleMap = {
+    // Voice/principles → customer-facing agents
+    voice: ["customer-success", "sales", "marketing", "product"],
+    principles: ["customer-success", "sales", "marketing", "product"],
+    // Revenue/launch → finance + operations
+    revenue_model: ["cfo", "operations"],
+    launch_plan: ["cfo", "operations"],
+    // Product direction → engineering
+    product_direction: ["cto", "vp-eng"],
+    // Org/philosophy → all agents
+    org_structure: [],
+    // Empty = all agents (fallback)
+    operating_philosophy: []
+    // Default to all agents for other sections
+  };
+  const roles = sectionRoleMap[section];
+  return roles !== void 0 ? roles : [];
+}
+function isEligibleForCascade(agent) {
+  const createdAt = new Date(agent.createdAt);
+  const now = /* @__PURE__ */ new Date();
+  const daysOld = (now.getTime() - createdAt.getTime()) / (1e3 * 60 * 60 * 24);
+  const isNewlyProvisioned = daysOld < 7 && !agent.lastHeartbeatAt;
+  return !isNewlyProvisioned;
+}
+function detectCustomOverrides(agent) {
+  const config = agent.adapter_config;
+  if (!config || !config.instructions) {
+    return { hasOverrides: false };
+  }
+  const instructions = config.instructions;
+  const isCustom = instructions.length > 0 && !instructions.includes("Provisional instructions") && !instructions.includes("See VISION.md");
+  if (isCustom) {
+    return {
+      hasOverrides: true,
+      snippet: instructions.substring(0, 100)
+    };
+  }
+  return { hasOverrides: false };
+}
+function planCascade(vision, acceptedAmendments, agents) {
+  const affectedAgentIds = /* @__PURE__ */ new Set();
+  const allAffectedRoles = /* @__PURE__ */ new Set();
+  for (const amendment of acceptedAmendments) {
+    const rolesForSection = determineAffectedRoles(amendment.section);
+    if (rolesForSection.length === 0) {
+      agents.forEach((a) => affectedAgentIds.add(a.id));
+    } else {
+      rolesForSection.forEach((role) => allAffectedRoles.add(role));
+    }
+  }
+  for (const agent of agents) {
+    const agentRole = agent.role || "";
+    if (allAffectedRoles.has(agentRole)) {
+      affectedAgentIds.add(agent.id);
+    }
+  }
+  const screened = agents.filter(
+    (a) => affectedAgentIds.has(a.id) && isEligibleForCascade(a)
+  );
+  const customOverrideWarnings = [];
+  const issuesByAgent = {};
+  for (const agent of screened) {
+    const override = detectCustomOverrides(agent);
+    if (override.hasOverrides) {
+      customOverrideWarnings.push({
+        agentId: agent.id,
+        agentName: agent.name || agent.id,
+        agentRole: agent.role || "unknown",
+        hasCustomOverrides: true,
+        override_snippet: override.snippet,
+        reason: "Agent has custom instruction overrides. Cascade will overlay amendments."
+      });
+    }
+    const amendmentSummary = acceptedAmendments.map((a) => `- ${a.section}: ${a.reason}`).join("\n");
+    issuesByAgent[agent.id] = {
+      title: `[Cascade from Assess] Review company vision amendments`,
+      description: `Company VISION.md has been amended based on recent drift audit.
+
+## Amendments Applied
+${amendmentSummary}
+
+## What This Means for You
+Your instructions and work priorities may be affected by these changes. Review VISION.md and adjust your approach as needed.
+
+## Next Steps
+1. Read VISION.md
+2. Update your instructions/priorities accordingly
+3. Respond with confirmation in comments
+
+Assessment run ID: ${acceptedAmendments[0]?.runId || "unknown"}`,
+      assigneeAgentId: agent.id
+    };
+  }
+  return {
+    affectedAgents: screened,
+    customOverrideWarnings,
+    issuesByAgent,
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// src/reposition/cascade.ts
+async function planRepositionCascade(vision, amendments, agents) {
+  if (!vision) {
+    return {
+      affectedAgents: [],
+      customOverrideWarnings: [],
+      issuesByAgent: {},
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  if (!agents || agents.length === 0) {
+    return {
+      affectedAgents: [],
+      customOverrideWarnings: [],
+      issuesByAgent: {},
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  const assessAmendments = amendments.map((a) => ({
+    section: a.section,
+    currentContent: a.currentContent,
+    proposedContent: a.proposedContent,
+    reason: a.reason,
+    evidence: [],
+    // Reposition has no evidence items (deterministic shift, not drift audit)
+    confidence: 1,
+    // Reposition founder explicitly approved, so high confidence
+    runId: "reposition-run"
+    // Placeholder; not used in cascade planning
+  }));
+  return planCascade(vision, assessAmendments, agents);
+}
+async function executeRepositionCascade(ctx, companyId, plan, repositionRunId) {
+  if (!plan || plan.affectedAgents.length === 0) {
+    return {
+      success: true,
+      createdIssueIds: [],
+      wakenAgentIds: []
+    };
+  }
+  const adapter = new PaperclipAdapter(ctx);
+  const result = {
+    success: false,
+    createdIssueIds: [],
+    wakenAgentIds: [],
+    errors: []
+  };
+  for (const agent of plan.affectedAgents) {
+    const issuePlan = plan.issuesByAgent[agent.id];
+    if (!issuePlan) {
+      result.errors?.push(`No issue plan for agent ${agent.id}`);
+      return result;
+    }
+    try {
+      const issueId = await adapter.createIssue(
+        companyId,
+        issuePlan.title,
+        issuePlan.description,
+        agent.id
+      );
+      result.createdIssueIds.push(issueId);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      result.errors?.push(`Failed to create issue for agent ${agent.id}: ${msg}`);
+      return result;
+    }
+    try {
+      const idempotencyKey = generateRepositionIdempotencyKey(
+        companyId,
+        repositionRunId,
+        agent.id
+      );
+      await adapter.queueWakeup(
+        companyId,
+        agent.id,
+        idempotencyKey,
+        `VISION.md repositioned. Review cascade issue for details.`
+      );
+      result.wakenAgentIds.push(agent.id);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      result.errors?.push(`Failed to queue wakeup for agent ${agent.id}: ${msg}`);
+      return result;
+    }
+  }
+  result.success = true;
+  result.errors = void 0;
+  return result;
+}
+
+// src/reposition/apply.ts
+async function applyRepositionAmendments(ctx, companyId, company, amendments, currentVision, proposedVision, approvalRouting = "founder", repositionRunId, adapterOverride) {
+  const adapter = adapterOverride || new PaperclipAdapter(ctx);
+  const applyRunId = generateApplyRunId();
+  const result = { success: false };
+  if (!amendments || amendments.length === 0) {
+    result.blockingErrors = ["No amendments to apply"];
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+  let serializedVision;
+  try {
+    serializedVision = serializeVision(proposedVision);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    result.blockingErrors = [`Failed to serialize VISION.md: ${msg}`];
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+  if (approvalRouting === "founder+ceo") {
+    return applyWithApprovalGate(
+      adapter,
+      ctx,
+      companyId,
+      amendments,
+      proposedVision,
+      applyRunId,
+      repositionRunId
+    );
+  }
+  let visionDocId;
+  try {
+    visionDocId = await adapter.writeDocument(companyId, "VISION.md", serializedVision);
+    result.visionDocId = visionDocId;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    result.blockingErrors = [`Failed to write VISION.md: ${msg}`];
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+  let cascadeResult;
+  try {
+    const cascade = await planRepositionCascade(proposedVision, amendments, company.agents);
+    cascadeResult = await executeRepositionCascade(ctx, companyId, cascade, repositionRunId);
+    if (!cascadeResult.success) {
+      result.errors = cascadeResult.errors;
+      await performRollback2(adapter, companyId, result);
+      result.auditLog = adapter.getAuditLog();
+      return result;
+    }
+    result.cascadeIssueIds = cascadeResult.createdIssueIds;
+    result.cascadeWakeupCount = cascadeResult.wakenAgentIds.length;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    result.errors = [`Cascade failed: ${msg}`];
+    await performRollback2(adapter, companyId, result);
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+  result.success = true;
+  result.summary = `Updated VISION.md with ${amendments.length} amendment(s), cascaded to ${result.cascadeWakeupCount || 0} agent(s)`;
+  result.auditLog = adapter.getAuditLog();
+  return result;
+}
+async function applyWithApprovalGate(adapter, ctx, companyId, amendments, proposedVision, applyRunId, repositionRunId) {
+  const result = {
+    success: true,
+    waitingForApproval: true
+  };
+  try {
+    const serializedVision = serializeVision(proposedVision);
+    const approvalId = `compass:approval:reposition:${companyId}:${repositionRunId}`;
+    await ctx.state.set(
+      {
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "reposition-approval",
+        stateKey: repositionRunId
+      },
+      {
+        approvalId,
+        status: "pending",
+        proposedVision: serializedVision,
+        amendments,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString()
+      }
+    );
+    result.approvalId = approvalId;
+    result.summary = `Approval request queued for CEO review. Waiting for decision.`;
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    result.success = false;
+    result.blockingErrors = [`Failed to queue approval: ${msg}`];
+    result.auditLog = adapter.getAuditLog();
+    return result;
+  }
+}
+async function performRollback2(adapter, companyId, result) {
+  const rollbackErrors = [];
+  if (result.cascadeIssueIds && result.cascadeIssueIds.length > 0) {
+    for (const issueId of result.cascadeIssueIds) {
+      try {
+        await adapter.deleteIssue(companyId, issueId);
+      } catch (rollbackErr) {
+        const msg = rollbackErr instanceof Error ? rollbackErr.message : String(rollbackErr);
+        rollbackErrors.push(`Failed to delete cascade issue ${issueId}: ${msg}`);
+      }
+    }
+  }
+  if (result.visionDocId) {
+    try {
+      await adapter.deleteDocument(companyId, result.visionDocId);
+    } catch (rollbackErr) {
+      const msg = rollbackErr instanceof Error ? rollbackErr.message : String(rollbackErr);
+      rollbackErrors.push(`Failed to delete VISION doc ${result.visionDocId}: ${msg}`);
+    }
+  }
+  result.rollbackApplied = rollbackErrors.length === 0;
+  result.rollbackErrors = rollbackErrors;
+  if (rollbackErrors.length > 0) {
+    const cleanupSteps = [
+      "Rollback encountered errors. Manual cleanup required:",
+      ...rollbackErrors,
+      "",
+      "Steps to clean up:",
+      "1. Delete cascade issues: " + (result.cascadeIssueIds || []).join(", "),
+      "2. Delete VISION doc: " + result.visionDocId
+    ];
+    result.errors = result.errors || [];
+    result.errors.push(...cleanupSteps);
+  }
+}
+
 // src/worker.ts
+import { randomUUID as randomUUID3 } from "node:crypto";
 var plugin = definePlugin({
   async setup(ctx) {
     try {
@@ -9518,6 +11082,496 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
+  ctx.data.register("classifyStall", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const inventory = await loadInventory(ctx, companyId);
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found. Revive mode requires a founded company."
+        };
+      }
+      let parsedVision;
+      try {
+        parsedVision = parseVision(visionContent);
+      } catch (parseError) {
+        return {
+          success: false,
+          error: `Failed to parse VISION.md: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+        };
+      }
+      const activity = await buildActivitySnapshot(adapter, companyId, 30);
+      let driftReport;
+      try {
+        driftReport = detectDrift(parsedVision, activity, 30);
+      } catch {
+      }
+      const classification = classifyStall(inventory, parsedVision, activity, driftReport);
+      const actionQueue = generateActionQueueFromClassification(classification);
+      await writeActionQueueDocument(adapter, companyId, actionQueue);
+      await ctx.state.set(
+        {
+          scopeKind: "company",
+          scopeId: companyId,
+          namespace: "compass:revive:run",
+          stateKey: actionQueue.run_id
+        },
+        actionQueue
+      );
+      return {
+        success: true,
+        queue: actionQueue,
+        classification
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Revive diagnosis failed: ${message}`
+      };
+    }
+  });
+  ctx.actions.register("applyReviveAction", async (params) => {
+    const { companyId, actionId, queueRunId } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const queue = await ctx.state.get({
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: queueRunId
+      });
+      if (!queue) {
+        return {
+          success: false,
+          error: "Action queue not found. Please run Revive diagnosis first."
+        };
+      }
+      const { queue: updatedQueue, result } = await applyAction(
+        queue,
+        actionId,
+        adapter
+      );
+      await ctx.state.set(
+        {
+          scopeKind: "company",
+          scopeId: companyId,
+          namespace: "compass:revive:run",
+          stateKey: queueRunId
+        },
+        updatedQueue
+      );
+      return {
+        success: result.success,
+        summary: result.summary,
+        queue: updatedQueue,
+        error: result.error
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to apply action: ${message}`
+      };
+    }
+  });
+  ctx.data.register("checkReviveActionStatus", async (params) => {
+    const { companyId, queueRunId } = params;
+    try {
+      let queue = await ctx.state.get({
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: queueRunId
+      });
+      if (!queue) {
+        return {
+          found: false,
+          error: "Queue not found"
+        };
+      }
+      return {
+        found: true,
+        totalItems: queue.total_items,
+        addressedCount: queue.addressed_count,
+        pendingCount: queue.total_items - queue.addressed_count
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        found: false,
+        error: `Failed to check action status: ${message}`
+      };
+    }
+  });
+  ctx.actions.register("loadReviveRunState", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const state = await ctx.state.get({
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "compass:revive:run",
+        stateKey: "current"
+      });
+      if (state && typeof state === "object") {
+        return state;
+      }
+      return null;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load revive run state:", message);
+      return null;
+    }
+  });
+  ctx.actions.register("updateReviveRunState", async (params) => {
+    const stateUpdates = params;
+    try {
+      for (const [key, value] of Object.entries(stateUpdates)) {
+        if (key.startsWith("compass:revive:run:")) {
+          const companyId = key.replace("compass:revive:run:", "");
+          if (value === void 0 || value === null) {
+            await ctx.state.delete({
+              scopeKind: "company",
+              scopeId: companyId,
+              namespace: "compass:revive:run",
+              stateKey: "current"
+            });
+          } else {
+            await ctx.state.set(
+              {
+                scopeKind: "company",
+                scopeId: companyId,
+                namespace: "compass:revive:run",
+                stateKey: "current"
+              },
+              value
+            );
+          }
+        }
+      }
+      return { success: true };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to update revive run state:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.data.register("classifyShift", async (params) => {
+    const { companyId, description } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "Reposition requires VISION.md. Run Found mode first."
+        };
+      }
+      let parsedVision;
+      try {
+        parsedVision = parseVision(visionContent);
+      } catch (parseError) {
+        return {
+          success: false,
+          error: `Failed to parse VISION.md: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+        };
+      }
+      const shiftScope = classifyShift(description, parsedVision);
+      return {
+        success: true,
+        shiftScope
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Shift classification failed: ${message}`
+      };
+    }
+  });
+  ctx.actions.register("generateAmendments", async (params) => {
+    const { companyId, interviewAnswers, affectedSections } = params;
+    try {
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found"
+        };
+      }
+      const parsedVision = parseVision(visionContent);
+      const amendments = await generateAmendments(
+        parsedVision,
+        interviewAnswers,
+        affectedSections
+      );
+      return {
+        success: true,
+        amendments
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Amendment generation failed: ${message}`
+      };
+    }
+  });
+  ctx.data.register("planRepositionCascade", async (params) => {
+    const { companyId, amendments } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found"
+        };
+      }
+      const parsedVision = parseVision(visionContent);
+      const agents = await ctx.agents.list({ companyId });
+      const cascadePlan = await planRepositionCascade(
+        parsedVision,
+        amendments,
+        agents
+      );
+      return {
+        success: true,
+        cascadePlan
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Cascade planning failed: ${message}`
+      };
+    }
+  });
+  ctx.actions.register("applyRepositionAmendments", async (params) => {
+    const {
+      companyId,
+      amendments,
+      currentVision,
+      proposedVision,
+      approvalRouting,
+      repositionRunId
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const agents = await ctx.agents.list({ companyId });
+      const result = await applyRepositionAmendments(
+        ctx,
+        companyId,
+        { agents },
+        amendments,
+        currentVision,
+        proposedVision,
+        approvalRouting,
+        repositionRunId,
+        adapter
+      );
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Amendment application failed: ${message}`
+      };
+    }
+  });
+  ctx.data.register("loadRepositionRunState", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const state = await ctx.state.get({
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "compass:reposition:run",
+        stateKey: "current"
+      });
+      return state ?? null;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load reposition run state:", message);
+      return null;
+    }
+  });
+  ctx.actions.register("updateRepositionRunState", async (params) => {
+    const { companyId, state } = params;
+    try {
+      if (state === null) {
+        await ctx.state.delete({
+          scopeKind: "company",
+          scopeId: companyId,
+          namespace: "compass:reposition:run",
+          stateKey: "current"
+        });
+      } else {
+        await ctx.state.set(
+          {
+            scopeKind: "company",
+            scopeId: companyId,
+            namespace: "compass:reposition:run",
+            stateKey: "current"
+          },
+          state
+        );
+      }
+      return { success: true };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to update reposition run state:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+}
+function generateActionQueueFromClassification(classification) {
+  const runId = randomUUID3();
+  const itemsByCause = {};
+  let totalItems = 0;
+  for (const cause of classification.causes) {
+    if (!itemsByCause[cause]) {
+      itemsByCause[cause] = [];
+    }
+    const actionItem = {
+      id: `action-${cause}-${itemsByCause[cause].length + 1}`,
+      cause,
+      priority: classification.confidence[cause] || 0.5,
+      title: getTitleForCause(cause),
+      why_blocking: getExplanationForCause(cause),
+      unblocks_count: 1,
+      target: {
+        type: "agent",
+        id: "target-agent",
+        context: `Unblocking ${cause} stall`
+      },
+      recommended_action: {
+        type: getActionTypeForCause(cause),
+        params: { cause }
+      },
+      status: "pending"
+    };
+    itemsByCause[cause].push(actionItem);
+    totalItems += 1;
+  }
+  return {
+    run_id: runId,
+    company_id: classification.companyId,
+    created_at: classification.timestamp,
+    causes: classification.causes,
+    items_by_cause: itemsByCause,
+    total_items: totalItems,
+    addressed_count: 0,
+    confidence: classification.confidence
+  };
+}
+function getTitleForCause(cause) {
+  switch (cause) {
+    case "single-blocker":
+      return "Resolve blocking issue";
+    case "strategic-drift":
+      return "Address strategic drift";
+    case "broken-integration":
+      return "Fix integration issue";
+    case "governance-loop":
+      return "Break approval loop";
+    case "dead-agent":
+      return "Restart inactive agent";
+    default:
+      return `Address ${cause}`;
+  }
+}
+function getExplanationForCause(cause) {
+  switch (cause) {
+    case "single-blocker":
+      return "A critical issue is blocking multiple downstream work items. Resolving this will unblock other work.";
+    case "strategic-drift":
+      return "Current activity has drifted from the VISION.md strategic direction. Amending the vision or refocusing work will restore alignment.";
+    case "broken-integration":
+      return "An external integration has failed and is preventing work from progressing. Fixing the integration will restore flow.";
+    case "governance-loop":
+      return "Issues are stuck in approval cycles. Breaking the loop will allow progress to resume.";
+    case "dead-agent":
+      return "An agent has not reported activity in 30+ days. Restarting the agent with fresh context will resume their work.";
+    default:
+      return `This stall cause is preventing progress.`;
+  }
+}
+function getActionTypeForCause(cause) {
+  switch (cause) {
+    case "single-blocker":
+      return "replace-blocker-issue";
+    case "strategic-drift":
+      return "surface-amendment-needed";
+    case "broken-integration":
+      return "nudge-agent-with-context-doc";
+    case "governance-loop":
+      return "mark-blocker-resolved";
+    case "dead-agent":
+      return "restart-agent";
+    default:
+      return "nudge-agent-with-context-doc";
+  }
 }
 var worker_default = plugin;
 runWorker(plugin, import.meta.url);

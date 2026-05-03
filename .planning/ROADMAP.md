@@ -7,10 +7,10 @@
 
 ## Phases
 
-- [ ] **Phase 1: Skeleton + Inventory + Mode Detection** - Plugin loads cleanly with diagnostic dashboard
-- [ ] **Phase 2: Found Mode** - New companies can be founded from vision-quest interview
-- [ ] **Phase 3: Assess Mode** - Active companies can audit drift via 30-day lookback
-- [ ] **Phase 4: Revive Mode** - Stalled companies can diagnose blockers and unlock
+- [x] **Phase 1: Skeleton + Inventory + Mode Detection** - Plugin loads cleanly with diagnostic dashboard
+- [x] **Phase 2: Found Mode** - New companies can be founded from vision-quest interview
+- [x] **Phase 3: Assess Mode** - Active companies can audit drift via 30-day lookback
+- [x] **Phase 4: Revive Mode** - Stalled companies can diagnose blockers and unlock
 - [ ] **Phase 5: Reposition Mode** - Healthy companies can execute strategic shift
 - [ ] **Phase 6: Engagement Memory + Scheduled Check-ins** - Plugin remembers findings and auto-triggers reviews
 
@@ -31,12 +31,12 @@
 4. Free-form chat input (e.g., "assess this company") routes to the correct mode via lightweight keyword classifier
 5. Plugin passes TypeScript strict mode, Vitest harness wired, README credits Aron Prins, CODEOWNERS + DECISIONS.md established, MIT licensed
 
-**Plans:** 3 plans in 2 waves
+**Plans:** 3 plans in 2 waves (all complete)
 
 Plan list:
-- [ ] 01-01-PLAN.md — Project bootstrap & SDK adapter (wave 1)
-- [ ] 01-02-PLAN.md — Core logic & inventory (wave 1)
-- [ ] 01-03-PLAN.md — UI dashboard & testing (wave 2)
+- [x] 01-01-PLAN.md — Project bootstrap & SDK adapter (wave 1)
+- [x] 01-02-PLAN.md — Core logic & inventory (wave 1)
+- [x] 01-03-PLAN.md — UI dashboard & testing (wave 2)
 
 ---
 
@@ -55,9 +55,11 @@ Plan list:
 4. Apply writes VISION.md to documents table via SDK, provisions agents per chosen preset, creates kickoff issues, queues wakeup_requests with idempotency keys — company starts heartbeating on next poll cycle
 5. Agent instruction writes route correctly based on `adapter_config.instructionsBundleMode` (managed UUID path vs external friendly path); no filesystem writes for managed agents
 
-**Plans:** TBD
+**Plans:** 2 plans in 1 wave (all complete)
 
-**UI hint**: yes
+Plan list:
+- [x] 02-01-PLAN.md — Interview content & service layer
+- [x] 02-02-PLAN.md — Apply orchestrator & worker integration
 
 ---
 
@@ -65,7 +67,7 @@ Plan list:
 
 **Goal:** Active companies can run drift audit comparing VISION.md vs 30 days of agent activity. Proposed amendments route through Amendment Protocol (founder or founder+CEO approval), cascade issues created for affected agents.
 
-**Depends on:** Phase 2 (Found mode shippped so companies exist, SDK adapter mature, wakeup queueing pattern proven)
+**Depends on:** Phase 2 (Found mode shipped so companies exist, SDK adapter mature, wakeup queueing pattern proven)
 
 **Requirements:** ASSESS-01 through ASSESS-08, XC-02, XC-03, XC-04, XC-08, XC-09 (ASSESS-09 reassigned to Phase 6 — depends on engagement memory)
 
@@ -76,9 +78,13 @@ Plan list:
 4. Approval routing per-company configurable as `founder` (default) or `founder+ceo` — when CEO approval required, amendment routes through `approvals` table and waits for CEO agent decision
 5. Apply step writes VISION amendments and creates downstream issues for affected pods/agents with explicit linking; cascade respects custom overrides and agent screening (excludes newly-provisioned)
 
-**Plans:** TBD
+**Plans:** 4 plans in 4 waves (all complete)
 
-**UI hint**: yes
+Plan list:
+- [x] 03-01-PLAN.md — Drift detection & amendment protocol
+- [x] 03-02-PLAN.md — Cascade orchestrator & apply
+- [x] 03-03-PLAN.md — Assess UI components
+- [x] 03-04-PLAN.md — Worker handlers & MainPanel routing
 
 ---
 
@@ -97,9 +103,14 @@ Plan list:
 4. Cascade plan applies agent screening (excludes newly-provisioned agents) and surfaces detected custom overrides for founder confirmation before apply
 5. Apply step queues wakeups with idempotency keys after all blockers are addressed; founder can execute recommended unblocks incrementally
 
-**Plans:** TBD
+**Plans:** 5 plans in 5 waves (all complete)
 
-**UI hint**: yes
+Plan list:
+- [x] 04-01-PLAN.md — Revive mode types, classify logic, adapter extensions
+- [x] 04-02-PLAN.md — Action handlers, sample-pivot, queue persistence
+- [x] 04-03-PLAN.md — Incremental apply orchestrator
+- [x] 04-04-PLAN.md — Revive UI components
+- [x] 04-05-PLAN.md — Worker handlers & MainPanel routing
 
 ---
 
@@ -118,9 +129,13 @@ Plan list:
 4. Apply writes amendments through full Amendment Protocol (per-company approval routing), creates downstream issues for affected agents, queues wakeups with idempotency keys
 5. VISION.md preserves intentional agent variance and custom instruction overrides — Reposition does not overwrite agent-specific configs
 
-**Plans:** TBD
+**Plans:** 4 plans in 4 waves (planned)
 
-**UI hint**: yes
+Plan list:
+- [ ] 05-01-PLAN.md — Types, shift-classify, scope-filter, seed-answers, idempotency
+- [ ] 05-02-PLAN.md — Amendment generation, cascade planning, apply orchestrator
+- [ ] 05-03-PLAN.md — Reposition UI components (panel, intent, scope, interview, preview, cascade, hook)
+- [ ] 05-04-PLAN.md — Worker handlers & MainPanel routing & integration tests
 
 ---
 
@@ -233,14 +248,14 @@ Plan list:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Skeleton + Inventory + Mode Detection | 0/3 | Planned | — |
-| 2. Found Mode | 0/1 | Not started | — |
-| 3. Assess Mode | 0/1 | Not started | — |
-| 4. Revive Mode | 0/1 | Not started | — |
-| 5. Reposition Mode | 0/1 | Not started | — |
-| 6. Engagement Memory + Scheduled Check-ins | 0/1 | Not started | — |
+| 1. Skeleton + Inventory + Mode Detection | 3/3 | Complete | 2026-05-03 |
+| 2. Found Mode | 2/2 | Complete | 2026-05-03 |
+| 3. Assess Mode | 4/4 | Complete | 2026-05-03 |
+| 4. Revive Mode | 5/5 | Complete | 2026-05-03 |
+| 5. Reposition Mode | 0/4 | Planned | — |
+| 6. Engagement Memory + Scheduled Check-ins | 0/? | Not started | — |
 
 ---
 
 *Roadmap created: 2026-05-02*  
-*Plans created: 2026-05-03*
+*Plans created: 2026-05-03 (Phase 5 planning complete)*

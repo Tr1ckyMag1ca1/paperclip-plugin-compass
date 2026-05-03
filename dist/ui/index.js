@@ -1,8 +1,8 @@
 // src/ui/MainPanel.tsx
-import { useCallback as useCallback11, useState as useState12 } from "react";
+import { useCallback as useCallback13, useState as useState15 } from "react";
 import {
-  usePluginData as usePluginData2,
-  usePluginAction as usePluginAction4
+  usePluginData as usePluginData3,
+  usePluginAction as usePluginAction6
 } from "@paperclipai/plugin-sdk/ui";
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
@@ -3224,15 +3224,485 @@ function FoundPanel() {
   ] }) });
 }
 
+// src/ui/revive/RevivePanel.tsx
+import { useState as useState14, useCallback as useCallback12, useEffect as useEffect9 } from "react";
+import { usePluginAction as usePluginAction5, usePluginData as usePluginData2 } from "@paperclipai/plugin-sdk/ui";
+
+// src/ui/revive/ActionItemCard.tsx
+import { useState as useState12 } from "react";
+
+// src/ui/revive/PriorityBadge.tsx
+import { jsx as jsx28 } from "react/jsx-runtime";
+var PriorityBadge = ({ priority }) => {
+  let label;
+  let bgClass;
+  let textClass;
+  if (priority >= 0.66) {
+    label = "High";
+    bgClass = "bg-destructive/20";
+    textClass = "text-destructive font-bold";
+  } else if (priority >= 0.33) {
+    label = "Medium";
+    bgClass = "bg-accent/20";
+    textClass = "text-accent font-semibold";
+  } else {
+    label = "Low";
+    bgClass = "bg-card";
+    textClass = "text-foreground";
+  }
+  return /* @__PURE__ */ jsx28(
+    "span",
+    {
+      className: `px-xs py-xs rounded text-label ${bgClass} ${textClass}`,
+      "aria-label": `Priority: ${label}`,
+      children: label
+    }
+  );
+};
+
+// src/ui/revive/SamplePivotModal.tsx
+import React16 from "react";
+import { jsx as jsx29, jsxs as jsxs28 } from "react/jsx-runtime";
+var SamplePivotModal = ({
+  actionId,
+  onConfirm,
+  onCancel
+}) => {
+  const [isLoading, setIsLoading] = React16.useState(false);
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      await onConfirm();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return /* @__PURE__ */ jsx29("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs28("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg", children: [
+    /* @__PURE__ */ jsx29("h2", { className: "text-display font-bold mb-md", children: "Switch to sample mode for this issue" }),
+    /* @__PURE__ */ jsx29("p", { className: "text-body mb-lg", children: "We'll keep your current draft as a sample to critique, and open a fresh production issue for the improved version. This is a known pattern from how vision-quest companies unstick themselves." }),
+    /* @__PURE__ */ jsxs28("div", { className: "flex gap-md", children: [
+      /* @__PURE__ */ jsx29(
+        "button",
+        {
+          onClick: onCancel,
+          disabled: isLoading,
+          className: "flex-1 px-md py-sm border border-border rounded hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed",
+          children: "Cancel"
+        }
+      ),
+      /* @__PURE__ */ jsx29(
+        "button",
+        {
+          onClick: handleConfirm,
+          disabled: isLoading,
+          className: "flex-1 px-md py-sm bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed",
+          children: isLoading ? "Creating\u2026" : "Create sample & production"
+        }
+      )
+    ] })
+  ] }) });
+};
+
+// src/ui/revive/ActionConfirmationModal.tsx
+import React17 from "react";
+import { jsx as jsx30, jsxs as jsxs29 } from "react/jsx-runtime";
+var ActionConfirmationModal = ({
+  action,
+  onConfirm,
+  onCancel
+}) => {
+  const [isLoading, setIsLoading] = React17.useState(false);
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      await onConfirm();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return /* @__PURE__ */ jsx30("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs29("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg max-h-[80vh] overflow-y-auto", children: [
+    /* @__PURE__ */ jsx30("h2", { className: "text-display font-bold mb-md", children: "Apply this action?" }),
+    /* @__PURE__ */ jsxs29("div", { className: "mb-lg text-body", children: [
+      /* @__PURE__ */ jsx30("p", { className: "font-semibold mb-sm", children: action.title }),
+      /* @__PURE__ */ jsxs29("p", { className: "text-foreground/70 mb-md", children: [
+        "Unlocks ",
+        action.unblocks_count || 1,
+        " downstream issue(s)"
+      ] }),
+      /* @__PURE__ */ jsxs29("div", { className: "text-label text-foreground/70 bg-background rounded p-md", children: [
+        /* @__PURE__ */ jsx30("p", { className: "font-semibold mb-sm", children: "This will:" }),
+        /* @__PURE__ */ jsxs29("ul", { className: "list-disc list-inside space-y-xs", children: [
+          /* @__PURE__ */ jsx30("li", { children: "Update issue" }),
+          /* @__PURE__ */ jsx30("li", { children: action.recommended_action.type === "pivot-to-sample" ? "Create dual issues (sample + production)" : "Create downstream issue(s)" }),
+          /* @__PURE__ */ jsx30("li", { children: "Queue agent wakeup" })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs29("div", { className: "flex gap-md", children: [
+      /* @__PURE__ */ jsx30(
+        "button",
+        {
+          onClick: onCancel,
+          disabled: isLoading,
+          className: "flex-1 px-md py-sm border border-border rounded hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed",
+          children: "Cancel"
+        }
+      ),
+      /* @__PURE__ */ jsx30(
+        "button",
+        {
+          onClick: handleConfirm,
+          disabled: isLoading,
+          className: "flex-1 px-md py-sm bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed",
+          children: isLoading ? "Applying\u2026" : "Apply"
+        }
+      )
+    ] })
+  ] }) });
+};
+
+// src/ui/revive/ActionItemCard.tsx
+import { Fragment, jsx as jsx31, jsxs as jsxs30 } from "react/jsx-runtime";
+var ActionItemCard = ({
+  item,
+  onApply,
+  onDismiss
+}) => {
+  const [showExplain, setShowExplain] = useState12(false);
+  const [showConfirm, setShowConfirm] = useState12(false);
+  const [isApplying, setIsApplying] = useState12(false);
+  const handleApply = async () => {
+    setShowConfirm(true);
+  };
+  const handleConfirm = async () => {
+    setIsApplying(true);
+    try {
+      await onApply?.();
+      setShowConfirm(false);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+  return /* @__PURE__ */ jsxs30(Fragment, { children: [
+    /* @__PURE__ */ jsxs30("div", { className: "p-md bg-card rounded border border-border", children: [
+      /* @__PURE__ */ jsxs30("div", { className: "flex items-start gap-md mb-md", children: [
+        /* @__PURE__ */ jsx31(PriorityBadge, { priority: item.priority }),
+        /* @__PURE__ */ jsxs30("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx31("h4", { className: "text-body font-bold", children: item.title }),
+          /* @__PURE__ */ jsxs30("p", { className: "text-label text-foreground/70 mt-xs", children: [
+            "Unlocks ",
+            item.unblocks_count || 1,
+            " downstream issue(s)"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx31("span", { className: "text-label text-foreground/70 whitespace-nowrap", children: item.status === "pending" ? "Pending" : item.status === "addressed" ? "\u2713 Addressed" : "\xD7 Dismissed" })
+      ] }),
+      /* @__PURE__ */ jsx31("p", { className: "text-body mb-md", children: item.why_blocking }),
+      /* @__PURE__ */ jsxs30("div", { className: "flex gap-md", children: [
+        /* @__PURE__ */ jsx31(
+          "button",
+          {
+            onClick: handleApply,
+            disabled: item.status !== "pending" || isApplying,
+            className: "flex-1 px-md py-sm bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed",
+            children: isApplying ? "Applying\u2026" : getActionButtonLabel(item.recommended_action.type)
+          }
+        ),
+        /* @__PURE__ */ jsx31(
+          "button",
+          {
+            onClick: () => setShowExplain(!showExplain),
+            className: "px-md py-sm text-foreground border border-border rounded hover:bg-background",
+            children: "Explain"
+          }
+        ),
+        /* @__PURE__ */ jsx31(
+          "button",
+          {
+            onClick: () => onDismiss?.(),
+            disabled: item.status !== "pending",
+            className: "px-md py-sm text-destructive border border-border rounded hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed",
+            children: "Dismiss"
+          }
+        )
+      ] }),
+      showExplain && /* @__PURE__ */ jsxs30(
+        "div",
+        {
+          className: "mt-md p-md bg-background rounded text-body",
+          role: "region",
+          "aria-expanded": "true",
+          children: [
+            /* @__PURE__ */ jsx31("p", { className: "font-semibold mb-sm", children: item.title }),
+            /* @__PURE__ */ jsx31("p", { children: item.why_blocking })
+          ]
+        }
+      )
+    ] }),
+    showConfirm && item.recommended_action.type === "pivot-to-sample" ? /* @__PURE__ */ jsx31(
+      SamplePivotModal,
+      {
+        actionId: item.id,
+        onConfirm: handleConfirm,
+        onCancel: () => setShowConfirm(false)
+      }
+    ) : /* @__PURE__ */ jsx31(
+      ActionConfirmationModal,
+      {
+        action: item,
+        onConfirm: handleConfirm,
+        onCancel: () => setShowConfirm(false)
+      }
+    )
+  ] });
+};
+function getActionButtonLabel(type) {
+  const labels = {
+    "replace-blocker-issue": "Replace this issue",
+    "reassign-issue": "Reassign to agent",
+    "nudge-agent-with-context-doc": "Brief the agent",
+    "pivot-to-sample": "Switch to sample mode",
+    "mark-blocker-resolved": "Mark resolved",
+    "restart-agent": "Restart agent",
+    "surface-amendment-needed": "Review in Assess"
+  };
+  return labels[type] || "Apply action";
+}
+
+// src/ui/revive/ActionQueuePanel.tsx
+import { jsx as jsx32, jsxs as jsxs31 } from "react/jsx-runtime";
+var CAUSE_HEADERS = {
+  "single-blocker": "Stuck on a blocker",
+  "strategic-drift": "Drifted from vision",
+  "broken-integration": "Integration broken",
+  "governance-loop": "Stuck in approval loop",
+  "dead-agent": "Agent stopped responding"
+};
+var ActionQueuePanel = ({
+  queue,
+  onActionApply,
+  onActionDismiss
+}) => {
+  return /* @__PURE__ */ jsx32("div", { className: "space-y-lg", children: Object.entries(queue.items_by_cause).map(([cause, items]) => {
+    if (!items || items.length === 0) return null;
+    return /* @__PURE__ */ jsxs31("section", { children: [
+      /* @__PURE__ */ jsx32("h3", { className: "text-heading font-bold mb-md", children: CAUSE_HEADERS[cause] }),
+      /* @__PURE__ */ jsx32("div", { className: "space-y-sm", children: items.sort((a, b) => b.priority - a.priority).map((item) => /* @__PURE__ */ jsx32(
+        ActionItemCard,
+        {
+          item,
+          onApply: onActionApply ? () => onActionApply(item.id) : void 0,
+          onDismiss: onActionDismiss ? () => onActionDismiss(item.id) : void 0
+        },
+        item.id
+      )) })
+    ] }, cause);
+  }) });
+};
+
+// src/ui/revive/StallSummaryBadge.tsx
+import { jsx as jsx33, jsxs as jsxs32 } from "react/jsx-runtime";
+var StallSummaryBadge = ({ inventory }) => {
+  const daysSinceHeartbeat = inventory.latestHeartbeat ? Math.floor((Date.now() - inventory.latestHeartbeat.getTime()) / (1e3 * 60 * 60 * 24)) : 999;
+  const blockerCount = inventory.blockerCount || 0;
+  return /* @__PURE__ */ jsx33("div", { className: "my-md px-md py-sm bg-card rounded border border-destructive", children: /* @__PURE__ */ jsxs32("span", { className: "text-label font-medium", children: [
+    "Stalled \u2014 ",
+    daysSinceHeartbeat,
+    " days no activity, ",
+    blockerCount,
+    " blocker(s)"
+  ] }) });
+};
+
+// src/ui/revive/ReviveRunState.ts
+import { useCallback as useCallback11, useEffect as useEffect8, useState as useState13 } from "react";
+import { usePluginAction as usePluginAction4 } from "@paperclipai/plugin-sdk/ui";
+function useReviveRunState(companyId) {
+  const loadRunStateAction = usePluginAction4("loadReviveRunState");
+  const updateStateAction = usePluginAction4("updateReviveRunState");
+  const [queue, setQueue] = useState13(null);
+  const [isLoading, setIsLoading] = useState13(true);
+  const [error, setError] = useState13(null);
+  useEffect8(() => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        const savedQueue = await loadRunStateAction({ companyId });
+        if (savedQueue && typeof savedQueue === "object") {
+          setQueue(savedQueue);
+        }
+        setError(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to load revive state");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [companyId, loadRunStateAction]);
+  const saveQueue = useCallback11(
+    async (newQueue) => {
+      try {
+        await updateStateAction({
+          [`compass:revive:run:${companyId}`]: newQueue
+        });
+        setQueue(newQueue);
+        setError(null);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Failed to save revive state";
+        setError(msg);
+        throw e;
+      }
+    },
+    [companyId, updateStateAction]
+  );
+  const clearQueue = useCallback11(
+    async () => {
+      try {
+        await updateStateAction({
+          [`compass:revive:run:${companyId}`]: void 0
+        });
+        setQueue(null);
+        setError(null);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Failed to clear revive state";
+        setError(msg);
+        throw e;
+      }
+    },
+    [companyId, updateStateAction]
+  );
+  return {
+    queue,
+    isLoading,
+    error,
+    saveQueue,
+    clearQueue
+  };
+}
+
+// src/ui/revive/RevivePanel.tsx
+import { Fragment as Fragment2, jsx as jsx34, jsxs as jsxs33 } from "react/jsx-runtime";
+function RevivePanel({ companyId, companyName }) {
+  const classifyStallAction = usePluginAction5("classifyStall");
+  const { data: inventory } = usePluginData2("getInventory");
+  const { queue, saveQueue } = useReviveRunState(companyId);
+  const [panelState, setPanelState] = useState14("empty");
+  const [isLoading, setIsLoading] = useState14(false);
+  const [errorMessage, setErrorMessage] = useState14(null);
+  useEffect9(() => {
+    if (queue && queue.items_by_cause) {
+      setPanelState("queue");
+    } else {
+      setPanelState("empty");
+    }
+  }, [queue]);
+  const handleDiagnose = useCallback12(async () => {
+    if (!inventory) return;
+    try {
+      setIsLoading(true);
+      setPanelState("diagnosing");
+      setErrorMessage(null);
+      const result = await classifyStallAction({
+        companyId
+      });
+      if (result && result.success && result.queue) {
+        await saveQueue(result.queue);
+        setPanelState("queue");
+      } else {
+        setErrorMessage(result?.error || "Diagnosis failed");
+        setPanelState("error");
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Diagnosis failed");
+      setPanelState("error");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [companyId, inventory, classifyStallAction, saveQueue]);
+  const handleDismissAction = async (actionId) => {
+    if (!queue) return;
+    const updatedItems_by_cause = Object.fromEntries(
+      Object.entries(queue.items_by_cause).map(([cause, items]) => [
+        cause,
+        items.map(
+          (item) => item.id === actionId ? { ...item, status: "dismissed" } : item
+        )
+      ])
+    );
+    const updatedQueue = {
+      ...queue,
+      items_by_cause: updatedItems_by_cause,
+      addressed_count: queue.addressed_count + 1
+    };
+    try {
+      await saveQueue(updatedQueue);
+    } catch (error) {
+      console.error("Failed to dismiss action:", error);
+    }
+  };
+  return /* @__PURE__ */ jsxs33("div", { className: "flex flex-col h-full bg-background", children: [
+    /* @__PURE__ */ jsxs33("header", { className: "p-lg border-b border-border", children: [
+      /* @__PURE__ */ jsx34("h1", { className: "text-display font-bold mb-sm", children: companyName }),
+      /* @__PURE__ */ jsx34("p", { className: "text-body text-foreground/70 mb-md", children: "Fix what's blocking this company" }),
+      inventory && /* @__PURE__ */ jsx34(StallSummaryBadge, { inventory }),
+      /* @__PURE__ */ jsx34(
+        "button",
+        {
+          onClick: handleDiagnose,
+          disabled: isLoading || panelState === "diagnosing",
+          className: "mt-md w-full px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-md",
+          children: isLoading || panelState === "diagnosing" ? /* @__PURE__ */ jsxs33(Fragment2, { children: [
+            /* @__PURE__ */ jsx34(Loader, { className: "w-4 h-4 animate-spin" }),
+            "Diagnosing\u2026"
+          ] }) : "Find what's blocking this company"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsx34("main", { className: "flex-1 overflow-y-auto p-lg", children: panelState === "diagnosing" ? /* @__PURE__ */ jsxs33("div", { className: "text-center py-3xl", children: [
+      /* @__PURE__ */ jsx34(Loader, { className: "w-8 h-8 animate-spin mx-auto mb-md text-accent" }),
+      /* @__PURE__ */ jsx34("p", { className: "text-body text-foreground/70", children: "Analyzing blockers\u2026" })
+    ] }) : panelState === "error" ? /* @__PURE__ */ jsxs33("div", { className: "text-center py-3xl", children: [
+      /* @__PURE__ */ jsx34("p", { className: "text-heading font-bold mb-md text-destructive", children: "Diagnosis failed" }),
+      /* @__PURE__ */ jsx34("p", { className: "text-body text-foreground/70", children: errorMessage || "Something went wrong" })
+    ] }) : !queue || queue.total_items === 0 ? /* @__PURE__ */ jsx34(EmptyReviveState, {}) : /* @__PURE__ */ jsx34(
+      ActionQueuePanel,
+      {
+        queue,
+        onActionDismiss: handleDismissAction
+      }
+    ) }),
+    queue && queue.total_items > 0 && panelState === "queue" && /* @__PURE__ */ jsxs33("footer", { className: "sticky bottom-0 border-t border-border bg-card p-lg flex justify-between items-center gap-md", children: [
+      /* @__PURE__ */ jsxs33("span", { className: "text-label text-foreground/70", children: [
+        queue.addressed_count,
+        " of ",
+        queue.total_items,
+        " addressed"
+      ] }),
+      /* @__PURE__ */ jsx34(
+        "button",
+        {
+          disabled: queue.addressed_count === 0,
+          className: "px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap",
+          children: "Review and apply"
+        }
+      )
+    ] })
+  ] });
+}
+var EmptyReviveState = () => /* @__PURE__ */ jsxs33("div", { className: "text-center py-3xl", children: [
+  /* @__PURE__ */ jsx34("h2", { className: "text-heading font-bold mb-md", children: "This company isn't stalled" }),
+  /* @__PURE__ */ jsx34("p", { className: "text-body mb-lg text-foreground/70", children: "No blocking issues detected. Try Assess for a strategic audit instead." })
+] });
+
 // src/ui/MainPanel.tsx
-import { jsx as jsx28, jsxs as jsxs28 } from "react/jsx-runtime";
+import { jsx as jsx35, jsxs as jsxs34 } from "react/jsx-runtime";
 function MainPanel() {
-  const [refreshing, setRefreshing] = useState12(false);
-  const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData2("getInventory");
-  const { data: modeData, loading: modeLoading, error: modeError } = usePluginData2("getDetectedMode");
-  const { data: storedOverride, loading: overrideLoading } = usePluginData2("getModeOverride");
-  const setModeOverrideAction = usePluginAction4("setModeOverride");
-  const handleModeOverride = useCallback11(
+  const [refreshing, setRefreshing] = useState15(false);
+  const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData3("getInventory");
+  const { data: modeData, loading: modeLoading, error: modeError } = usePluginData3("getDetectedMode");
+  const { data: storedOverride, loading: overrideLoading } = usePluginData3("getModeOverride");
+  const setModeOverrideAction = usePluginAction6("setModeOverride");
+  const handleModeOverride = useCallback13(
     async (newMode) => {
       try {
         await setModeOverrideAction({ mode: newMode });
@@ -3242,7 +3712,7 @@ function MainPanel() {
     },
     [setModeOverrideAction]
   );
-  const handleRefresh = useCallback11(async () => {
+  const handleRefresh = useCallback13(async () => {
     setRefreshing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1e3));
@@ -3253,20 +3723,20 @@ function MainPanel() {
   if (inventoryError || modeError) {
     const errorToDisplay = inventoryError || modeError;
     const errorMessage = errorToDisplay instanceof Error ? errorToDisplay.message : String(errorToDisplay);
-    return /* @__PURE__ */ jsx28(ErrorBoundary, { error: new Error(errorMessage) });
+    return /* @__PURE__ */ jsx35(ErrorBoundary, { error: new Error(errorMessage) });
   }
   if (inventoryLoading || modeLoading || overrideLoading || storedOverride === void 0) {
-    return /* @__PURE__ */ jsx28("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx28("div", { className: "text-center", children: /* @__PURE__ */ jsx28("p", { className: "text-body text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
+    return /* @__PURE__ */ jsx35("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx35("div", { className: "text-center", children: /* @__PURE__ */ jsx35("p", { className: "text-body text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
   }
   if (!inventory || !modeData) {
-    return /* @__PURE__ */ jsx28(ErrorBoundary, { error: new Error("Failed to load company inventory") });
+    return /* @__PURE__ */ jsx35(ErrorBoundary, { error: new Error("Failed to load company inventory") });
   }
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
   const companyId = inventory?.companyId || "";
   const visionExists = inventory?.visionExists ?? false;
   if (currentMode === "Assess") {
-    return /* @__PURE__ */ jsx28(
+    return /* @__PURE__ */ jsx35(
       AssessPanel,
       {
         companyId,
@@ -3276,10 +3746,19 @@ function MainPanel() {
     );
   }
   if (currentMode === "Found") {
-    return /* @__PURE__ */ jsx28(FoundPanel, {});
+    return /* @__PURE__ */ jsx35(FoundPanel, {});
   }
-  return /* @__PURE__ */ jsxs28("div", { className: "flex h-full flex-col bg-background", children: [
-    /* @__PURE__ */ jsx28(
+  if (currentMode === "Revive") {
+    return /* @__PURE__ */ jsx35(
+      RevivePanel,
+      {
+        companyId,
+        companyName: "Company"
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxs34("div", { className: "flex h-full flex-col bg-background", children: [
+    /* @__PURE__ */ jsx35(
       ModeBanner,
       {
         inventory,
@@ -3288,8 +3767,8 @@ function MainPanel() {
         onOverrideChange: handleModeOverride
       }
     ),
-    /* @__PURE__ */ jsx28("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx28(InventoryDisplay, { inventory }) }),
-    /* @__PURE__ */ jsx28("div", { className: "border-t px-lg py-md", children: /* @__PURE__ */ jsx28(
+    /* @__PURE__ */ jsx35("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx35(InventoryDisplay, { inventory }) }),
+    /* @__PURE__ */ jsx35("div", { className: "border-t px-lg py-md", children: /* @__PURE__ */ jsx35(
       "button",
       {
         onClick: handleRefresh,
@@ -3298,7 +3777,7 @@ function MainPanel() {
         children: refreshing ? "Refreshing..." : "Refresh"
       }
     ) }),
-    /* @__PURE__ */ jsx28(ChatPanel, { detectedMode: currentMode })
+    /* @__PURE__ */ jsx35(ChatPanel, { detectedMode: currentMode })
   ] });
 }
 export {

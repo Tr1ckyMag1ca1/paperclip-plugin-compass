@@ -24,6 +24,13 @@ import { classifyStall } from "./revive/classify.js";
 import { applyAction, applyAllActions } from "./revive/apply.js";
 import { writeActionQueueDocument } from "./revive/queue.js";
 import type { ActionQueue, ActionItem } from "./types/revive.js";
+import { classifyShift } from "./reposition/shift-classify.js";
+import { generateAmendments } from "./reposition/amend.js";
+import { planRepositionCascade, type CascadePlan } from "./reposition/cascade.js";
+import { applyRepositionAmendments } from "./reposition/apply.js";
+import { generateRepositionIdempotencyKey } from "./found/idempotency.js";
+import type { ShiftScope, Amendment, RepositionRunState } from "./types/reposition.js";
+import type { ParsedVision } from "./types/assess.js";
 import { randomUUID } from "node:crypto";
 
 const plugin = definePlugin({
@@ -735,6 +742,310 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       const message =
         error instanceof Error ? error.message : "Unknown error occurred";
       console.error("Failed to update revive run state:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // ============================
+  // REPOSITION MODE HANDLERS
+  // ============================
+
+  // Handler: classifyShift (REPO-01, D-01, D-02)
+  // Classify founder-described strategic shift into affected VISION sections
+  ctx.data.register("classifyShift", async (params: any) => {
+    const { companyId, description } = params as {
+      companyId: string;
+      description: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load VISION.md
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent: string | null = null;
+
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = (visionDoc as any).body || (visionDoc as any).content;
+            if (visionContent) break;
+          }
+        } catch {
+          // Skip issues that don't have documents
+          continue;
+        }
+      }
+
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "Reposition requires VISION.md. Run Found mode first.",
+        };
+      }
+
+      // Parse VISION
+      let parsedVision;
+      try {
+        parsedVision = parseVision(visionContent);
+      } catch (parseError) {
+        return {
+          success: false,
+          error: `Failed to parse VISION.md: ${
+            parseError instanceof Error ? parseError.message : String(parseError)
+          }`,
+        };
+      }
+
+      // Classify shift (pure function)
+      const shiftScope = classifyShift(description, parsedVision);
+
+      return {
+        success: true,
+        shiftScope,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Shift classification failed: ${message}`,
+      };
+    }
+  });
+
+  // Handler: generateAmendments (REPO-02, D-07, D-08)
+  // Generate per-section VISION amendments from scoped interview answers
+  ctx.actions.register("generateAmendments", async (params: any) => {
+    const { companyId, interviewAnswers, affectedSections } = params as {
+      companyId: string;
+      interviewAnswers: any; // InterviewAnswers
+      affectedSections: string[]; // VisionSectionId[]
+    };
+
+    try {
+      // Load current VISION
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent: string | null = null;
+
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = (visionDoc as any).body || (visionDoc as any).content;
+            if (visionContent) break;
+          }
+        } catch {
+          // Skip issues that don't have documents
+          continue;
+        }
+      }
+
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found",
+        };
+      }
+
+      // Parse VISION
+      const parsedVision = parseVision(visionContent);
+
+      // Generate amendments
+      const amendments = await generateAmendments(
+        parsedVision,
+        interviewAnswers,
+        affectedSections as any
+      );
+
+      return {
+        success: true,
+        amendments,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Amendment generation failed: ${message}`,
+      };
+    }
+  });
+
+  // Handler: planRepositionCascade (REPO-03, D-09)
+  // Plan cascading changes for affected agents
+  ctx.data.register("planRepositionCascade", async (params: any) => {
+    const { companyId, amendments } = params as {
+      companyId: string;
+      amendments: Amendment[];
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load VISION
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent: string | null = null;
+
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = (visionDoc as any).body || (visionDoc as any).content;
+            if (visionContent) break;
+          }
+        } catch {
+          // Skip issues that don't have documents
+          continue;
+        }
+      }
+
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found",
+        };
+      }
+
+      const parsedVision = parseVision(visionContent);
+
+      // Load agents
+      const agents = await ctx.agents.list({ companyId });
+
+      // Plan cascade
+      const cascadePlan = await planRepositionCascade(
+        parsedVision,
+        amendments,
+        agents
+      );
+
+      return {
+        success: true,
+        cascadePlan,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Cascade planning failed: ${message}`,
+      };
+    }
+  });
+
+  // Handler: applyRepositionAmendments (REPO-04, REPO-05, D-11, D-12, XC-02, XC-03)
+  // Apply amendments and cascade changes with approval routing
+  ctx.actions.register("applyRepositionAmendments", async (params: any) => {
+    const {
+      companyId,
+      amendments,
+      currentVision,
+      proposedVision,
+      approvalRouting,
+      repositionRunId,
+    } = params as {
+      companyId: string;
+      amendments: Amendment[];
+      currentVision: ParsedVision;
+      proposedVision: ParsedVision;
+      approvalRouting: "founder" | "founder+ceo";
+      repositionRunId: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load company agents
+      const agents = await ctx.agents.list({ companyId });
+
+      // Apply amendments and cascade (orchestrated by apply module)
+      const result = await applyRepositionAmendments(
+        ctx,
+        companyId,
+        { agents },
+        amendments,
+        currentVision,
+        proposedVision,
+        approvalRouting,
+        repositionRunId,
+        adapter
+      );
+
+      return result;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Amendment application failed: ${message}`,
+      };
+    }
+  });
+
+  // Handler: loadRepositionRunState (D-13, D-14)
+  // Load persisted reposition run state for recovery on reload
+  ctx.data.register("loadRepositionRunState", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      const state = await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:reposition:run",
+        stateKey: "current",
+      });
+
+      return (state as RepositionRunState | null) ?? null;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load reposition run state:", message);
+      return null;
+    }
+  });
+
+  // Handler: updateRepositionRunState (D-14)
+  // Persist reposition run state to worker-state for recovery
+  ctx.actions.register("updateRepositionRunState", async (params: any) => {
+    const { companyId, state } = params as {
+      companyId: string;
+      state: RepositionRunState | null;
+    };
+
+    try {
+      if (state === null) {
+        // Delete the state
+        await ctx.state.delete({
+          scopeKind: "company" as const,
+          scopeId: companyId,
+          namespace: "compass:reposition:run",
+          stateKey: "current",
+        });
+      } else {
+        // Set/update the state
+        await ctx.state.set(
+          {
+            scopeKind: "company" as const,
+            scopeId: companyId,
+            namespace: "compass:reposition:run",
+            stateKey: "current",
+          },
+          state
+        );
+      }
+
+      return { success: true };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to update reposition run state:", message);
       return {
         success: false,
         error: message,
