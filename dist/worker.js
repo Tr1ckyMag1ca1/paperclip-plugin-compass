@@ -1,8 +1,375 @@
 var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
+
+// src/memory/finding.ts
+var finding_exports = {};
+__export(finding_exports, {
+  createFinding: () => createFinding,
+  deduplicateAgainstOpenFindings: () => deduplicateAgainstOpenFindings,
+  filterByDateRange: () => filterByDateRange,
+  filterByMode: () => filterByMode,
+  filterByStatus: () => filterByStatus,
+  transitionStatus: () => transitionStatus
+});
+import { randomUUID } from "node:crypto";
+function createFinding(runId, mode, summary, evidenceRefs = []) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    id: randomUUID(),
+    run_id: runId,
+    mode,
+    created_at: now,
+    summary,
+    evidence_refs: evidenceRefs,
+    status: "open",
+    status_history: [
+      {
+        from: null,
+        to: "open",
+        at: now
+      }
+    ]
+  };
+}
+function transitionStatus(finding, newStatus, byRunId) {
+  if (finding.status === "open" && (newStatus === "addressed" || newStatus === "invalidated")) {
+  } else if (finding.status === "addressed" || finding.status === "invalidated") {
+    throw new Error(
+      `Cannot transition finding ${finding.id} from terminal status "${finding.status}" to "${newStatus}"`
+    );
+  } else if (finding.status === newStatus) {
+    return finding;
+  } else {
+    throw new Error(
+      `Invalid status transition for finding ${finding.id}: "${finding.status}" \u2192 "${newStatus}"`
+    );
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const newTransition = {
+    from: finding.status,
+    to: newStatus,
+    at: now,
+    by_run_id: byRunId
+  };
+  return {
+    ...finding,
+    status: newStatus,
+    status_history: [...finding.status_history, newTransition]
+  };
+}
+function deduplicateAgainstOpenFindings(newFindings, openFindings) {
+  if (openFindings.length === 0) {
+    return newFindings;
+  }
+  const openSummaries = openFindings.map((f) => f.summary.toLowerCase());
+  return newFindings.filter((newFinding) => {
+    const newSummary = newFinding.summary.toLowerCase();
+    for (const openSummary of openSummaries) {
+      if (newSummary.includes(openSummary) || openSummary.includes(newSummary)) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+function filterByStatus(findings, status) {
+  if (status === "all") {
+    return findings;
+  }
+  return findings.filter((f) => f.status === status);
+}
+function filterByMode(findings, mode) {
+  if (mode === "all") {
+    return findings;
+  }
+  return findings.filter((f) => f.mode === mode);
+}
+function filterByDateRange(findings, startDate, endDate) {
+  const startTime = startDate.getTime();
+  const endTime = endDate.getTime();
+  return findings.filter((f) => {
+    const findingTime = new Date(f.created_at).getTime();
+    return findingTime >= startTime && findingTime <= endTime;
+  });
+}
+var init_finding = __esm({
+  "src/memory/finding.ts"() {
+    "use strict";
+  }
+});
+
+// src/memory/history-store.ts
+var history_store_exports = {};
+__export(history_store_exports, {
+  createEngagementHistory: () => createEngagementHistory,
+  getEngagementHistory: () => getEngagementHistory,
+  recordFindingsToHistory: () => recordFindingsToHistory,
+  updateEngagementHistory: () => updateEngagementHistory
+});
+async function getEngagementHistory(ctx, adapter, companyId) {
+  const cached = await ctx.state.get({
+    scopeKind: "company",
+    scopeId: companyId,
+    namespace: "memory-cache",
+    stateKey: "engagement-history"
+  });
+  if (cached) {
+    const age = Date.now() - cached.cachedAt;
+    if (age < cached.ttlMs) {
+      return cached.data;
+    }
+  }
+  const docBody = await adapter.getDocumentByKey(companyId, ENGAGEMENT_HISTORY_DOC_KEY);
+  if (!docBody) {
+    return null;
+  }
+  const history = parseEngagementHistoryFromMarkdown(docBody);
+  if (!history) {
+    return null;
+  }
+  await ctx.state.set({
+    scopeKind: "company",
+    scopeId: companyId,
+    namespace: "memory-cache",
+    stateKey: "engagement-history"
+  }, {
+    data: history,
+    cachedAt: Date.now(),
+    ttlMs: ENGAGEMENT_HISTORY_CACHE_TTL_MS
+  });
+  return history;
+}
+async function createEngagementHistory(ctx, adapter, companyId) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const history = {
+    version: 1,
+    company_id: companyId,
+    last_engaged_at: now,
+    findings: [],
+    routines: []
+  };
+  const markdown = serializeEngagementHistoryToMarkdown(history);
+  await adapter.writeDocument(companyId, ENGAGEMENT_HISTORY_DOC_KEY, markdown);
+  await ctx.state.set({
+    scopeKind: "company",
+    scopeId: companyId,
+    namespace: "memory-cache",
+    stateKey: "engagement-history"
+  }, {
+    data: history,
+    cachedAt: Date.now(),
+    ttlMs: ENGAGEMENT_HISTORY_CACHE_TTL_MS
+  });
+  return history;
+}
+async function updateEngagementHistory(ctx, adapter, companyId, history) {
+  const markdown = serializeEngagementHistoryToMarkdown(history);
+  await adapter.writeDocument(companyId, ENGAGEMENT_HISTORY_DOC_KEY, markdown);
+  await ctx.state.set({
+    scopeKind: "company",
+    scopeId: companyId,
+    namespace: "memory-cache",
+    stateKey: "engagement-history"
+  }, null);
+}
+async function recordFindingsToHistory(ctx, adapter, companyId, runId, mode, findingItems) {
+  let history = await getEngagementHistory(ctx, adapter, companyId);
+  if (!history) {
+    history = await createEngagementHistory(ctx, adapter, companyId);
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  history.findings.push(...findingItems);
+  history.last_engaged_at = now;
+  await updateEngagementHistory(ctx, adapter, companyId, history);
+}
+function serializeEngagementHistoryToMarkdown(history) {
+  const recentFindings = history.findings.slice(-5).reverse();
+  const findingsList = recentFindings.map((f) => {
+    const statusBadge = f.status === "open" ? "\u{1F534} **Open**" : f.status === "addressed" ? "\u2705 **Addressed**" : "\u2B55 **Invalidated**";
+    return `- ${statusBadge} ${f.mode}: ${f.summary} (${f.created_at})`;
+  }).join("\n");
+  const recentSection = history.findings.length === 0 ? "No findings yet. Engagement history appears here after you Found, Assess, Revive, or Reposition a company." : findingsList;
+  const markdown = `# Engagement History
+
+## Recent Findings
+
+${recentSection}
+
+## Raw Data
+
+\`\`\`json
+${JSON.stringify(history, null, 2)}
+\`\`\`
+`;
+  return markdown;
+}
+function parseEngagementHistoryFromMarkdown(markdown) {
+  const jsonMatch = markdown.match(/```json\n([\s\S]*?)\n```/);
+  if (!jsonMatch || !jsonMatch[1]) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(jsonMatch[1]);
+    if (typeof parsed === "object" && parsed.version === 1 && typeof parsed.company_id === "string" && Array.isArray(parsed.findings) && Array.isArray(parsed.routines)) {
+      return parsed;
+    }
+  } catch (e) {
+  }
+  return null;
+}
+var ENGAGEMENT_HISTORY_DOC_KEY, ENGAGEMENT_HISTORY_CACHE_TTL_MS;
+var init_history_store = __esm({
+  "src/memory/history-store.ts"() {
+    "use strict";
+    ENGAGEMENT_HISTORY_DOC_KEY = "compass-engagement-history";
+    ENGAGEMENT_HISTORY_CACHE_TTL_MS = 6e4;
+  }
+});
+
+// src/memory/routine.ts
+var routine_exports = {};
+__export(routine_exports, {
+  createRoutine: () => createRoutine,
+  getCronFromPreset: () => getCronFromPreset,
+  parseCronExpression: () => parseCronExpression,
+  shouldRunRoutine: () => shouldRunRoutine,
+  validateCronExpression: () => validateCronExpression,
+  validateRoutineSchedule: () => validateRoutineSchedule
+});
+function validateCronExpression(cronString) {
+  if (!cronString || typeof cronString !== "string") {
+    return false;
+  }
+  const fields = cronString.trim().split(/\s+/);
+  if (fields.length !== 5) {
+    return false;
+  }
+  const cronFieldPattern = /^(\*|(\d+)(-\d+)?)(\/\d+)?([,\d\-]*)?$/;
+  for (const field of fields) {
+    if (!cronFieldPattern.test(field)) {
+      return false;
+    }
+  }
+  return true;
+}
+function parseCronExpression(cronString) {
+  if (!validateCronExpression(cronString)) {
+    throw new Error(`Invalid cron expression: ${cronString}`);
+  }
+  const fields = cronString.trim().split(/\s+/);
+  return {
+    minute: fields[0],
+    hour: fields[1],
+    dayOfMonth: fields[2],
+    month: fields[3],
+    dayOfWeek: fields[4]
+  };
+}
+function getCronFromPreset(frequencyPreset, cronString) {
+  switch (frequencyPreset) {
+    case "quarterly":
+      return "0 9 1 1,4,7,10 *";
+    // 9am, 1st of Q1/Q2/Q3/Q4
+    case "monthly":
+      return "0 9 1 * *";
+    // 9am, 1st of every month
+    case "custom":
+      if (!cronString) {
+        throw new Error("Custom frequency requires cronString");
+      }
+      if (!validateCronExpression(cronString)) {
+        throw new Error(`Invalid custom cron expression: ${cronString}`);
+      }
+      return cronString;
+    default:
+      throw new Error(`Unknown frequency preset: ${frequencyPreset}`);
+  }
+}
+function validateRoutineSchedule(routine) {
+  const errors = [];
+  if (!routine.name || routine.name.trim().length === 0) {
+    errors.push("Routine name is required");
+  }
+  if (routine.mode !== "Assess" && routine.mode !== "Revive") {
+    errors.push(`Invalid mode: ${routine.mode}. Must be Assess or Revive`);
+  }
+  if (!validateCronExpression(routine.cron)) {
+    errors.push(`Invalid cron expression: ${routine.cron}`);
+  }
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+function shouldRunRoutine(routine, currentTime = /* @__PURE__ */ new Date()) {
+  try {
+    const parsed = parseCronExpression(routine.cron);
+    const minute = currentTime.getMinutes();
+    const hour = currentTime.getHours();
+    const dayOfMonth = currentTime.getDate();
+    const month = currentTime.getMonth() + 1;
+    const dayOfWeek = currentTime.getDay();
+    if (!matchesCronField(parsed.minute, minute)) return false;
+    if (!matchesCronField(parsed.hour, hour)) return false;
+    if (!matchesCronField(parsed.dayOfMonth, dayOfMonth)) return false;
+    if (!matchesCronField(parsed.month, month)) return false;
+    if (!matchesCronField(parsed.dayOfWeek, dayOfWeek)) return false;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function createRoutine(name, mode, cronPreset, customCron) {
+  const cron = getCronFromPreset(cronPreset, customCron);
+  return {
+    id: globalThis.crypto.randomUUID(),
+    name,
+    mode,
+    cron,
+    created_at: (/* @__PURE__ */ new Date()).toISOString(),
+    last_run_at: null,
+    last_finding_ids: []
+  };
+}
+function matchesCronField(field, value) {
+  if (field === "*") return true;
+  if (field.includes("/")) {
+    const parts = field.split("/");
+    const step = parseInt(parts[1], 10);
+    if (isNaN(step) || step <= 0) return false;
+    if (parts[0] === "*") {
+      return value % step === 0;
+    } else {
+      const baseNum = parseInt(parts[0], 10);
+      return !isNaN(baseNum) && value >= baseNum && (value - baseNum) % step === 0;
+    }
+  }
+  if (field.includes("-") && !field.includes(",")) {
+    const parts = field.split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parseInt(parts[1], 10);
+    if (isNaN(start) || isNaN(end)) return false;
+    return value >= start && value <= end;
+  }
+  if (field.includes(",")) {
+    const values = field.split(",").map((v) => parseInt(v.trim(), 10));
+    return values.includes(value);
+  }
+  const num = parseInt(field, 10);
+  return !isNaN(num) && num === value;
+}
+var init_routine = __esm({
+  "src/memory/routine.ts"() {
+    "use strict";
+  }
+});
 
 // node_modules/.pnpm/@paperclipai+plugin-sdk@2026.428.0_react@19.2.5/node_modules/@paperclipai/plugin-sdk/dist/define-plugin.js
 function definePlugin(definition) {
@@ -8830,6 +9197,51 @@ ${(doc.body || "").substring(0, 500)}`.trim(),
     }
   }
   /**
+   * Get a document by company ID and key.
+   *
+   * Per D-01 (XC-01), reads from documents table by key.
+   * Used by memory module to load engagement history.
+   *
+   * @param companyId Company ID
+   * @param docKey Document key (e.g., "compass-engagement-history")
+   * @returns Document body as string, or null if not found
+   */
+  async getDocumentByKey(companyId, docKey) {
+    try {
+      const issues = await this.ctx.issues.list({ companyId });
+      for (const issue of issues) {
+        const documents = await this.ctx.issues.documents.list(issue.id, companyId);
+        for (const doc of documents) {
+          if ((doc.key || doc.id) === docKey) {
+            logAudit({
+              step: "get-document-by-key",
+              success: true,
+              resourceId: docKey,
+              timestamp: (/* @__PURE__ */ new Date()).toISOString()
+            });
+            return doc.body || "";
+          }
+        }
+      }
+      return null;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      logAudit({
+        step: "get-document-by-key",
+        success: false,
+        resourceId: docKey,
+        error: errorMsg,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+      throw new Error(`Failed to get document ${docKey}: ${errorMsg}`);
+    }
+  }
+  /**
+   * NOTE: Routine management (getRoutines, createRoutine, deleteRoutine, runRoutine)
+   * is deferred to Phase 6 Wave 2 pending Plugin SDK extension for routines table.
+   * For now, routines are stored in ScheduledRoutine[] array within EngagementHistory.
+   */
+  /**
    * Get the audit log (for debugging and rollback sequencing).
    *
    * @returns Array of audit log entries
@@ -8947,12 +9359,14 @@ function checkVisionQuality(vision) {
 }
 
 // src/found/idempotency.ts
-import { randomUUID } from "node:crypto";
+function generateUUID() {
+  return globalThis.crypto.randomUUID();
+}
 function generateIdempotencyKey(companyId, agentId, applyRunId) {
   return `compass:found:${companyId}:${agentId}:${applyRunId}`;
 }
 function generateApplyRunId() {
-  return randomUUID();
+  return generateUUID();
 }
 function generateReviveActionKey(companyId, actionId, attempt) {
   return `compass:revive:${companyId}:${actionId}:${attempt}`;
@@ -8965,7 +9379,7 @@ function generateRepositionIdempotencyKey(companyId, repositionRunId, agentId) {
 async function applyFound(ctx, companyId, vision, preset, selectedPresetId) {
   const adapter = new PaperclipAdapter(ctx);
   const applyRunId = generateApplyRunId();
-  const result = { success: false };
+  const result = { success: false, runId: applyRunId };
   try {
     const quality = checkVisionQuality(vision);
     if (!quality.isValid) {
@@ -9277,8 +9691,9 @@ function serializeVision(parsed) {
 }
 
 // src/assess/drift.ts
+init_finding();
 import { randomUUID as randomUUID2 } from "node:crypto";
-function detectDrift(vision, activity, windowDays = 30) {
+function detectDrift(vision, activity, windowDays = 30, priorOpenFindings) {
   const runId = randomUUID2();
   const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
   const confidenceThreshold = 0.5;
@@ -9320,8 +9735,32 @@ function detectDrift(vision, activity, windowDays = 30) {
       totalItemsDetected++;
     }
   }
-  return {
-    items: detectedItems,
+  let deduplicatedCount = 0;
+  let finalItems = detectedItems;
+  if (priorOpenFindings && priorOpenFindings.length > 0) {
+    const driftAsFindings = detectedItems.map((item) => ({
+      id: randomUUID2(),
+      run_id: runId,
+      mode: "Assess",
+      created_at: generatedAt,
+      summary: item.proposedAmendment,
+      evidence_refs: item.evidence.map((e) => e.id),
+      status: "open",
+      status_history: [{
+        from: null,
+        to: "open",
+        at: generatedAt
+      }]
+    }));
+    const dedupedFindings = deduplicateAgainstOpenFindings(driftAsFindings, priorOpenFindings);
+    deduplicatedCount = driftAsFindings.length - dedupedFindings.length;
+    finalItems = detectedItems.filter((item, idx) => {
+      const driftFinding = driftAsFindings[idx];
+      return dedupedFindings.some((f) => f.summary === driftFinding.summary);
+    });
+  }
+  const result = {
+    items: finalItems,
     runId,
     generatedAt,
     companyId: "",
@@ -9329,6 +9768,13 @@ function detectDrift(vision, activity, windowDays = 30) {
     confidenceThreshold,
     totalItemsDetected: detectedItems.length + totalItemsDetected
   };
+  if (priorOpenFindings && priorOpenFindings.length > 0) {
+    result.contextRefreshPreamble = {
+      priorOpenFindingsCount: priorOpenFindings.length,
+      deduplicatedAgainstCount: deduplicatedCount
+    };
+  }
+  return result;
 }
 function normalizeText(text) {
   return text.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -10634,7 +11080,7 @@ async function executeRepositionCascade(ctx, companyId, plan, repositionRunId) {
 async function applyRepositionAmendments(ctx, companyId, company, amendments, currentVision, proposedVision, approvalRouting = "founder", repositionRunId, adapterOverride) {
   const adapter = adapterOverride || new PaperclipAdapter(ctx);
   const applyRunId = generateApplyRunId();
-  const result = { success: false };
+  const result = { success: false, runId: applyRunId };
   if (!amendments || amendments.length === 0) {
     result.blockingErrors = ["No amendments to apply"];
     result.auditLog = adapter.getAuditLog();
@@ -10766,7 +11212,6 @@ async function performRollback2(adapter, companyId, result) {
 }
 
 // src/worker.ts
-import { randomUUID as randomUUID3 } from "node:crypto";
 var plugin = definePlugin({
   async setup(ctx) {
     try {
@@ -10965,6 +11410,23 @@ async function registerDataHandlers(ctx) {
             },
             null
           );
+          const { recordFindingsToHistory: recordFindingsToHistory2 } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+          const adapter = new PaperclipAdapter(ctx);
+          const findings = [{
+            id: globalThis.crypto.randomUUID(),
+            run_id: applyRunId,
+            mode: "Found",
+            created_at: (/* @__PURE__ */ new Date()).toISOString(),
+            summary: `Founded company: ${preset.name}`,
+            evidence_refs: result.visionDocId ? [result.visionDocId] : [],
+            status: "open",
+            status_history: [{
+              from: null,
+              to: "open",
+              at: (/* @__PURE__ */ new Date()).toISOString()
+            }]
+          }];
+          await recordFindingsToHistory2(ctx, adapter, companyId, applyRunId, "Found", findings);
         }
         return result;
       } catch (error) {
@@ -11010,10 +11472,14 @@ async function registerDataHandlers(ctx) {
         };
       }
       const activity = await buildActivitySnapshot(adapter, companyId, 30);
-      const driftReport = detectDrift(parsedVision, activity, 30);
+      const { getEngagementHistory: getEngagementHistory2 } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      const priorOpenFindings = history?.findings.filter((f) => f.status === "open") || [];
+      const driftReport = detectDrift(parsedVision, activity, 30, priorOpenFindings);
       return {
         success: true,
-        driftReport
+        driftReport,
+        contextRefreshPreamble: driftReport.contextRefreshPreamble || void 0
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
@@ -11053,6 +11519,26 @@ async function registerDataHandlers(ctx) {
       }
       const currentVision = parseVision(visionContent);
       const agents = await ctx.agents.list({ companyId });
+      const runId = globalThis.crypto.randomUUID();
+      const success = true;
+      if (success) {
+        const { recordFindingsToHistory: recordFindingsToHistory2 } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+        const findings = acceptedItems.map((item) => ({
+          id: globalThis.crypto.randomUUID(),
+          run_id: runId,
+          mode: "Assess",
+          created_at: (/* @__PURE__ */ new Date()).toISOString(),
+          summary: item.summary || `Drift amendment: ${item.sectionId}`,
+          evidence_refs: [item.sectionId],
+          status: "open",
+          status_history: [{
+            from: null,
+            to: "open",
+            at: (/* @__PURE__ */ new Date()).toISOString()
+          }]
+        }));
+        await recordFindingsToHistory2(ctx, adapter, companyId, runId, "Assess", findings);
+      }
       return {
         success: true,
         summary: `Prepared to apply ${acceptedItems.length} amendments with ${approvalRouting} approval routing`
@@ -11177,6 +11663,24 @@ async function registerDataHandlers(ctx) {
         },
         updatedQueue
       );
+      if (result.success) {
+        const { recordFindingsToHistory: recordFindingsToHistory2 } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+        const findings = [{
+          id: globalThis.crypto.randomUUID(),
+          run_id: queueRunId,
+          mode: "Revive",
+          created_at: (/* @__PURE__ */ new Date()).toISOString(),
+          summary: result.summary || `Revive action applied: ${actionId}`,
+          evidence_refs: [actionId],
+          status: "open",
+          status_history: [{
+            from: null,
+            to: "open",
+            at: (/* @__PURE__ */ new Date()).toISOString()
+          }]
+        }];
+        await recordFindingsToHistory2(ctx, adapter, companyId, queueRunId, "Revive", findings);
+      }
       return {
         success: result.success,
         summary: result.summary,
@@ -11275,6 +11779,57 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
+  ctx.data.register("getCurrentVision", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const issues = await ctx.issues.list({ companyId });
+      let visionContent = null;
+      for (const issue of issues) {
+        try {
+          const docs = await ctx.issues.documents.list(issue.id, companyId);
+          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          if (visionDoc) {
+            visionContent = visionDoc.body || visionDoc.content;
+            if (visionContent) break;
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (!visionContent) {
+        return {
+          success: false,
+          error: "VISION.md not found"
+        };
+      }
+      return {
+        success: true,
+        vision: visionContent
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to load VISION.md: ${message}`
+      };
+    }
+  });
+  ctx.data.register("getApprovalRouting", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const routing = "founder";
+      return {
+        success: true,
+        routing
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      return {
+        success: false,
+        error: `Failed to get approval routing: ${message}`
+      };
+    }
+  });
   ctx.data.register("classifyShift", async (params) => {
     const { companyId, description } = params;
     try {
@@ -11362,7 +11917,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("planRepositionCascade", async (params) => {
+  ctx.data.register("planCascade", async (params) => {
     const { companyId, amendments } = params;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -11405,7 +11960,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.actions.register("applyRepositionAmendments", async (params) => {
+  ctx.actions.register("applyReposition", async (params) => {
     const {
       companyId,
       amendments,
@@ -11428,6 +11983,25 @@ async function registerDataHandlers(ctx) {
         repositionRunId,
         adapter
       );
+      if (result.success) {
+        const { recordFindingsToHistory: recordFindingsToHistory2 } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+        const amendmentSummaries = amendments.map((a) => a.sectionId).join(", ");
+        const findings = [{
+          id: globalThis.crypto.randomUUID(),
+          run_id: repositionRunId,
+          mode: "Reposition",
+          created_at: (/* @__PURE__ */ new Date()).toISOString(),
+          summary: `Repositioned: ${amendmentSummaries}`,
+          evidence_refs: amendments.map((a) => a.id),
+          status: "open",
+          status_history: [{
+            from: null,
+            to: "open",
+            at: (/* @__PURE__ */ new Date()).toISOString()
+          }]
+        }];
+        await recordFindingsToHistory2(ctx, adapter, companyId, repositionRunId, "Reposition", findings);
+      }
       return result;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
@@ -11484,9 +12058,330 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
+  ctx.data.register("memory.load", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      return {
+        success: true,
+        history: history || null
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load engagement history:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("memory.recordFindings", async (params) => {
+    const {
+      companyId,
+      runId,
+      mode,
+      findings
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        recordFindingsToHistory: recordFindingsToHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      await recordFindingsToHistory2(ctx, adapter, companyId, runId, mode, findings);
+      return {
+        success: true
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to record findings:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("memory.transitionStatus", async (params) => {
+    const {
+      companyId,
+      findingId,
+      newStatus
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2,
+        updateEngagementHistory: updateEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const {
+        transitionStatus: transitionStatus2
+      } = await Promise.resolve().then(() => (init_finding(), finding_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found"
+        };
+      }
+      const finding = history.findings.find((f) => f.id === findingId);
+      if (!finding) {
+        return {
+          success: false,
+          error: `Finding ${findingId} not found`
+        };
+      }
+      transitionStatus2(finding, newStatus);
+      await updateEngagementHistory2(ctx, adapter, companyId, history);
+      return {
+        success: true,
+        finding
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to transition finding status:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("routine.create", async (params) => {
+    const {
+      companyId,
+      name,
+      mode,
+      cronPreset,
+      customCron
+    } = params;
+    try {
+      const {
+        getCronFromPreset: getCronFromPreset2,
+        validateCronExpression: validateCronExpression2
+      } = await Promise.resolve().then(() => (init_routine(), routine_exports));
+      let cron;
+      if (cronPreset === "custom" && customCron) {
+        cron = customCron;
+      } else {
+        cron = getCronFromPreset2(cronPreset);
+      }
+      if (!validateCronExpression2(cron)) {
+        return {
+          success: false,
+          error: `Invalid cron expression: ${cron}`
+        };
+      }
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2,
+        updateEngagementHistory: updateEngagementHistory2,
+        createEngagementHistory: createEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      let history = await getEngagementHistory2(ctx, adapter, companyId);
+      if (!history) {
+        history = await createEngagementHistory2(ctx, adapter, companyId);
+      }
+      const routineId = globalThis.crypto.randomUUID();
+      const routine = {
+        id: routineId,
+        name,
+        mode,
+        cron,
+        created_at: (/* @__PURE__ */ new Date()).toISOString(),
+        last_run_at: null,
+        last_finding_ids: []
+      };
+      if (!history.routines) {
+        history.routines = [];
+      }
+      history.routines.push(routine);
+      await updateEngagementHistory2(ctx, adapter, companyId, history);
+      return {
+        success: true,
+        routine
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to create routine:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("routine.delete", async (params) => {
+    const {
+      companyId,
+      routineId
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2,
+        updateEngagementHistory: updateEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found"
+        };
+      }
+      history.routines = (history.routines || []).filter((r) => r.id !== routineId);
+      await updateEngagementHistory2(ctx, adapter, companyId, history);
+      return {
+        success: true
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to delete routine:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("routine.run", async (params) => {
+    const {
+      companyId,
+      routineId
+    } = params;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2,
+        updateEngagementHistory: updateEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found"
+        };
+      }
+      const routine = (history.routines || []).find((r) => r.id === routineId);
+      if (!routine) {
+        return {
+          success: false,
+          error: `Routine ${routineId} not found`
+        };
+      }
+      const findings = [];
+      try {
+        if (routine.mode === "Assess") {
+          const driftResult = await ctx.data.call("runDriftAudit", { companyId });
+          if (driftResult.success && driftResult.driftReport) {
+            const runId = globalThis.crypto.randomUUID();
+            for (const item of driftResult.driftReport.items || []) {
+              findings.push({
+                id: globalThis.crypto.randomUUID(),
+                run_id: runId,
+                mode: "Assess",
+                created_at: (/* @__PURE__ */ new Date()).toISOString(),
+                summary: item.summary || `Drift: ${item.sectionId}`,
+                evidence_refs: [item.sectionId],
+                status: "open",
+                status_history: [{
+                  from: null,
+                  to: "open",
+                  at: (/* @__PURE__ */ new Date()).toISOString()
+                }],
+                triggered_by_routine_id: routineId
+              });
+            }
+          }
+        } else if (routine.mode === "Revive") {
+          const reviveResult = await ctx.data.call("classifyStall", { companyId });
+          if (reviveResult.success && reviveResult.queue) {
+            const runId = globalThis.crypto.randomUUID();
+            for (const item of Object.values(reviveResult.queue.items_by_cause || {}).flat()) {
+              findings.push({
+                id: globalThis.crypto.randomUUID(),
+                run_id: runId,
+                mode: "Revive",
+                created_at: (/* @__PURE__ */ new Date()).toISOString(),
+                summary: item.title || `Action: ${item.cause}`,
+                evidence_refs: [item.id],
+                status: "open",
+                status_history: [{
+                  from: null,
+                  to: "open",
+                  at: (/* @__PURE__ */ new Date()).toISOString()
+                }],
+                triggered_by_routine_id: routineId
+              });
+            }
+          }
+        }
+      } catch (modeError) {
+        console.warn(`Routine ${routineId} mode handler failed:`, modeError);
+      }
+      if (findings.length > 0) {
+        const {
+          recordFindingsToHistory: recordFindingsToHistory2
+        } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+        const runId = findings[0].run_id;
+        await recordFindingsToHistory2(ctx, adapter, companyId, runId, routine.mode, findings);
+      }
+      routine.last_run_at = (/* @__PURE__ */ new Date()).toISOString();
+      routine.last_finding_ids = findings.map((f) => f.id);
+      await updateEngagementHistory2(ctx, adapter, companyId, history);
+      return {
+        success: true,
+        findings
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to run routine:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.actions.register("routine.onFire", async (params) => {
+    const {
+      companyId,
+      routineId
+    } = params;
+    try {
+      const result = await ctx.actions.call("routine.run", { companyId, routineId });
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Routine fire failed:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
+  ctx.data.register("routine.listForCompany", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+      const {
+        getEngagementHistory: getEngagementHistory2
+      } = await Promise.resolve().then(() => (init_history_store(), history_store_exports));
+      const history = await getEngagementHistory2(ctx, adapter, companyId);
+      return {
+        success: true,
+        routines: history?.routines || []
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to list routines:", message);
+      return {
+        success: false,
+        error: message
+      };
+    }
+  });
 }
 function generateActionQueueFromClassification(classification) {
-  const runId = randomUUID3();
+  const runId = globalThis.crypto.randomUUID();
   const itemsByCause = {};
   let totalItems = 0;
   for (const cause of classification.causes) {
