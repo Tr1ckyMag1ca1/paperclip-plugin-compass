@@ -88,6 +88,29 @@ Founders get one in-app surface for strategic + operational guidance across the 
 | Distribution via npm + Paperclip plugin manager | Standard OSS pattern; Paperclip plugin manager is the founder-friendly path | — Pending |
 | Build assumes Aron Prins co-maintainership | He's been invited; structure-for-collab is cheap to add now, expensive to retrofit | — Pending |
 
+## Current State
+
+**Shipped:** v1.0 — 2026-05-03. All 6 phases, 22 plans, 829 tests, 72/72 requirements covered. Build clean. See `.planning/milestones/v1.0-ROADMAP.md` and `.planning/v1.0-MILESTONE-AUDIT.md`.
+
+**Capabilities live in v1.0:**
+- Diagnostic dashboard with mode auto-detection (Found / Assess / Revive / Reposition)
+- Found mode — vision-quest interview → VISION.md → agent provisioning + kickoff issues + heartbeating
+- Assess mode — drift audit + Amendment Protocol + cascade with `founder` | `founder+ceo` routing
+- Revive mode — 5-cause stall classifier + founder-action queue + sample-pivot + incremental apply
+- Reposition mode — shift classifier → scoped re-interview → targeted amendments + cascade with custom-override toggle
+- Engagement memory — persisted findings + History tab + scheduled routines + ASSESS-09 dedup
+
+## Next Milestone Goals
+
+To be defined via `/gsd-new-milestone`. Likely candidates from v1.0 deferred backlog:
+- Cross-company history rollup
+- LLM-assisted classifier variants (drift / shift / stall)
+- Side-by-side amendment diff
+- Live polling on `founder+ceo` approvals
+- Memory export (JSON/CSV)
+- Native Paperclip routines table integration (when SDK exposes routinesApi)
+- Native agent create/delete (when SDK exposes those APIs)
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
