@@ -1120,6 +1120,462 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       };
     }
   });
+
+  // ============================
+  // ENGAGEMENT MEMORY HANDLERS (Phase 6, MEM-01..MEM-06)
+  // ============================
+
+  // Handler: memory.load (MEM-01, D-03)
+  // Load engagement history from documents table (cached via worker-state with 60s TTL)
+  ctx.data.register("memory.load", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load engagement history with cache (per D-03)
+      const {
+        getEngagementHistory,
+      } = await import("./memory/history-store.js");
+
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+
+      return {
+        success: true,
+        history: history || null,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to load engagement history:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: memory.recordFindings (MEM-02, D-06, D-07)
+  // Record findings from a completed Apply run into engagement history
+  ctx.actions.register("memory.recordFindings", async (params: any) => {
+    const {
+      companyId,
+      runId,
+      mode,
+      findings,
+    } = params as {
+      companyId: string;
+      runId: string;
+      mode: string;
+      findings: any[];
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      const {
+        recordFindingsToHistory,
+      } = await import("./memory/history-store.js");
+
+      // Record findings with idempotency (per D-06, XC-03)
+      await recordFindingsToHistory(ctx, adapter, companyId, runId, mode as any, findings);
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to record findings:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: memory.transitionStatus (MEM-03, D-05)
+  // Transition finding status (open → addressed/invalidated) with audit trail
+  ctx.actions.register("memory.transitionStatus", async (params: any) => {
+    const {
+      companyId,
+      findingId,
+      newStatus,
+    } = params as {
+      companyId: string;
+      findingId: string;
+      newStatus: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      const {
+        getEngagementHistory,
+        updateEngagementHistory,
+      } = await import("./memory/history-store.js");
+      const {
+        transitionStatus,
+      } = await import("./memory/finding.js");
+
+      // Load history
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found",
+        };
+      }
+
+      // Find the finding
+      const finding = history.findings.find((f: any) => f.id === findingId);
+      if (!finding) {
+        return {
+          success: false,
+          error: `Finding ${findingId} not found`,
+        };
+      }
+
+      // Transition status (validates immutability rules per D-05)
+      transitionStatus(finding, newStatus as any);
+
+      // Update history
+      await updateEngagementHistory(ctx, adapter, companyId, history);
+
+      return {
+        success: true,
+        finding,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to transition finding status:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // ============================
+  // SCHEDULED ROUTINE HANDLERS (Phase 6, MEM-05, MEM-06, D-13..D-15)
+  // ============================
+
+  // Handler: routine.create (MEM-05, D-13)
+  // Create a new scheduled routine (quarterly/monthly drift review or custom cron)
+  ctx.actions.register("routine.create", async (params: any) => {
+    const {
+      companyId,
+      name,
+      mode,
+      cronPreset,
+      customCron,
+    } = params as {
+      companyId: string;
+      name: string;
+      mode: "Assess" | "Revive";
+      cronPreset: "quarterly" | "monthly" | "custom";
+      customCron?: string;
+    };
+
+    try {
+      const {
+        getCronFromPreset,
+        validateCronExpression,
+      } = await import("./memory/routine.js");
+
+      // Resolve cron expression from preset or custom
+      let cron: string;
+      if (cronPreset === "custom" && customCron) {
+        cron = customCron;
+      } else {
+        cron = getCronFromPreset(cronPreset as any);
+      }
+
+      // Validate cron
+      if (!validateCronExpression(cron)) {
+        return {
+          success: false,
+          error: `Invalid cron expression: ${cron}`,
+        };
+      }
+
+      const adapter = new PaperclipAdapter(ctx);
+
+      // Load engagement history (routines are stored within it)
+      const {
+        getEngagementHistory,
+        updateEngagementHistory,
+        createEngagementHistory,
+      } = await import("./memory/history-store.js");
+
+      let history = await getEngagementHistory(ctx, adapter, companyId);
+      if (!history) {
+        history = await createEngagementHistory(ctx, adapter, companyId);
+      }
+
+      // Create routine with UUID
+      const routineId = globalThis.crypto.randomUUID();
+      const routine = {
+        id: routineId,
+        name,
+        mode,
+        cron,
+        created_at: new Date().toISOString(),
+        last_run_at: null as string | null,
+        last_finding_ids: [] as string[],
+      };
+
+      // Add to history (assuming routines array exists)
+      if (!history.routines) {
+        history.routines = [];
+      }
+      history.routines.push(routine);
+
+      // Update history
+      await updateEngagementHistory(ctx, adapter, companyId, history);
+
+      return {
+        success: true,
+        routine,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to create routine:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: routine.delete (MEM-05, D-12)
+  // Delete (disable) a scheduled routine
+  ctx.actions.register("routine.delete", async (params: any) => {
+    const {
+      companyId,
+      routineId,
+    } = params as {
+      companyId: string;
+      routineId: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      const {
+        getEngagementHistory,
+        updateEngagementHistory,
+      } = await import("./memory/history-store.js");
+
+      // Load history
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found",
+        };
+      }
+
+      // Filter out the routine
+      history.routines = (history.routines || []).filter((r: any) => r.id !== routineId);
+
+      // Update history
+      await updateEngagementHistory(ctx, adapter, companyId, history);
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to delete routine:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: routine.run (MEM-06, D-14)
+  // Manually trigger a routine (fire on-demand)
+  ctx.actions.register("routine.run", async (params: any) => {
+    const {
+      companyId,
+      routineId,
+    } = params as {
+      companyId: string;
+      routineId: string;
+    };
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      const {
+        getEngagementHistory,
+        updateEngagementHistory,
+      } = await import("./memory/history-store.js");
+
+      // Load history to find routine
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+      if (!history) {
+        return {
+          success: false,
+          error: "Engagement history not found",
+        };
+      }
+
+      const routine = (history.routines || []).find((r: any) => r.id === routineId);
+      if (!routine) {
+        return {
+          success: false,
+          error: `Routine ${routineId} not found`,
+        };
+      }
+
+      // Dispatch to appropriate mode handler
+      const findings: any[] = [];
+      try {
+        if (routine.mode === "Assess") {
+          // Call runDriftAudit and capture findings
+          const driftResult = await (ctx.data as any).call("runDriftAudit", { companyId });
+          if (driftResult.success && driftResult.driftReport) {
+            // Convert drift items to findings
+            const runId = globalThis.crypto.randomUUID();
+            for (const item of driftResult.driftReport.items || []) {
+              findings.push({
+                id: globalThis.crypto.randomUUID(),
+                run_id: runId,
+                mode: "Assess",
+                created_at: new Date().toISOString(),
+                summary: item.summary || `Drift: ${item.sectionId}`,
+                evidence_refs: [item.sectionId],
+                status: "open",
+                status_history: [{
+                  from: null,
+                  to: "open",
+                  at: new Date().toISOString(),
+                }],
+                triggered_by_routine_id: routineId,
+              });
+            }
+          }
+        } else if (routine.mode === "Revive") {
+          // Call classifyStall and capture findings
+          const reviveResult = await (ctx.data as any).call("classifyStall", { companyId });
+          if (reviveResult.success && reviveResult.queue) {
+            // Convert action items to findings
+            const runId = globalThis.crypto.randomUUID();
+            for (const item of Object.values(reviveResult.queue.items_by_cause || {}).flat() as any[]) {
+              findings.push({
+                id: globalThis.crypto.randomUUID(),
+                run_id: runId,
+                mode: "Revive",
+                created_at: new Date().toISOString(),
+                summary: item.title || `Action: ${item.cause}`,
+                evidence_refs: [item.id],
+                status: "open",
+                status_history: [{
+                  from: null,
+                  to: "open",
+                  at: new Date().toISOString(),
+                }],
+                triggered_by_routine_id: routineId,
+              });
+            }
+          }
+        }
+      } catch (modeError) {
+        // Non-fatal: mode handler failed but don't crash routine
+        console.warn(`Routine ${routineId} mode handler failed:`, modeError);
+      }
+
+      // Record findings
+      if (findings.length > 0) {
+        const {
+          recordFindingsToHistory,
+        } = await import("./memory/history-store.js");
+
+        const runId = findings[0].run_id;
+        await recordFindingsToHistory(ctx, adapter, companyId, runId, routine.mode as any, findings);
+      }
+
+      // Update routine.last_run_at and last_finding_ids
+      routine.last_run_at = new Date().toISOString();
+      routine.last_finding_ids = findings.map((f: any) => f.id);
+      await updateEngagementHistory(ctx, adapter, companyId, history);
+
+      return {
+        success: true,
+        findings,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to run routine:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: routine.onFire (MEM-06, D-14)
+  // Triggered by Paperclip scheduler when routine cron fires
+  // (Same implementation as routine.run)
+  ctx.actions.register("routine.onFire", async (params: any) => {
+    const {
+      companyId,
+      routineId,
+    } = params as {
+      companyId: string;
+      routineId: string;
+    };
+
+    try {
+      // Delegate to routine.run handler (identical flow)
+      const result = await (ctx.actions as any).call("routine.run", { companyId, routineId });
+      return result;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Routine fire failed:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
+
+  // Handler: routine.listForCompany (D-12)
+  // List all active routines for a company
+  ctx.data.register("routine.listForCompany", async (params: any) => {
+    const companyId = params.companyId as string;
+
+    try {
+      const adapter = new PaperclipAdapter(ctx);
+
+      const {
+        getEngagementHistory,
+      } = await import("./memory/history-store.js");
+
+      const history = await getEngagementHistory(ctx, adapter, companyId);
+
+      return {
+        success: true,
+        routines: history?.routines || [],
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("Failed to list routines:", message);
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  });
 }
 
 /**
