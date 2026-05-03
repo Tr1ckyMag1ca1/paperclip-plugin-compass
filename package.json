@@ -37,7 +37,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@paperclipai/plugin-sdk": "^1.0.0"
+    "@paperclipai/plugin-sdk": "2026.428.0"
   },
   "devDependencies": {
     "@types/node": ">=20",

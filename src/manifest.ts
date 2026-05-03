@@ -11,11 +11,12 @@ const manifest: PaperclipPluginManifestV1 = {
   categories: ["ui", "automation"],
   minimumPaperclipVersion: "1.0.0",
   capabilities: [
-    "ui.sidebarPanel.register",
-    "entities.agents.read",
-    "entities.issues.read",
-    "entities.documents.read",
-    "state.worker.write",
+    "ui.sidebar.register",
+    "agents.read",
+    "issues.read",
+    "plugin.state.read",
+    "plugin.state.write",
+    "companies.read",
   ],
   entrypoints: {
     worker: "./dist/worker.js",

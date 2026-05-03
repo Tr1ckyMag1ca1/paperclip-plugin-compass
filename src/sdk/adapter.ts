@@ -1,6 +1,6 @@
 import type { PluginContext } from "@paperclipai/plugin-sdk";
-import type { InventorySnapshot, Mode, SchemaValidationResult } from "../types";
-import { validateSchema } from "../primitives/schema-validator";
+import type { InventorySnapshot, Mode, SchemaValidationResult } from "../types.js";
+import { validateSchema } from "../primitives/schema-validator.js";
 
 /**
  * PaperclipAdapter — XC-01 architectural chokepoint
@@ -42,45 +42,47 @@ export class PaperclipAdapter {
    * (not re-queried per mode).
    */
   async getInventorySnapshot(companyId: string): Promise<InventorySnapshot> {
-    const [agents, issues, documents] = await Promise.all([
-      this.ctx.agents.list(),
-      this.ctx.issues.list(),
-      this.ctx.documents.list(),
+    const [agents, issues] = await Promise.all([
+      this.ctx.agents.list({ companyId }),
+      this.ctx.issues.list({ companyId }),
     ]);
 
-    // Calculate visionExists
-    const visionExists = documents.some(
-      (doc) =>
-        doc.title === "VISION.md" ||
-        doc.title === "VISION" ||
-        doc.title?.toLowerCase() === "vision.md"
-    );
+    // Calculate visionExists by checking for VISION in issue titles or descriptions
+    let visionExists = false;
+    for (const issue of issues) {
+      if (
+        issue.title?.toUpperCase().includes("VISION") ||
+        issue.description?.toUpperCase().includes("VISION.MD")
+      ) {
+        visionExists = true;
+        break;
+      }
+    }
+    const documents: any[] = [];
 
-    // Calculate latestHeartbeat
+    // Calculate latestHeartbeat (SDK uses camelCase: lastHeartbeatAt)
     let latestHeartbeat: Date | null = null;
     for (const agent of agents) {
-      if (agent.last_heartbeat_at) {
-        const heartbeat = new Date(agent.last_heartbeat_at);
+      if (agent.lastHeartbeatAt) {
+        const heartbeat = new Date(agent.lastHeartbeatAt);
         if (!latestHeartbeat || heartbeat > latestHeartbeat) {
           latestHeartbeat = heartbeat;
         }
       }
     }
 
-    // Filter recent issues (last 30 days)
+    // Filter recent issues (last 30 days) — SDK uses camelCase: createdAt
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentIssues = issues.filter((issue) => {
-      const createdAt = new Date(issue.created_at);
+    const recentIssues = issues.filter((issue: any) => {
+      const createdAt = new Date(issue.createdAt || issue.created_at || 0);
       return createdAt >= thirtyDaysAgo;
     });
 
     // Count blockers
     const blockerCount = issues.filter(
-      (issue) =>
-        issue.status === "blocked" ||
-        (issue.description &&
-          issue.description.toLowerCase().includes("blocker"))
+      (issue: any) =>
+        issue.status === "blocked" || issue.priority === "blocker"
     ).length;
 
     return {
