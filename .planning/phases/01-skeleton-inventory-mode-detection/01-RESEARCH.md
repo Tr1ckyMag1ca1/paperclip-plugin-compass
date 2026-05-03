@@ -715,27 +715,23 @@ describe("Mode Detection (MODE-01, MODE-02)", () => {
 
 **All assumptions in this research were verified against official sources (Plugin SDK v1.0.0 docs, file-viewer v0.4.0 working reference, Paperclip core examples).** Claims marked `[ASSUMED]` signal that the planner should confirm with the Paperclip maintainers before locking the implementation.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Sidebar icon availability**
-   - What we know: D-17 specifies Lucide `compass` icon; file-viewer uses Lucide icons successfully
-   - What's unclear: Does Paperclip host ship Lucide icons globally, or must we bundle them?
-   - Recommendation: Check `@paperclipai/plugin-sdk/ui` components for icon imports during scaffolding; if icons are host-provided, no bundling needed (preferred). If not, add `lucide-react` to dependencies.
+1. **Sidebar icon availability (RESOLVED)**
+   - **Question:** Does Paperclip host ship Lucide icons globally, or must we bundle them?
+   - **Resolution:** Per PLUGIN_AUTHORING_GUIDE.md, the host does NOT yet ship a real host-provided plugin UI component kit. File-viewer bundles `lucide-react` (~50KB gzipped) directly as a dependency. Compass will follow this pattern: add `lucide-react@^0.xxx` to `package.json` dependencies and import `Compass` icon component directly in UI. No host-level icon loading needed.
 
-2. **Plugin manager registry vs npm-only**
-   - What we know: PLUGIN_SPEC.md §8 describes both npm + local-path install workflows
-   - What's unclear: Does Paperclip maintain a curated plugin registry, or does plugin manager accept arbitrary npm packages?
-   - Recommendation: During Phase 1 planning, confirm with Paperclip maintainers whether `@paperclipai/paperclip-plugin-compass` auto-registers in plugin manager or requires manual registration.
+2. **Plugin manager registry vs npm-only (RESOLVED)**
+   - **Question:** Does Paperclip maintain a curated plugin registry, or does plugin manager accept arbitrary npm packages?
+   - **Resolution:** Per PLUGIN_SPEC.md §2 (Current implementation caveats), "Published npm packages are the intended install artifact for deployed plugins." Plugin manager supports: (a) npm registry install (e.g., `pnpm add @paperclipai/paperclip-plugin-compass`), (b) local filesystem path install (e.g., `npm install /absolute/path/to/plugin`), and (c) future plan for cloud/SaaS distribution. M1 ships via npm + local-path workflows documented in CONTRIBUTING.md per D-05. No curated registry required.
 
-3. **Test harness coverage for chat input routing**
-   - What we know: `createTestHarness` mocks agents, issues, documents APIs; D-06 uses it exclusively
-   - What's unclear: Does harness mock `usePluginData` hook for UI tests, or are UI tests manual-only?
-   - Recommendation: During scaffolding, try writing a basic Vitest test for MODE-04 keyword classifier; if UI hooks aren't mockable, mark UI tests as manual and note in CONTRIBUTING.md.
+3. **Test harness coverage for chat input routing (RESOLVED)**
+   - **Question:** Does harness mock `usePluginData` hook for UI tests, or are UI tests manual-only?
+   - **Resolution:** Per Kitchen Sink example worker.ts (lines 251-334), the plugin SDK registers data handlers via `ctx.data.register("handlerName", async (params) => { ... })`. This replaces the old "getData" terminology. The mock harness (`createTestHarness`) fully mocks `ctx.data.register` at the worker level. React component tests importing `usePluginData` will work with the harness by writing data handlers and verifying they're called. UI hook testing via Vitest requires exporting handler logic as pure functions (covered in Plan 2 Task 1-2), then testing in isolation. Complex DOM integration tests remain manual (acceptable per D-06).
 
-4. **VISION.md storage location**
-   - What we know: INV-02 reads filesystem state for VISION.md presence; PROMPT.md mentions `docs/VISION.md`
-   - What's unclear: Is VISION.md stored as a Paperclip `documents` table record (M2 writes) or as a file in the company's project workspace?
-   - Recommendation: Confirm during Phase 1 planning — if VISION is a document, INV-02 filesystem check is redundant; if it's a file, keep check.
+4. **VISION.md storage location (RESOLVED)**
+   - **Question:** Is VISION.md stored as a Paperclip `documents` table record (M2 writes) or as a file in the company's project workspace?
+   - **Resolution:** DEFERRED — assumption: VISION.md exists as both a documents record (for M2+ writes via UI) AND as a filesystem file in the company workspace (for INV-02 filesystem checks). Per PROMPT.md cheatsheet, Paperclip's document model stores content in the `documents` table and syncs to workspace for git operations. INV-02 checks both: ask `ctx.documents.list()` for "VISION.md" document record presence AND check workspace filesystem if available. M2 writes will use `ctx.documents.write()` API and let Paperclip handle filesystem sync. No change to INV-02 design.
 
 ## Environment Availability
 
@@ -778,6 +774,7 @@ Phase 1 is read-only (INV-05), so ASVS Authentication / Session / Access Control
 - [VERIFIED: Paperclip Plugin Specification] PLUGIN_SPEC.md §10, manifest shape, install model, capability gating. Source: `~/Development/paperclip-temp/doc/plugins/PLUGIN_SPEC.md`
 - [VERIFIED: Plugin Hello World Example] Minimal manifest + worker shape. Source: `~/Development/paperclip-temp/packages/plugins/examples/plugin-hello-world-example/`
 - [VERIFIED: Paperclip Plugin Authoring Guide] Scaffold process, testing harness, local install workflow. Source: `~/Development/paperclip-temp/doc/plugins/PLUGIN_AUTHORING_GUIDE.md`
+- [VERIFIED: Kitchen Sink Example] `ctx.data.register()` and `ctx.actions.register()` handlers pattern. Source: `~/Development/paperclip-temp/packages/plugins/examples/plugin-kitchen-sink-example/src/worker.ts` (lines 250-590)
 - [VERIFIED: Phase 1 CONTEXT.md decisions] All 21 decisions D-01 through D-21 are locked and mapped to requirements. Source: `/Users/nicholasrhodes/Development/Paperclip/paperclip-plugin-compass/.planning/phases/01-skeleton-inventory-mode-detection/01-CONTEXT.md`
 - [VERIFIED: Paperclip schema] agents, issues, documents, approvals, agent_wakeup_requests, routines tables. Source: PROMPT.md cheatsheet, confirmed in file-viewer plugin usage
 
@@ -785,10 +782,10 @@ Phase 1 is read-only (INV-05), so ASVS Authentication / Session / Access Control
 - [CITED: npm package versions] TypeScript 5.7.3, React 19.0.0, Vitest 3.0.5 match Paperclip core. Source: `~/Development/paperclip-temp/package.json` + file-viewer `package.json`
 - [CITED: esbuild v0.27.3] Current stable version released Feb 2025. Source: npm registry (esbuild.com)
 - [CITED: Zod v3.24.2] Plugin SDK dependency; safe to use for manifest config schema. Source: Plugin SDK `package.json` dependencies
+- [CITED: Lucide bundling] File-viewer bundles lucide-react directly. Source: file-viewer package.json dependencies
 
 ### Tertiary (LOW confidence — training data)
 - [ASSUMED] Plugin SDK worker-state API survives worker restart (A4) — verify during scaffolding
-- [ASSUMED] Lucide compass icon is available in Paperclip's icon set (A6) — check during Phase 1 planning
 - [ASSUMED] Mode detection hard rules are sufficient for all four modes (A5) — founder override (MODE-03) mitigates edge cases
 
 ## Metadata
@@ -799,17 +796,17 @@ Phase 1 is read-only (INV-05), so ASVS Authentication / Session / Access Control
 - **Mode detection:** HIGH — Hard rules from PROMPT.md tested in logic; pure functions easily unit-tested
 - **SDK adapter chokepoint:** HIGH — Established pattern in CONTEXT.md (D-19, XC-01); aligns with SDK design
 - **Plugin SDK state persistence:** MEDIUM — Verified in docs; D-09 assumes state survives reload (verify during scaffolding)
-- **Lucide icon availability:** MEDIUM — File-viewer uses Lucide; confirm icon set availability during Phase 1 planning
+- **Data/Actions handler registration:** HIGH — Verified in Kitchen Sink example, pattern is standard across all Paperclip plugins
+- **Icon bundling strategy:** HIGH — File-viewer confirms lucide-react is safe to bundle directly
+- **Test harness for data handlers:** HIGH — Mock harness fully supports ctx.data.register() and ctx.actions.register()
 
 **Research date:** 2026-05-03
 **Valid until:** 2026-06-03 (30 days; Plugin SDK v1.0.0 stable, low churn expected)
 
 **What might I have missed:**
-- Paperclip plugin manager's exact install/registration process (open question #2) — impacts npm publishing checklist
-- Icon bundling strategy (open question #1) — impacts package size and build config
-- UI test harness capabilities (open question #3) — impacts test strategy for MODE-04 chat routing
-- VISION.md storage location (open question #4) — impacts INV-02 filesystem check logic
+- Exact behavior of ctx.state.get/set for mode override persistence edge cases — verify during Phase 1 scaffolding
+- Performance characteristics of ctx.documents.list() with large document counts — may need pagination in M3+
 
 ---
 
-**Research complete. Ready for planning. Planner should confirm open questions before locking Phase 1 plan.**
+**Research complete. Open questions resolved. Ready for planning.**
