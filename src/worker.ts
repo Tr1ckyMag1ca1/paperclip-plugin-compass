@@ -31,7 +31,6 @@ import { applyRepositionAmendments } from "./reposition/apply.js";
 import { generateRepositionIdempotencyKey } from "./found/idempotency.js";
 import type { ShiftScope, Amendment, RepositionRunState } from "./types/reposition.js";
 import type { ParsedVision } from "./types/assess.js";
-import { randomUUID } from "node:crypto";
 
 const plugin = definePlugin({
   async setup(ctx: PluginContext) {
@@ -880,7 +879,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: planRepositionCascade (REPO-03, D-09)
   // Plan cascading changes for affected agents
-  ctx.data.register("planRepositionCascade", async (params: any) => {
+  ctx.data.register("planCascade", async (params: any) => {
     const { companyId, amendments } = params as {
       companyId: string;
       amendments: Amendment[];
@@ -942,7 +941,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: applyRepositionAmendments (REPO-04, REPO-05, D-11, D-12, XC-02, XC-03)
   // Apply amendments and cascade changes with approval routing
-  ctx.actions.register("applyRepositionAmendments", async (params: any) => {
+  ctx.actions.register("applyReposition", async (params: any) => {
     const {
       companyId,
       amendments,
@@ -1065,7 +1064,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
  * @returns ActionQueue with all action items ranked by priority
  */
 function generateActionQueueFromClassification(classification: any): ActionQueue {
-  const runId = randomUUID();
+  const runId = globalThis.crypto.randomUUID();
   const itemsByCause: Record<string, ActionItem[]> = {};
   let totalItems = 0;
 

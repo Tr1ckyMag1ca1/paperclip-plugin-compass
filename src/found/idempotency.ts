@@ -14,7 +14,13 @@
  * 3. Validated before insert (format check + existence check in adapter)
  */
 
-import { randomUUID } from "node:crypto";
+/**
+ * Generate a random UUID using Web Crypto API.
+ * Works in both Node.js (>=19) and browser environments.
+ */
+function generateUUID(): string {
+  return globalThis.crypto.randomUUID();
+}
 
 /**
  * Generate an idempotency key for a wakeup request.
@@ -62,7 +68,7 @@ export function isValidIdempotencyKey(key: string): boolean {
  * @returns UUID v4 string (e.g., "f47ac10b-58cc-4372-a567-0e02b2c3d479")
  */
 export function generateApplyRunId(): string {
-  return randomUUID();
+  return generateUUID();
 }
 
 /**
