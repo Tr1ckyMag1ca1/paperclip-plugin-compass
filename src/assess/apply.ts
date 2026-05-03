@@ -44,6 +44,9 @@ export interface ApplyResult {
   /** True if all writes succeeded and wakeups queued */
   success: boolean;
 
+  /** Apply run UUID (stable across retries, used for memory recording) */
+  runId?: string;
+
   /** Document ID of written VISION.md amendment (if successful) */
   visionDocId?: string;
 
@@ -127,7 +130,7 @@ export async function applyAssessmentChanges(
 ): Promise<ApplyResult> {
   const adapter = adapterOverride || new PaperclipAdapter(ctx);
   const applyRunId = generateApplyRunId();
-  const result: ApplyResult = { success: false };
+  const result: ApplyResult = { success: false, runId: applyRunId };
 
   // ─────────────────────────────────────────────────────────────────
   // PREFLIGHT STAGE
@@ -211,6 +214,11 @@ export async function applyAssessmentChanges(
   // Success!
   result.success = true;
   result.summary = `Updated VISION.md with ${acceptedAmendments.length} amendment(s), cascaded to ${result.cascadeWakeupCount || 0} agent(s)`;
+
+  // Per D-06: Memory recording deferred to handler layer (Phase 7)
+  // Apply executes in browser context; memory functions require Node APIs
+  // Handler will call recordFindingsToHistory post-Apply with amendment metadata
+
   result.auditLog = adapter.getAuditLog();
   return result;
 }

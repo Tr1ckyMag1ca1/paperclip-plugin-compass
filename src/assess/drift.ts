@@ -11,6 +11,8 @@
 
 import { randomUUID } from "node:crypto";
 import type { ParsedVision, ActivitySnapshot, DriftReport, DriftItem } from "../types/assess.js";
+import { deduplicateAgainstOpenFindings } from "../memory/finding.js";
+import type { Finding } from "../types/memory.js";
 
 /**
  * Detect drift between VISION.md and recent activity.
@@ -21,15 +23,21 @@ import type { ParsedVision, ActivitySnapshot, DriftReport, DriftItem } from "../
  *
  * Items with confidence >= 0.5 surface to founder. Below 0.5 deferred (info severity).
  *
+ * Per ASSESS-09 (D-08, D-09): Optionally accepts priorOpenFindings to deduplicate
+ * against repeat noise. If provided, filters new findings to exclude any whose summary
+ * matches (substring match) an open finding from a prior run.
+ *
  * @param vision ParsedVision object (from parseVision)
  * @param activity ActivitySnapshot (from buildActivitySnapshot)
  * @param windowDays Number of days in activity window (for recency weighting)
- * @returns DriftReport with detected items, confidence scores, and metadata
+ * @param priorOpenFindings Optional array of prior open findings for ASSESS-09 dedup
+ * @returns DriftReport with detected items, confidence scores, metadata, and optional dedup preamble
  */
 export function detectDrift(
   vision: ParsedVision,
   activity: ActivitySnapshot,
-  windowDays: number = 30
+  windowDays: number = 30,
+  priorOpenFindings?: Finding[]
 ): DriftReport {
   const runId = randomUUID();
   const generatedAt = new Date().toISOString();
@@ -89,14 +97,55 @@ export function detectDrift(
     }
   }
 
-  return {
-    items: detectedItems,
+  // Per ASSESS-09: Apply dedup if prior open findings provided
+  let deduplicatedCount = 0;
+  let finalItems = detectedItems;
+
+  if (priorOpenFindings && priorOpenFindings.length > 0) {
+    // Convert drift items to Finding-like objects for dedup logic
+    const driftAsFindings = detectedItems.map((item) => ({
+      id: randomUUID(),
+      run_id: runId,
+      mode: "Assess" as const,
+      created_at: generatedAt,
+      summary: item.proposedAmendment,
+      evidence_refs: item.evidence.map((e) => e.id),
+      status: "open" as const,
+      status_history: [{
+        from: null as any,
+        to: "open" as const,
+        at: generatedAt,
+      }],
+    }));
+
+    const dedupedFindings = deduplicateAgainstOpenFindings(driftAsFindings, priorOpenFindings);
+    deduplicatedCount = driftAsFindings.length - dedupedFindings.length;
+
+    // Map back to DriftItems (keep original structure)
+    finalItems = detectedItems.filter((item, idx) => {
+      const driftFinding = driftAsFindings[idx];
+      return dedupedFindings.some((f) => f.summary === driftFinding.summary);
+    });
+  }
+
+  const result: DriftReport = {
+    items: finalItems,
     runId,
     generatedAt,
     companyId: "", // Set by caller
     confidenceThreshold,
     totalItemsDetected: detectedItems.length + totalItemsDetected,
   };
+
+  // Per ASSESS-09: Include dedup context in preamble if dedup was applied
+  if (priorOpenFindings && priorOpenFindings.length > 0) {
+    result.contextRefreshPreamble = {
+      priorOpenFindingsCount: priorOpenFindings.length,
+      deduplicatedAgainstCount: deduplicatedCount,
+    };
+  }
+
+  return result;
 }
 
 /**

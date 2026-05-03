@@ -40,6 +40,9 @@ export interface ApplyResult {
   /** True if all writes succeeded and wakeups queued */
   success: boolean;
 
+  /** Apply run UUID (stable across retries, used for memory recording) */
+  runId?: string;
+
   /** Document ID of written VISION.md (if successful) */
   visionDocId?: string;
 
@@ -100,7 +103,7 @@ export async function applyFound(
 ): Promise<ApplyResult> {
   const adapter = new PaperclipAdapter(ctx);
   const applyRunId = generateApplyRunId();
-  const result: ApplyResult = { success: false };
+  const result: ApplyResult = { success: false, runId: applyRunId };
 
   // 0. Quality check VISION before proceeding
   try {
@@ -242,6 +245,10 @@ See VISION.md for full company context.`;
     result.errors = [String(err)];
     result.success = false; // Mark failure but don't roll back (wakeups are queue-only)
   }
+
+  // Per D-06: Memory recording deferred to handler layer (Phase 7)
+  // Apply executes in browser context; memory functions require Node APIs
+  // Handler will call recordFindingsToHistory post-Apply with result metadata
 
   result.auditLog = adapter.getAuditLog();
   return result;

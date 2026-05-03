@@ -195,6 +195,14 @@ export interface DriftReport {
 
   /** Total items detected before threshold filtering */
   totalItemsDetected: number;
+
+  /** Context refresh preamble for ASSESS-09 dedup (optional) */
+  contextRefreshPreamble?: {
+    /** Number of prior open findings loaded for dedup context */
+    priorOpenFindingsCount: number;
+    /** Number of new findings filtered out as duplicates */
+    deduplicatedAgainstCount: number;
+  };
 }
 
 /**

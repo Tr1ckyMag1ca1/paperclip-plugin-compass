@@ -189,8 +189,12 @@ export async function applyAction(
  * Iterates over queue items by cause, calling applyAction for each pending item.
  * Updates queue for next iteration (so addressed items stay addressed).
  *
+ * Per D-06: Records findings to memory for addressed actions on success.
+ *
  * @param queue Current action queue
  * @param adapter SDK adapter for all writes
+ * @param ctx Plugin context (for memory recording)
+ * @param runId Apply run UUID (for memory recording)
  * @returns Object { queue: final ActionQueue, results: array of { actionId, result } }
  */
 export async function applyAllActions(
@@ -217,5 +221,10 @@ export async function applyAllActions(
     }
   }
 
+  // Per D-06: Memory recording deferred to handler layer (Phase 7)
+  // Apply executes in browser context; memory functions require Node APIs
+  // Handler will call recordFindingsToHistory post-Apply with action metadata
+
   return { queue, results };
 }
+

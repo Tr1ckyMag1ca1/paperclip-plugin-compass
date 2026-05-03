@@ -110,9 +110,9 @@ export async function createEngagementHistory(
     routines: [],
   };
 
-  // Write to documents table via adapter
+  // Write to documents table via adapter with correct key
   const markdown = serializeEngagementHistoryToMarkdown(history);
-  await adapter.writeDocument(companyId, "Engagement History", markdown);
+  await adapter.writeDocument(companyId, ENGAGEMENT_HISTORY_DOC_KEY, markdown);
 
   // Update cache
   await ctx.state.set({
@@ -148,8 +148,8 @@ export async function updateEngagementHistory(
   // Serialize to markdown
   const markdown = serializeEngagementHistoryToMarkdown(history);
 
-  // Write via adapter
-  await adapter.writeDocument(companyId, "Engagement History", markdown);
+  // Write via adapter with correct key
+  await adapter.writeDocument(companyId, ENGAGEMENT_HISTORY_DOC_KEY, markdown);
 
   // Invalidate cache by clearing it
   await ctx.state.set({

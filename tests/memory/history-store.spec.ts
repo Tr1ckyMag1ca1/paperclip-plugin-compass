@@ -171,7 +171,7 @@ ${JSON.stringify(mockHistory)}
 
       expect(mockAdapter.writeDocument).toHaveBeenCalledWith(
         "company-1",
-        "Engagement History",
+        "compass-engagement-history",
         expect.stringContaining("Engagement History")
       );
     });
@@ -214,7 +214,7 @@ ${JSON.stringify(mockHistory)}
 
       expect(mockAdapter.writeDocument).toHaveBeenCalledWith(
         "company-1",
-        "Engagement History",
+        "compass-engagement-history",
         expect.stringContaining("Engagement History")
       );
     });
