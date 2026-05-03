@@ -60,26 +60,26 @@ Inherited from Phase 1 (Paperclip host design tokens):
 
 ## Typography
 
-Inherited from Paperclip host (Plugin SDK provides design tokens):
+Inherited from Paperclip host (Plugin SDK provides design tokens). **Two font weights only: 400 (normal) and 700 (bold).**
 
 | Role | Size | Weight | Line Height | Class Usage |
 |------|------|--------|-------------|-------------|
-| Body (paragraph) | 14px | 400 (normal) | 1.5 (24px) | `text-body` |
-| Label (form labels, captions) | 12px | 500 (medium) | 1.4 (17px) | `text-label` |
-| Heading (section headers, h3/h4) | 18px | 600 (semibold) | 1.3 (23px) | `text-heading` |
-| Display (interview section title, h2) | 24px | 700 (bold) | 1.2 (29px) | `text-display` |
+| Body (paragraph) | 14px | 400 (normal) | 1.5 (24px) | `text-body font-normal` |
+| Label (form labels, captions) | 12px | 400 (normal) | 1.4 (17px) | `text-label font-normal` |
+| Heading (section headers, h3/h4) | 18px | 700 (bold) | 1.3 (23px) | `text-heading font-bold` |
+| Display (interview section title, h2) | 24px | 700 (bold) | 1.2 (29px) | `text-display font-bold` |
 
 **Rationale:**
 - Body 14px × 1.5 — readable in narrow sidebar, follows Paperclip conventions
 - Label 12px — form field descriptors, inline hints (matches Paperclip form pattern)
-- Heading 18px — visual break between form sections, question groups
-- Display 24px — interview section title (e.g., "Big Picture"), command attention
+- Heading 18px × bold — visual break between form sections, question groups
+- Display 24px × bold — interview section title (e.g., "Big Picture"), command attention
 
 **Application in Phase 2:**
 - Interview section title: `text-display font-bold` — "Big Picture", "Revenue & Customers", etc.
 - Question prompt: `text-body font-normal` — interview questions, instructions
-- Form labels: `text-label font-medium` — input labels, hint text
-- VISION preview heading: `text-heading font-semibold` — section names in rendered VISION.md
+- Form labels: `text-label font-normal` — input labels, hint text
+- VISION preview heading: `text-heading font-bold` — section names in rendered VISION.md
 
 ---
 
@@ -147,7 +147,7 @@ Inherited from Paperclip host (using host design token class names):
 
 2. **Question Renderer** (form area)
    - One question per viewport (or question group if related, TBD by planner)
-   - Question prompt in `text-body` font
+   - Question prompt in `text-body font-normal`
    - Question type determines input:
      - `free-text-short` → single-line text input
      - `free-text-long` → textarea (minimum 4 rows, expand on input)
@@ -332,7 +332,7 @@ On validation fail: block Apply, show error banner with specific slot names + "E
 - [ ] Dimension 1 Copywriting: PASS — All copy matches founder-readable style from Phase 1, specific verb+noun CTAs, no engineer-speak
 - [ ] Dimension 2 Visuals: PASS — Linear interview flow, preview panel, confirm modal, apply progress UI all specified; no ambiguity on component boundaries
 - [ ] Dimension 3 Color: PASS — Accent reserved explicitly for mode icon, required indicators, focus rings; destructive only for discard action
-- [ ] Dimension 4 Typography: PASS — Display/Heading/Body/Label roles mapped to classes and point sizes; line heights inherited from host
+- [ ] Dimension 4 Typography: PASS — Two font weights only (400 normal, 700 bold); 4 size roles (12, 14, 18, 24px) mapped to classes; line heights inherited from host
 - [ ] Dimension 5 Spacing: PASS — 8-point scale applied; sidebar width constraint noted; no custom breakpoints
 - [ ] Dimension 6 Registry Safety: PASS — No third-party component registry; only Plugin SDK UI components (MetricCard, StatusBadge, DataTable, LogView, ActionBar) + Lucide icons; no external blocks to vet
 
@@ -366,4 +366,5 @@ All above locked in **planner** phase, not here. UI-SPEC provides the contract; 
 ---
 
 *Phase 2: Found Mode*  
-*UI-SPEC created: 2026-05-03*
+*UI-SPEC created: 2026-05-03*  
+*Typography fixed (2 weights only): 2026-05-03*
