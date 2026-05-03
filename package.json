@@ -1,0 +1,53 @@
+{
+  "name": "@paperclipai/paperclip-plugin-compass",
+  "version": "0.1.0",
+  "type": "module",
+  "private": false,
+  "description": "Strategic consultant for AI company lifecycle — diagnose, found, revive, reposition",
+  "keywords": [
+    "paperclip",
+    "plugin",
+    "compass",
+    "strategy",
+    "ai-company",
+    "consultant"
+  ],
+  "author": "Paperclip AI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tr1ckyMag1ca1/paperclip-plugin-compass.git"
+  },
+  "paperclipPlugin": {
+    "manifest": "./dist/manifest.js",
+    "worker": "./dist/worker.js",
+    "ui": "./dist/ui"
+  },
+  "scripts": {
+    "build": "node ./esbuild.config.mjs",
+    "dev": "node ./esbuild.config.mjs --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist/",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": ">=20",
+    "@types/react": "^19.0.8",
+    "esbuild": "^0.27.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}
