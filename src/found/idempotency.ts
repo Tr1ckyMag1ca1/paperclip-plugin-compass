@@ -144,3 +144,43 @@ export function isValidReviveIdempotencyKey(key: string): boolean {
   const pattern = /^compass:revive:[^:]+:[^:]+:[^:]+$/;
   return pattern.test(key);
 }
+
+/**
+ * Generate an idempotency key for Reposition mode amendment application.
+ *
+ * Per D-12 (XC-03), Reposition mode uses reposition-namespaced idempotency keys
+ * to distinguish from Found/Assess/Revive modes.
+ *
+ * Format: compass:reposition:${company_id}:${reposition_run_id}:${agent_id}
+ * - company_id: the company being repositioned
+ * - reposition_run_id: UUID per Reposition run (stable across retries)
+ * - agent_id: the specific agent being woken up (for cascade)
+ *
+ * Same inputs always produce same key (deterministic).
+ *
+ * @param companyId Company ID (e.g., "acme-corp-123")
+ * @param repositionRunId Reposition run UUID (e.g., "f47ac10b-58cc-4372-a567-0e02b2c3d479")
+ * @param agentId Agent ID to wake up (e.g., "agent-ceo-456")
+ * @returns Idempotency key in format compass:reposition:{company}:{runId}:{agent}
+ */
+export function generateRepositionIdempotencyKey(
+  companyId: string,
+  repositionRunId: string,
+  agentId: string
+): string {
+  return `compass:reposition:${companyId}:${repositionRunId}:${agentId}`;
+}
+
+/**
+ * Validate a reposition-mode idempotency key format.
+ *
+ * Per XC-03, key must match: compass:reposition:[non-empty]:[non-empty]:[non-empty]
+ * Used before queuing to catch malformed keys early.
+ *
+ * @param key Idempotency key to validate
+ * @returns True if key matches expected reposition format, false otherwise
+ */
+export function isValidRepositionIdempotencyKey(key: string): boolean {
+  const pattern = /^compass:reposition:[^:]+:[^:]+:[^:]+$/;
+  return pattern.test(key);
+}

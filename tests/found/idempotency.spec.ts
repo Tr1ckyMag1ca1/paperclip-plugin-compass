@@ -6,6 +6,8 @@ import {
   isValidAssessIdempotencyKey,
   generateReviveActionKey,
   isValidReviveIdempotencyKey,
+  generateRepositionIdempotencyKey,
+  isValidRepositionIdempotencyKey,
 } from "../../src/found/idempotency.js";
 
 describe("Idempotency Key Generation", () => {
@@ -223,6 +225,98 @@ describe("Idempotency Key Generation", () => {
     });
   });
 
+  // ===== REPOSITION MODE TESTS =====
+
+  describe("Reposition Mode: generateRepositionIdempotencyKey", () => {
+    it("generates key in format compass:reposition:{company}:{runId}:{agent}", () => {
+      const key = generateRepositionIdempotencyKey(
+        "acme-corp",
+        "reposition-run-uuid",
+        "agent-ceo-123"
+      );
+      expect(key).toBe("compass:reposition:acme-corp:reposition-run-uuid:agent-ceo-123");
+    });
+
+    it("is deterministic: same inputs produce same key", () => {
+      const key1 = generateRepositionIdempotencyKey(
+        "company-1",
+        "run-uuid-1",
+        "agent-x"
+      );
+      const key2 = generateRepositionIdempotencyKey(
+        "company-1",
+        "run-uuid-1",
+        "agent-x"
+      );
+      expect(key1).toBe(key2);
+    });
+
+    it("produces different keys for different agents", () => {
+      const key1 = generateRepositionIdempotencyKey("company-1", "run-1", "agent-a");
+      const key2 = generateRepositionIdempotencyKey("company-1", "run-1", "agent-b");
+      expect(key1).not.toBe(key2);
+    });
+
+    it("produces different keys for different run IDs", () => {
+      const key1 = generateRepositionIdempotencyKey("company-1", "run-uuid-1", "agent-a");
+      const key2 = generateRepositionIdempotencyKey("company-1", "run-uuid-2", "agent-a");
+      expect(key1).not.toBe(key2);
+    });
+
+    it("produces different keys for different companies", () => {
+      const key1 = generateRepositionIdempotencyKey("company-1", "run-1", "agent-a");
+      const key2 = generateRepositionIdempotencyKey("company-2", "run-1", "agent-a");
+      expect(key1).not.toBe(key2);
+    });
+  });
+
+  describe("Reposition Mode: isValidRepositionIdempotencyKey", () => {
+    it("returns true for valid reposition-mode keys", () => {
+      const key = "compass:reposition:acme-corp:reposition-run-uuid:agent-ceo";
+      expect(isValidRepositionIdempotencyKey(key)).toBe(true);
+    });
+
+    it("returns true for keys with complex UUIDs", () => {
+      const key = "compass:reposition:company-1:f47ac10b-58cc-4372-a567-0e02b2c3d479:agent-123";
+      expect(isValidRepositionIdempotencyKey(key)).toBe(true);
+    });
+
+    it("returns false for found-mode keys", () => {
+      expect(
+        isValidRepositionIdempotencyKey("compass:found:acme-corp:agent-ceo:run-123")
+      ).toBe(false);
+    });
+
+    it("returns false for assess-mode keys", () => {
+      expect(
+        isValidRepositionIdempotencyKey("compass:assess:acme-corp:run-123:agent-ceo")
+      ).toBe(false);
+    });
+
+    it("returns false for revive-mode keys", () => {
+      expect(
+        isValidRepositionIdempotencyKey("compass:revive:acme-corp:action-1:1")
+      ).toBe(false);
+    });
+
+    it("returns false for keys with missing parts", () => {
+      expect(isValidRepositionIdempotencyKey("compass:reposition:acme-corp:run-uuid")).toBe(false);
+      expect(isValidRepositionIdempotencyKey("compass:reposition:acme-corp")).toBe(false);
+    });
+
+    it("returns false for malformed keys", () => {
+      expect(isValidRepositionIdempotencyKey("compass:reposition:::")).toBe(false);
+      expect(isValidRepositionIdempotencyKey("invalid-key")).toBe(false);
+      expect(isValidRepositionIdempotencyKey("")).toBe(false);
+    });
+
+    it("returns false for keys with wrong namespace", () => {
+      expect(
+        isValidRepositionIdempotencyKey("compass:unknown:acme-corp:run-1:agent")
+      ).toBe(false);
+    });
+  });
+
   // ===== CROSS-MODE TESTS =====
 
   describe("Cross-Mode Idempotency", () => {
@@ -231,28 +325,41 @@ describe("Idempotency Key Generation", () => {
       const foundKey = generateIdempotencyKey(company, "agent-a", "run-1");
       const assessKey = generateAssessIdempotencyKey(company, "run-1", "agent-a");
       const reviveKey = generateReviveActionKey(company, "action-1", 1);
+      const repositionKey = generateRepositionIdempotencyKey(company, "run-1", "agent-a");
 
       expect(foundKey).not.toBe(assessKey);
       expect(foundKey).not.toBe(reviveKey);
+      expect(foundKey).not.toBe(repositionKey);
       expect(assessKey).not.toBe(reviveKey);
+      expect(assessKey).not.toBe(repositionKey);
+      expect(reviveKey).not.toBe(repositionKey);
     });
 
     it("all validators reject keys from other modes", () => {
       const foundKey = "compass:found:company:agent:run";
       const assessKey = "compass:assess:company:run:agent";
       const reviveKey = "compass:revive:company:action:1";
+      const repositionKey = "compass:reposition:company:run:agent";
 
-      // Found key fails assess and revive validators
+      // Found key fails all other validators
       expect(isValidAssessIdempotencyKey(foundKey)).toBe(false);
       expect(isValidReviveIdempotencyKey(foundKey)).toBe(false);
+      expect(isValidRepositionIdempotencyKey(foundKey)).toBe(false);
 
-      // Assess key fails found and revive validators
+      // Assess key fails all other validators
       expect(isValidIdempotencyKey(assessKey)).toBe(false);
       expect(isValidReviveIdempotencyKey(assessKey)).toBe(false);
+      expect(isValidRepositionIdempotencyKey(assessKey)).toBe(false);
 
-      // Revive key fails found and assess validators
+      // Revive key fails all other validators
       expect(isValidIdempotencyKey(reviveKey)).toBe(false);
       expect(isValidAssessIdempotencyKey(reviveKey)).toBe(false);
+      expect(isValidRepositionIdempotencyKey(reviveKey)).toBe(false);
+
+      // Reposition key fails all other validators
+      expect(isValidIdempotencyKey(repositionKey)).toBe(false);
+      expect(isValidAssessIdempotencyKey(repositionKey)).toBe(false);
+      expect(isValidReviveIdempotencyKey(repositionKey)).toBe(false);
     });
   });
 });
