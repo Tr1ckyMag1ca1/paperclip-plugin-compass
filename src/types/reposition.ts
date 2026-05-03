@@ -18,8 +18,10 @@ import type { CascadePlan } from "../assess/cascade.js";
  * Represents the named sections of VISION.md that can be amended:
  * mission, mandate, voice, principles, success_criteria, growth_strategy,
  * revenue_model, target_customer, and others.
+ *
+ * Excludes 'amendments' field (which is metadata, not a vision section).
  */
-export type VisionSectionId = keyof ParsedVision;
+export type VisionSectionId = Exclude<keyof ParsedVision, "amendments">;
 
 /**
  * ShiftScope — output of the shift classifier.
