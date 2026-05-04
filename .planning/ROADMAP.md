@@ -12,16 +12,16 @@
 
 ## Active Milestone: v1.1 Compass UI Parity with Paperclip Host
 
-**Status:** Planning
+**Status:** Planning (Phase 7 plan complete)
 **Phases:** 4 (7–10, continuing from v1.0)
-**Total Requirements:** 38 v1
+**Total Requirements:** 38 v1.1
 **Granularity:** Coarse (per config.json)
 
 Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishable from Paperclip host shell. Fix layout bugs caused by nonexistent custom Tailwind tokens and light-only color utilities.
 
 ### Phases
 
-- [ ] **Phase 7: Foundations + Shared Primitives** - Design token baseline and reusable components (9 reqs)
+- [x] **Phase 7: Foundations + Shared Primitives** - Design token baseline and reusable components (9 reqs) — 3 plans
 - [ ] **Phase 8: Assess + Found Panels** - Migrate primary mode panels to host tokens (8 reqs)
 - [ ] **Phase 9: Revive + Reposition Panels** - Complete secondary mode migrations (7 reqs)
 - [ ] **Phase 10: Memory + Verification + Documentation** - History panel, verification gates, documentation (14 reqs)
@@ -46,7 +46,12 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 5. Dark-mode toggle test passes for all Phase 7 components — light and dark both visually correct, zero hardcoded color regressions
 6. OKLCH-vs-HSL color format verified compatible with host tokens and opacity modifiers (`/10`, `/20`) tested explicitly
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+**Plan List:**
+- [x] **07-01-PLAN.md** — Card + SectionHeader primitives, unit tests (UIF-01, UIF-02)
+- [x] **07-02-PLAN.md** — OklchProbe (gating), StatusBadge + ModeBanner migrations (UIF-05, UIF-06, UIF-08)
+- [x] **07-03-PLAN.md** — MainPanel, SidebarLink, 7 shared components, DualRenderProbe, grep verify (UIF-03, UIF-04, UIF-07, UIF-09)
 
 **UI hint**: yes
 
@@ -123,7 +128,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Foundations | 0/? | Not started | — |
+| 7. Foundations | 3/3 | Planned | 2026-05-04 |
 | 8. Assess + Found | 0/? | Not started | — |
 | 9. Revive + Reposition | 0/? | Not started | — |
 | 10. Memory + Verify + Docs | 0/? | Not started | — |
@@ -134,16 +139,16 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 **Requirements mapped:** 38/38 ✓
 
-| Category | Requirements | Count | Phase |
-|----------|--------------|-------|-------|
-| UI-FOUND | UIF-01 through UIF-09 | 9 | Phase 7 |
-| UI-ASSESS | UIA-01 through UIA-05 | 5 | Phase 8 |
-| UI-FOUND-MODE | UIFM-01 through UIFM-03 | 3 | Phase 8 |
-| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 |
-| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 |
-| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 |
-| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 |
-| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 |
+| Category | Requirements | Count | Phase | Status |
+|----------|--------------|-------|-------|--------|
+| UI-FOUND | UIF-01 through UIF-09 | 9 | Phase 7 | Planned |
+| UI-ASSESS | UIA-01 through UIA-05 | 5 | Phase 8 | Pending |
+| UI-FOUND-MODE | UIFM-01 through UIFM-03 | 3 | Phase 8 | Pending |
+| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 | Pending |
+| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 | Pending |
+| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Pending |
+| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Pending |
+| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Pending |
 
 **Total:** 38/38 requirements, 0 orphans, 0 duplicates.
 
@@ -197,4 +202,4 @@ All success criteria map to requirements; all requirements support at least one 
 
 ---
 
-*Last updated: 2026-05-04 — v1.1 roadmap created*
+*Last updated: 2026-05-04 — Phase 7 planning complete (3 plans created)*
