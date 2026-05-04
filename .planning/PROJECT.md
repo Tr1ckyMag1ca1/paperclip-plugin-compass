@@ -100,9 +100,25 @@ Founders get one in-app surface for strategic + operational guidance across the 
 - Reposition mode — shift classifier → scoped re-interview → targeted amendments + cascade with custom-override toggle
 - Engagement memory — persisted findings + History tab + scheduled routines + ASSESS-09 dedup
 
-## Next Milestone Goals
+## Current Milestone: v1.1 Compass UI parity with Paperclip host
 
-To be defined via `/gsd-new-milestone`. Likely candidates from v1.0 deferred backlog:
+**Goal:** Reskin Compass UI to look indistinguishable from Paperclip host shell; fix layout bugs caused by nonexistent custom Tailwind tokens.
+
+**Target features:**
+- Migrate ~55 components across 5 mode panels (Assess, Found, Revive, Reposition, Memory) to host shadcn tokens
+- Replace nonexistent custom tokens (`gap-xs`, `px-sm`, `py-md`) with valid Tailwind utilities — fixes collapsed/overlapping layouts
+- Replace light-only color utilities with theme-aware host tokens; verify light + dark
+- Verify host radius and semantic-color tokens against `paperclip-temp/ui/src/index.css` before scaling migration
+- Verifier grep: zero hits on documented broken-class patterns
+
+**Key context:**
+- Plugin renders directly in host React tree (`paperclip-temp/ui/src/plugins/slots.tsx`) — host Tailwind tokens available, no iframe/shadow DOM
+- Reference: `~/Development/paperclip-temp/ui/src/components/` (shadcn new-york, neutral baseColor, lucide icons)
+- Migration map and inventory in `UI_REDO_HANDOFF.md`
+
+## Future Milestone Candidates
+
+From v1.0 deferred backlog:
 - Cross-company history rollup
 - LLM-assisted classifier variants (drift / shift / stall)
 - Side-by-side amendment diff
@@ -129,4 +145,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-02 after initialization*
+*Last updated: 2026-05-04 — milestone v1.1 started*
