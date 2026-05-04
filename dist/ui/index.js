@@ -318,6 +318,15 @@ var Zap = createLucideIcon("zap", __iconNode19);
 
 // src/ui/components/ModeBanner.tsx
 import { jsx, jsxs } from "react/jsx-runtime";
+function getModeIconColor(mode) {
+  const colors = {
+    Found: "text-emerald-500",
+    Assess: "text-blue-500",
+    Revive: "text-red-500",
+    Reposition: "text-yellow-500"
+  };
+  return colors[mode];
+}
 function ModeBanner({
   inventory,
   detectedMode,
@@ -325,12 +334,12 @@ function ModeBanner({
   onOverrideChange
 }) {
   const currentMode = override || detectedMode;
-  return /* @__PURE__ */ jsx("div", { className: "border-b bg-card px-lg py-lg", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-md", children: [
-    /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-md flex-1", children: [
-      /* @__PURE__ */ jsx(Compass, { className: "h-5 w-5 mt-1 text-accent flex-shrink-0" }),
+  return /* @__PURE__ */ jsx("div", { className: "border-b bg-card px-4 py-4", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4 flex-1", children: [
+      /* @__PURE__ */ jsx(Compass, { className: `h-5 w-5 mt-1 ${getModeIconColor(currentMode)} flex-shrink-0` }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h2", { className: "text-heading font-semibold leading-tight", children: getModeLabel(currentMode) }),
-        /* @__PURE__ */ jsx("p", { className: "text-body text-foreground/70 mt-xs", children: getModeBannerCopy(currentMode) })
+        /* @__PURE__ */ jsx("h2", { className: "text-base font-semibold leading-tight", children: getModeLabel(currentMode) }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-foreground/70 mt-1", children: getModeBannerCopy(currentMode) })
       ] })
     ] }),
     /* @__PURE__ */ jsxs(
@@ -338,7 +347,7 @@ function ModeBanner({
       {
         value: currentMode,
         onChange: (e) => onOverrideChange(e.target.value),
-        className: "rounded border border-border bg-background px-md py-sm text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent",
+        className: "rounded-none border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent",
         children: [
           /* @__PURE__ */ jsx("option", { value: "Found", children: "Found a new company" }),
           /* @__PURE__ */ jsx("option", { value: "Assess", children: "Run a fresh audit" }),
@@ -378,23 +387,23 @@ function StatusBadge({ status }) {
     healthy: {
       icon: /* @__PURE__ */ jsx2(Check, { className: "h-3 w-3" }),
       label: "Healthy",
-      className: "bg-green-50 text-green-700 border-green-200"
+      className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
     },
     stalled: {
       icon: /* @__PURE__ */ jsx2(X, { className: "h-3 w-3" }),
       label: "Stalled",
-      className: "bg-red-50 text-red-700 border-red-200"
+      className: "bg-red-500/10 text-red-500 border-red-500/20"
     },
     unknown: {
       icon: null,
       label: "Unknown",
-      className: "bg-slate-50 text-slate-600 border-slate-200"
+      className: "bg-muted text-muted-foreground border-border"
     }
   }[status];
   return /* @__PURE__ */ jsxs2(
     "div",
     {
-      className: `inline-flex items-center gap-xs px-sm py-xs rounded text-xs font-medium border ${config.className}`,
+      className: `inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium border ${config.className}`,
       children: [
         config.icon,
         /* @__PURE__ */ jsx2("span", { children: config.label })
@@ -408,11 +417,11 @@ import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
 function AgentCard({ agent }) {
   const status = getAgentStatus(agent);
   const heartbeatLabel = getHeartbeatLabel(agent.lastHeartbeatAt);
-  return /* @__PURE__ */ jsx3("div", { className: "rounded border border-border bg-card px-md py-md", children: /* @__PURE__ */ jsxs3("div", { className: "flex items-start justify-between gap-md", children: [
+  return /* @__PURE__ */ jsx3("div", { className: "rounded-none border border-border bg-card px-4 py-4", children: /* @__PURE__ */ jsxs3("div", { className: "flex items-start justify-between gap-4", children: [
     /* @__PURE__ */ jsxs3("div", { className: "flex-1 min-w-0", children: [
       /* @__PURE__ */ jsx3("h3", { className: "font-semibold text-sm text-foreground", children: agent.name }),
-      /* @__PURE__ */ jsx3("p", { className: "text-xs text-foreground/60 mt-xs", children: agent.role }),
-      /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-xs mt-md text-xs text-foreground/60", children: [
+      /* @__PURE__ */ jsx3("p", { className: "text-xs text-foreground/60 mt-1", children: agent.role }),
+      /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-1 mt-4 text-xs text-foreground/60", children: [
         /* @__PURE__ */ jsx3(Clock, { className: "h-3 w-3 flex-shrink-0" }),
         /* @__PURE__ */ jsx3("span", { children: heartbeatLabel })
       ] })
@@ -452,16 +461,16 @@ function getHeartbeatLabel(lastHeartbeatAt) {
 // src/ui/components/DocumentList.tsx
 import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 function DocumentList({ documents }) {
-  return /* @__PURE__ */ jsxs4("div", { className: "space-y-md", children: [
-    /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-md", children: [
-      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-green-600 flex-shrink-0" }),
+  return /* @__PURE__ */ jsxs4("div", { className: "space-y-4", children: [
+    /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-4", children: [
+      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
       /* @__PURE__ */ jsxs4("div", { className: "flex-1 min-w-0", children: [
         /* @__PURE__ */ jsx4("p", { className: "text-sm font-medium text-foreground", children: "VISION.md" }),
         /* @__PURE__ */ jsx4("p", { className: "text-xs text-foreground/60", children: "Company vision and strategic plan" })
       ] })
     ] }),
-    documents.map((doc) => /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-md", children: [
-      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-green-600 flex-shrink-0" }),
+    documents.map((doc) => /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-4", children: [
+      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
       /* @__PURE__ */ jsx4("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx4("p", { className: "text-sm font-medium text-foreground", children: doc.title || doc.key }) })
     ] }, doc.id))
   ] });
@@ -475,14 +484,14 @@ function ActivityTimeline({
   if (issues.length === 0) {
     return /* @__PURE__ */ jsx5("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." });
   }
-  return /* @__PURE__ */ jsx5("div", { className: "space-y-sm", children: issues.map((issue) => /* @__PURE__ */ jsxs5("div", { className: "flex gap-md", children: [
-    /* @__PURE__ */ jsx5("div", { className: "flex flex-col items-center gap-xs", children: /* @__PURE__ */ jsx5(Clock, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
-    /* @__PURE__ */ jsxs5("div", { className: "flex-1 min-w-0 pb-sm", children: [
-      /* @__PURE__ */ jsxs5("div", { className: "flex items-baseline justify-between gap-md", children: [
+  return /* @__PURE__ */ jsx5("div", { className: "space-y-2", children: issues.map((issue) => /* @__PURE__ */ jsxs5("div", { className: "flex gap-4", children: [
+    /* @__PURE__ */ jsx5("div", { className: "flex flex-col items-center gap-1", children: /* @__PURE__ */ jsx5(Clock, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
+    /* @__PURE__ */ jsxs5("div", { className: "flex-1 min-w-0 pb-2", children: [
+      /* @__PURE__ */ jsxs5("div", { className: "flex items-baseline justify-between gap-4", children: [
         /* @__PURE__ */ jsx5("p", { className: "text-sm font-medium text-foreground line-clamp-2", children: issue.title }),
         /* @__PURE__ */ jsx5("span", { className: "text-xs text-foreground/60 flex-shrink-0", children: formatDate(new Date(issue.createdAt || Date.now())) })
       ] }),
-      issue.status && /* @__PURE__ */ jsxs5("p", { className: "text-xs text-foreground/60 mt-xs", children: [
+      issue.status && /* @__PURE__ */ jsxs5("p", { className: "text-xs text-foreground/60 mt-1", children: [
         "Status: ",
         issue.status
       ] })
@@ -515,19 +524,19 @@ function VisionStatusDisplay({
   visionExists
 }) {
   if (visionExists) {
-    return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-md", children: [
-      /* @__PURE__ */ jsx6(Check, { className: "h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" }),
+    return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-4", children: [
+      /* @__PURE__ */ jsx6(Check, { className: "h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" }),
       /* @__PURE__ */ jsxs6("div", { children: [
         /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "VISION.md found" }),
-        /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-xs", children: "Your company has a strategic vision document." })
+        /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-1", children: "Your company has a strategic vision document." })
       ] })
     ] });
   }
-  return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-md", children: [
-    /* @__PURE__ */ jsx6(X, { className: "h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" }),
+  return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx6(X, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
     /* @__PURE__ */ jsxs6("div", { children: [
       /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "No VISION.md" }),
-      /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-xs", children: "Create one using Found mode to establish your company's strategic foundation." })
+      /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-1", children: "Create one using Found mode to establish your company's strategic foundation." })
     ] })
   ] });
 }
@@ -543,7 +552,7 @@ function InventoryDisplay({
       {
         title: `Agents (${inventory.agentCount})`,
         defaultOpen: true,
-        children: inventory.agents.length > 0 ? /* @__PURE__ */ jsx7("div", { className: "space-y-sm", children: inventory.agents.map((agent) => /* @__PURE__ */ jsx7(AgentCard, { agent }, agent.id)) }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No agents provisioned yet. Found mode will create them." })
+        children: inventory.agents.length > 0 ? /* @__PURE__ */ jsx7("div", { className: "space-y-2", children: inventory.agents.map((agent) => /* @__PURE__ */ jsx7(AgentCard, { agent }, agent.id)) }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No agents provisioned yet. Found mode will create them." })
       }
     ),
     /* @__PURE__ */ jsx7(CollapsibleSection, { title: "Documents", defaultOpen: true, children: inventory.documents.length > 0 ? /* @__PURE__ */ jsx7(DocumentList, { documents: inventory.documents }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No key documents found. VISION.md will be created when you found this company." }) }),
@@ -571,16 +580,16 @@ function CollapsibleSection({
       onToggle: (e) => setOpen(e.currentTarget.open),
       className: "group",
       children: [
-        /* @__PURE__ */ jsxs7("summary", { className: "flex cursor-pointer items-center gap-md px-lg py-md font-semibold text-sm select-none hover:bg-accent/5", children: [
+        /* @__PURE__ */ jsxs7("summary", { className: "flex cursor-pointer items-center gap-4 px-4 py-4 font-semibold text-sm select-none hover:bg-accent/5", children: [
           /* @__PURE__ */ jsx7(
             ChevronDown,
             {
               className: `h-4 w-4 transition-transform flex-shrink-0 ${open ? "" : "-rotate-90"}`
             }
           ),
-          /* @__PURE__ */ jsx7("span", { className: "text-label font-semibold", children: title })
+          /* @__PURE__ */ jsx7("span", { className: "text-xs font-medium", children: title })
         ] }),
-        /* @__PURE__ */ jsx7("div", { className: "px-lg py-md text-body", children })
+        /* @__PURE__ */ jsx7("div", { className: "px-4 py-4 text-sm", children })
       ]
     }
   );
@@ -636,7 +645,7 @@ function ChatPanel({
     },
     [input, detectedMode]
   );
-  return /* @__PURE__ */ jsx8("div", { className: "border-t bg-background px-lg py-md", children: /* @__PURE__ */ jsxs8("form", { onSubmit: handleSubmit, className: "flex gap-sm", children: [
+  return /* @__PURE__ */ jsx8("div", { className: "border-t bg-background px-4 py-4", children: /* @__PURE__ */ jsxs8("form", { onSubmit: handleSubmit, className: "flex gap-2", children: [
     /* @__PURE__ */ jsx8(
       "input",
       {
@@ -645,7 +654,7 @@ function ChatPanel({
         onChange: (e) => setInput(e.target.value),
         placeholder: "e.g., assess this company, help me revive...",
         disabled: submitting,
-        className: "flex-1 rounded border border-border bg-background px-md py-sm text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+        className: "flex-1 rounded-none border border-border bg-background px-4 py-2 text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
       }
     ),
     /* @__PURE__ */ jsxs8(
@@ -653,7 +662,7 @@ function ChatPanel({
       {
         type: "submit",
         disabled: submitting || !input.trim(),
-        className: "inline-flex items-center gap-xs rounded px-md py-sm font-medium text-accent bg-accent/10 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed",
+        className: "inline-flex items-center gap-1 rounded-none px-4 py-2 font-medium text-accent bg-accent/10 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed",
         children: [
           /* @__PURE__ */ jsx8(Send, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsx8("span", { className: "hidden sm:inline", children: "Send" })
@@ -669,23 +678,23 @@ import { jsx as jsx9, jsxs as jsxs9 } from "react/jsx-runtime";
 function ErrorBoundary({ error }) {
   const [dismissed, setDismissed] = useState3(false);
   if (dismissed) {
-    return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "Error dismissed. Refresh to retry." }) });
+    return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "Error dismissed. Refresh to retry." }) });
   }
   const { title, message, nextSteps } = parseError(error);
-  return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx9("div", { className: "max-w-md w-full rounded-lg border border-orange-200 bg-orange-50 p-lg", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start gap-md", children: [
-    /* @__PURE__ */ jsx9(TriangleAlert, { className: "h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" }),
+  return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx9("div", { className: "max-w-md w-full rounded-none border border-red-500/20 bg-red-500/10 p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx9(TriangleAlert, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
     /* @__PURE__ */ jsxs9("div", { className: "flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsx9("h3", { className: "font-semibold text-sm text-orange-900", children: title }),
-      /* @__PURE__ */ jsx9("p", { className: "text-sm text-orange-800 mt-md", children: message }),
-      nextSteps && /* @__PURE__ */ jsxs9("div", { className: "mt-md pt-md border-t border-orange-200", children: [
-        /* @__PURE__ */ jsx9("p", { className: "text-xs font-semibold text-orange-700 mb-sm", children: "What to do:" }),
-        /* @__PURE__ */ jsx9("ol", { className: "text-xs text-orange-700 space-y-xs list-decimal list-inside", children: nextSteps.map((step, idx) => /* @__PURE__ */ jsx9("li", { children: step }, idx)) })
+      /* @__PURE__ */ jsx9("h3", { className: "font-semibold text-sm text-red-500", children: title }),
+      /* @__PURE__ */ jsx9("p", { className: "text-sm text-red-500 mt-4", children: message }),
+      nextSteps && /* @__PURE__ */ jsxs9("div", { className: "mt-4 pt-4 border-t border-red-500/20", children: [
+        /* @__PURE__ */ jsx9("p", { className: "text-xs font-semibold text-red-500 mb-2", children: "What to do:" }),
+        /* @__PURE__ */ jsx9("ol", { className: "text-xs text-red-500 space-y-1 list-decimal list-inside", children: nextSteps.map((step, idx) => /* @__PURE__ */ jsx9("li", { children: step }, idx)) })
       ] }),
       /* @__PURE__ */ jsxs9(
         "button",
         {
           onClick: () => setDismissed(true),
-          className: "mt-md inline-flex items-center gap-xs px-sm py-xs rounded text-xs font-medium text-orange-700 hover:bg-orange-100",
+          className: "mt-4 inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium text-red-500 hover:bg-red-500/20",
           children: [
             /* @__PURE__ */ jsx9(X, { className: "h-3 w-3" }),
             /* @__PURE__ */ jsx9("span", { children: "Dismiss" })
@@ -5992,12 +6001,12 @@ function HistoryTabBar({
   const hasOpenFindings = (historyData?.history?.findings || []).some(
     (f) => f.status === "open"
   );
-  return /* @__PURE__ */ jsxs50("div", { className: "border-b px-lg py-sm flex gap-sm", children: [
+  return /* @__PURE__ */ jsxs50("div", { className: "border-b px-4 py-2 flex gap-2", children: [
     /* @__PURE__ */ jsx52(
       "button",
       {
         onClick: () => onSelectTab("mode"),
-        className: `text-label font-medium px-md py-sm rounded transition-colors ${selectedTab === "mode" ? "bg-accent text-accent-foreground" : "text-foreground/60 hover:text-foreground"}`,
+        className: `text-xs font-medium px-4 py-2 rounded transition-colors ${selectedTab === "mode" ? "bg-accent text-accent-foreground" : "text-foreground/60 hover:text-foreground"}`,
         children: currentMode
       }
     ),
@@ -6005,7 +6014,7 @@ function HistoryTabBar({
       "button",
       {
         onClick: () => onSelectTab("history"),
-        className: `text-label font-medium px-md py-sm rounded transition-colors flex items-center gap-sm ${selectedTab === "history" ? "bg-accent text-accent-foreground" : "text-foreground/60 hover:text-foreground"}`,
+        className: `text-xs font-medium px-4 py-2 rounded transition-colors flex items-center gap-2 ${selectedTab === "history" ? "bg-accent text-accent-foreground" : "text-foreground/60 hover:text-foreground"}`,
         children: [
           "History",
           findingCount > 0 && /* @__PURE__ */ jsx52(HistoryTabBadge, { count: findingCount, hasOpenFindings })
@@ -6050,7 +6059,7 @@ function MainPanel() {
     return /* @__PURE__ */ jsx52(ErrorBoundary, { error: new Error(errorMessage) });
   }
   if (inventoryLoading || modeLoading || overrideLoading || storedOverride === void 0) {
-    return /* @__PURE__ */ jsx52("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx52("div", { className: "text-center", children: /* @__PURE__ */ jsx52("p", { className: "text-body text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
+    return /* @__PURE__ */ jsx52("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx52("div", { className: "text-center", children: /* @__PURE__ */ jsx52("p", { className: "text-sm text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
   }
   if (!inventory || !modeData) {
     return /* @__PURE__ */ jsx52(ErrorBoundary, { error: new Error("Failed to load company inventory") });
@@ -6121,12 +6130,12 @@ function MainPanel() {
       }
     ),
     /* @__PURE__ */ jsx52("div", { className: "flex-1 overflow-y-auto", children: renderContent() }),
-    selectedTab === "mode" && /* @__PURE__ */ jsx52("div", { className: "border-t px-lg py-md", children: /* @__PURE__ */ jsx52(
+    selectedTab === "mode" && /* @__PURE__ */ jsx52("div", { className: "border-t px-4 py-4", children: /* @__PURE__ */ jsx52(
       "button",
       {
         onClick: handleRefresh,
         disabled: refreshing,
-        className: "inline-flex items-center gap-sm rounded px-md py-sm text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50",
+        className: "inline-flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50",
         children: refreshing ? "Refreshing..." : "Refresh"
       }
     ) }),
@@ -6137,8 +6146,8 @@ function MainPanel() {
 // src/ui/SidebarLink.tsx
 import { jsx as jsx53, jsxs as jsxs51 } from "react/jsx-runtime";
 function SidebarLink({ context }) {
-  const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
-  const isActive = typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
+  const href = context.companyPrefix ? `/${context.companyPrefix}/plugins/compass` : "#";
+  const isActive = typeof window !== "undefined" && window.location.pathname.endsWith("/plugins/compass");
   const handleClick = (e) => {
     e.preventDefault();
     if (href !== "#") window.history.pushState({}, "", href);
@@ -6149,7 +6158,7 @@ function SidebarLink({ context }) {
     {
       href,
       onClick: handleClick,
-      className: `flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-zinc-800 ${isActive ? "bg-zinc-800 text-white" : "text-zinc-400"}`,
+      className: `flex items-center gap-2 px-3 py-2 rounded-none text-sm ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "bg-sidebar text-sidebar-foreground hover:opacity-80"}`,
       children: [
         /* @__PURE__ */ jsx53(Compass, { size: 16 }),
         /* @__PURE__ */ jsx53("span", { children: "Compass" })
