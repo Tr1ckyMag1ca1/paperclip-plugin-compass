@@ -577,27 +577,27 @@ function Component() {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Icon library finalization for SectionHeader**
    - What we know: Lucide is already in dependencies; ModeBanner uses `Compass` icon; company-wizard precedent exists
    - What's unclear: Should SectionHeader icon be required or optional? (CONTEXT.md D-03 shows optional)
-   - Recommendation: Keep optional per D-03; document examples in PATTERNS doc (Phase 10, UID-02)
+   - **RESOLVED:** Keep optional per D-03; document examples in PATTERNS doc (Phase 10, UID-02)
 
 2. **Dev-only probe page routing mechanism**
    - What we know: Dual-render probe is required (D-08); routes for dev-only features need a pattern
    - What's unclear: Should probe live at `?probe=1`, `/dev/probe`, or hidden route? Does plugin-sdk have dev routing utilities?
-   - Recommendation: Check existing plugin for precedent; pick lowest-friction option (likely query param); remove probe routes before ship
+   - **RESOLVED:** Check existing plugin for precedent; pick lowest-friction option (likely query param); remove probe routes before ship
 
 3. **Grep verifier broken-pattern list completeness**
    - What we know: UI_REDO_HANDOFF.md provides migration map; UIV-01 requires grep to confirm zero hits
    - What's unclear: Are there additional broken patterns beyond those listed in UI_REDO_HANDOFF.md? (e.g., `col-span-*`, `grid-cols-*` if grid is used)
-   - Recommendation: Before finalizing grep pattern list, scan Phase 7 components for all Tailwind classes; extend list if needed
+   - **RESOLVED:** Before finalizing grep pattern list, scan Phase 7 components for all Tailwind classes; extend list if needed
 
 4. **ErrorBoundary implementation for React 19**
    - What we know: ErrorBoundary exists in codebase; React 19 supports both class and hook-based error handling
    - What's unclear: Does current implementation use deprecated pattern? Should Phase 7 migrate to latest React 19 error boundary API?
-   - Recommendation: Check current ErrorBoundary source; if it's class-based, consider updating to error.boundary hook pattern (React 19 stable feature)
+   - **RESOLVED:** Check current ErrorBoundary source; if it's class-based, consider updating to error.boundary hook pattern (React 19 stable feature)
 
 ---
 
