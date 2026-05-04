@@ -22,23 +22,23 @@ export function StatusBadge({ status }: StatusBadgeProps): React.ReactElement {
     healthy: {
       icon: <Check className="h-3 w-3" />,
       label: "Healthy",
-      className: "bg-green-50 text-green-700 border-green-200",
+      className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     },
     stalled: {
       icon: <X className="h-3 w-3" />,
       label: "Stalled",
-      className: "bg-red-50 text-red-700 border-red-200",
+      className: "bg-red-500/10 text-red-500 border-red-500/20",
     },
     unknown: {
       icon: null,
       label: "Unknown",
-      className: "bg-slate-50 text-slate-600 border-slate-200",
+      className: "bg-muted text-muted-foreground border-border",
     },
   }[status];
 
   return (
     <div
-      className={`inline-flex items-center gap-xs px-sm py-xs rounded text-xs font-medium border ${config.className}`}
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium border ${config.className}`}
     >
       {config.icon}
       <span>{config.label}</span>
