@@ -1,410 +1,214 @@
-# Technology Stack: Paperclip Plugin Compass
-
-**Project:** Compass (Paperclip Plugin for strategic consulting)  
-**Researched:** 2026-05-02  
-**Confidence:** HIGH (verified against Paperclip core v1.0, Plugin SDK 1.0, company-wizard 0.1.16, and file-viewer 0.4.0 reference implementations)
-
-## Recommended Stack
-
-### Core Runtime
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| **TypeScript** | ^5.7.3 | Type-safe source language for worker + UI | Matches Paperclip core and all first-party plugins; strict mode enables Plugin SDK contracts and reduces bugs |
-| **Node.js** | >=20 | Worker process runtime | Required by Paperclip; aligns with esbuild and plugin infrastructure |
-| **React** | >=18 (peer) | UI component framework | Paperclip host requires >=18; ship as peer dependency, not bundled |
-| **Zod** | ^3.24.2 | Schema validation for config + events | Already in Plugin SDK; use for manifest config schema and event type safety |
-
-### Build & Bundling
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| **esbuild** | ^0.27.3 | Worker + manifest + UI bundling | Paperclip standard; 50x faster than tsc alone; handles .ts/.tsx/.css seamlessly |
-| **TypeScript Compiler** | ^5.7.3 | Type checking during builds | Separate from esbuild; use `tsc --noEmit` for CI/pre-commit |
-| **pnpm** | >=9.15.4 | Package manager | Paperclip monorepo standard; faster than npm/yarn; workspace-aware |
-
-**Build Artifacts:**
-- `dist/worker.js` — plugin worker entrypoint (Node.js/esbuild output)
-- `dist/manifest.js` — exported manifest object (CommonJS, esbuild output)
-- `dist/ui/` — React bundle directory for plugin UI (ES module bundle, esbuild output)
-
-### Testing & Quality
-
-| Technology | Version | Purpose | When to Use |
-|------------|---------|---------|-------------|
-| **Vitest** | ^3.0.5 | Unit tests (mode detection, drift logic, schema parsing) | Paperclip standard test runner; compatible with Playwright for E2E |
-| **@paperclipai/plugin-test-harness** | ^1.0.0 (from SDK) | Mock Paperclip host for plugin logic testing | Test `getData`/`performAction` handlers, event subscriptions, state writes without a real instance |
-| **Node --test** | (built-in) | Logic tests for non-TypeScript utilities | Optional fallback for pure JS; rarely needed in typed codebase |
-
-**No dedicated linter/formatter discovered in Paperclip core** (as of 2026-05). Recommend:
-- **Prettier** (optional): Code formatting consistency across open-source contributors
-- **ESLint** (optional): Catch unused variables, invalid patterns (company-wizard does not enforce globally)
-
-### SDK & API Surface
-
-| Package | Version | Purpose | Why |
-|---------|---------|---------|-----|
-| **@paperclipai/plugin-sdk** | ^1.0.0 | Plugin worker context + UI bridge hooks | The complete public API for Paperclip plugins; published to npm; includes `definePlugin`, event system, state/config management, agent tools, issue/document/agent/goal read-write, and UI bridge |
-| **@paperclipai/plugin-sdk/ui** | ^1.0.0 (subpath export) | Frontend hooks + shared components + design tokens | `usePluginData`, `usePluginAction`, `usePluginStream`, `useHostContext`; components like `MetricCard`, `StatusBadge`, `DataTable`, `LogView`, `ActionBar`; Paperclip design tokens |
-| **@paperclipai/plugin-sdk/bundlers** | ^1.0.0 (subpath export) | esbuild preset helper function | `createPluginBundlerPresets({ uiEntry: "src/ui/index.tsx" })` generates worker/manifest/ui esbuild configs automatically |
-| **@paperclipai/plugin-sdk/testing** | ^1.0.0 (subpath export) | Test harness mock host | `createTestHarness(manifest)` for unit testing; mocks full SDK context |
-
-### Plugin Dependencies
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| **Lucide Icons** (via company-wizard) | ^0.xxx | SVG icon components | For interview UI, charts, status badges; matches Paperclip design language |
-| **Tailwind CSS v4** | (if custom styling needed) | Utility-first CSS framework | Company-wizard uses Tailwind; Compass can inherit preset styles from host or add scoped styles |
-| **Zod** (via SDK) | ^3.24.2 | Runtime schema validation | Already a Plugin SDK dependency; use for `instanceConfigSchema` in manifest |
-| **React Router** (optional) | ^7.1.5 (Paperclip host version) | Routing within plugin panels | Only if Compass needs multi-panel navigation; host already routes plugins to slots |
-
-**Do NOT bundle React or React-DOM** — Paperclip provides both at runtime. Declare as `peerDependencies` in `package.json` with `optional: true` in meta.
-
-## Distribution & Installation
-
-### npm Package Structure
-
-**`package.json` metadata:**
-```json
-{
-  "name": "@paperclipai/paperclip-plugin-compass",
-  "version": "1.0.0",
-  "type": "module",
-  "license": "MIT",
-  "paperclipPlugin": {
-    "manifest": "./dist/manifest.js",
-    "worker": "./dist/worker.js",
-    "ui": "./dist/ui/"
-  }
-}
-```
-
-**Delivery:**
-1. **npm Registry** (primary): Publish to npmjs.com as `@paperclipai/paperclip-plugin-compass` for automated Paperclip plugin manager discovery
-2. **GitHub Releases**: Attach `.tgz` artifacts for direct installation via local path
-
-**Why this structure:**
-- Paperclip plugin manager reads `package.json#paperclipPlugin` to locate manifest + worker + UI bundle
-- Host validates `manifest.js` exports a `PaperclipPluginManifestV1` object
-- UI bundle loaded dynamically from `dist/ui/` as ES modules
-- npm distribution is portable across Paperclip instances
-
-### Plugin Manager Installation
-
-**Via npm (recommended for open source):**
-```bash
-pnpm paperclipai plugin install @paperclipai/paperclip-plugin-compass
-```
-
-**Via local path (development):**
-```bash
-pnpm paperclipai plugin install /absolute/path/to/paperclip-plugin-compass
-```
-
-**Format expected by host:**
-- Manifest must export `id`, `apiVersion`, `version`, `displayName`, `categories`, `capabilities`, `entrypoints` (worker, ui), and optional `ui.slots`
-- Worker must export default `Plugin` object from `definePlugin()`, with optional `setup`, `onHealth`, event handlers
-- UI entry must export named components matching declared slot `exportName`s
-
-## Build Configuration
-
-### esbuild.config.mjs (reference implementation)
-
-Use Paperclip's preset builder:
-
-```javascript
-import esbuild from "esbuild";
-import { createPluginBundlerPresets } from "@paperclipai/plugin-sdk/bundlers";
-
-const presets = createPluginBundlerPresets({ 
-  uiEntry: "src/ui/index.tsx"
-});
-const watch = process.argv.includes("--watch");
-
-const workerCtx = await esbuild.context(presets.esbuild.worker);
-const manifestCtx = await esbuild.context(presets.esbuild.manifest);
-const uiCtx = await esbuild.context(presets.esbuild.ui);
-
-if (watch) {
-  await Promise.all([
-    workerCtx.watch(), 
-    manifestCtx.watch(), 
-    uiCtx.watch()
-  ]);
-  console.log("esbuild watch mode enabled");
-} else {
-  await Promise.all([
-    workerCtx.rebuild(), 
-    manifestCtx.rebuild(), 
-    uiCtx.rebuild()
-  ]);
-  await Promise.all([
-    workerCtx.dispose(), 
-    manifestCtx.dispose(), 
-    uiCtx.dispose()
-  ]);
-}
-```
-
-**Custom plugin support:**
-- Raw imports (Tailwind CSS processing, markdown templates): Use `?raw` query imports in esbuild plugin
-- PostCSS pipelines: company-wizard uses Tailwind v4; Compass can inherit or extend
-
-### TypeScript Configuration
-
-**Extend Paperclip's base tsconfig (if in same monorepo):**
-
-```json
-{
-  "extends": "../../../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "lib": ["ES2023", "DOM"],
-    "jsx": "react-jsx"
-  },
-  "include": ["src"]
-}
-```
-
-**Standalone (outside Paperclip monorepo):**
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "skipLibCheck": true,
-    "lib": ["ES2022", "DOM"],
-    "jsx": "react-jsx",
-    "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
-  },
-  "include": ["src"],
-  "exclude": ["dist", "node_modules"]
-}
-```
-
-### npm scripts
-
-```json
-{
-  "scripts": {
-    "build": "node ./esbuild.config.mjs",
-    "dev": "node ./esbuild.config.mjs --watch",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:ui": "vitest --ui",
-    "prepublishOnly": "npm run build && npm run typecheck && npm run test:run"
-  }
-}
-```
-
-## Plugin Conventions (from company-wizard)
-
-### Manifest Structure
-
-```typescript
-// src/manifest.ts
-import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
-
-const manifest: PaperclipPluginManifestV1 = {
-  id: "paperclip.compass",
-  apiVersion: 1,
-  version: "1.0.0",
-  displayName: "Compass: Strategic Consultant",
-  description: "Guide companies through founding, assessment, revival, and repositioning.",
-  author: "Paperclip AI + Aron Prins",
-  categories: ["automation", "ui"],
-  capabilities: [
-    "ui.sidebar.register",
-    "ui.page.register",
-    "companies.read",
-    "issues.create",
-    "issues.update",
-    "issue.comments.create",
-    "issue.documents.write",
-    "agent.read",
-    "goals.read",
-    "activity.read",
-    "events.subscribe"
-  ],
-  entrypoints: {
-    worker: "./dist/worker.js",
-    ui: "./dist/ui",
-  },
-  ui: {
-    slots: [
-      {
-        type: "sidebar",
-        id: "compass-sidebar",
-        displayName: "Compass",
-        exportName: "CompassSidebar"
-      },
-      {
-        type: "page",
-        id: "compass-main",
-        displayName: "Compass",
-        exportName: "CompassMainPage",
-        routePath: "compass"
-      }
-    ]
-  }
-};
-
-export default manifest;
-```
-
-### Worker Entry Structure
-
-```typescript
-// src/worker.ts
-import { definePlugin, runWorker } from "@paperclipai/plugin-sdk";
-
-const plugin = definePlugin({
-  async setup(ctx) {
-    ctx.logger.info("Compass plugin initialized");
-    
-    // Register event subscriptions
-    ctx.events.on("company.updated", async (event) => {
-      // Handle event
-    });
-    
-    // Register UI data handlers
-    ctx.data.register("inventory", async (params) => {
-      return { /* inventory snapshot */ };
-    });
-    
-    ctx.data.register("mode-detection", async (params) => {
-      return { mode: "found" | "assess" | "revive" | "reposition" };
-    });
-  },
-
-  async onHealth() {
-    return { status: "ok", message: "Compass ready" };
-  }
-});
-
-export default plugin;
-runWorker(plugin, import.meta.url);
-```
-
-### UI Entry Structure
-
-```typescript
-// src/ui/index.tsx
-import React from "react";
-import { usePluginData, usePluginAction, useHostContext } from "@paperclipai/plugin-sdk/ui";
-
-export function CompassSidebar() {
-  const { companyId } = useHostContext();
-  const { data: modeData, loading } = usePluginData("mode-detection", { companyId });
-
-  return (
-    <div>
-      {loading ? <Spinner /> : <ModeDisplay mode={modeData.mode} />}
-    </div>
-  );
-}
-
-export function CompassMainPage() {
-  // Full multi-panel interview experience
-  return <InterviewFlow />;
-}
-```
-
-## Alternatives Considered & Why Not
-
-| Category | Recommended | Alternative | Why Not |
-|----------|-------------|-------------|---------|
-| **Build Tool** | esbuild | Webpack / Vite | esbuild is Paperclip standard; faster builds; simpler config; no HMR complexity needed for plugin bundles |
-| **Test Runner** | Vitest | Jest / Node --test | Vitest integrates with esbuild/tsconfig; faster startup; Paperclip core uses Vitest |
-| **React Version** | 19 (peer) | 18 / 17 | Paperclip host requires >=18; v19 is production-ready 2026; peer dep avoids bundle duplication |
-| **CSS Framework** | (None required) | styled-components / emotion | Use host design tokens + Tailwind utility classes from `@paperclipai/plugin-sdk/ui`; no additional CSS-in-JS needed |
-| **HTTP Client** | Fetch API (built-in) | axios / got | Fetch + Plugin SDK bridge eliminate need for standalone HTTP; host validates routes |
-| **State Management** | Plugin SDK ctx.state | Redux / Zustand | Plugin SDK provides `ctx.state` with scoped namespaces; no middleware needed for plugin-local state |
-| **Form Validation** | Zod (already in SDK) | io-ts / yup | SDK bundles Zod; it's the Paperclip standard |
-| **Icon Set** | Lucide (company-wizard) | Heroicons / FontAwesome | Lucide matches company-wizard precedent + Paperclip's usage; open source; modern |
-| **Linter/Formatter** | None mandated | ESLint + Prettier | Paperclip core does not enforce globally; optional for team contributor experience; company-wizard does not use |
-
-## Peer Dependencies & Bundling Rules
-
-**React/React-DOM:** MUST be peer dependencies, NEVER bundled.
-
-Why:
-- Paperclip host already loads React 19 globally
-- Bundling React creates conflicts, duplicate instances, broken hooks
-- Plugin UI runs as same-origin ES modules, not iframes — shares React context with host
-- Keep plugin bundle < 200KB by excluding React
-
-**package.json:**
-```json
-{
-  "peerDependencies": {
-    "react": ">=18"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    }
-  }
-}
-```
-
-**All other dependencies:** Bundle normally (esbuild default). Examples:
-- `zod` (already in SDK, but safe to re-export)
-- `lucide-react` (bundled, ~50KB gzipped)
-- utility libraries
-
-## Plugin API Version & SDK Contract
-
-- **Plugin API Version:** 1 (declared in manifest)
-- **Plugin SDK Version:** ^1.0.0 (from npm)
-- **Minimum Paperclip Host:** 1.0.0 (plugin API v1 support required)
-
-**Compatibility:**
-- SDK 1.x → API version 1
-- SDK 2.x (future) → API version 2 with breaking changes
-- Host supports multiple API versions simultaneously (v1 plugins work on v2 hosts for 6+ months)
-
-## Installation for Development
+# Technology Stack — UI Parity Reskin (v1.1)
+
+**Project:** Compass — Paperclip Plugin  
+**Milestone:** v1.1 (UI parity reskin with Paperclip host)  
+**Researched:** 2026-05-04
+
+## Summary
+
+Compass UI migration to match Paperclip host requires **no new runtime dependencies**. The host uses Tailwind CSS v4 with inline `@theme` and CSS variables for theming (not a separate config file). Compass inherits these tokens directly via the host's React tree (no iframe/shadow DOM). All 55 components migrate by swapping hardcoded light-only Tailwind classes for host-exposed theme tokens and eliminating nonexistent custom utilities (`gap-xs`, `px-sm`, `py-md`). Theme verification uses Vitest + DOM inspection (existing Compass test runner), no screenshot-diff tool needed at this stage.
+
+## Recommended Stack (No Changes Required)
+
+### Current Runtime (Compass v1.0 — Already Correct)
+
+| Technology | Version | Purpose | Why Kept |
+|------------|---------|---------|----------|
+| **TypeScript** | ^5.7.3 | Type-safe source language | Already matches Paperclip core standard; strict mode verified working |
+| **Node.js** | >=20 | Worker process runtime | Required by Paperclip, already in use |
+| **React** | >=18 (peer) | UI component framework | Paperclip host ≥19; peer dependency prevents duplication; shared React tree |
+| **Zod** | ^3.24.2 (via SDK) | Schema validation | Already in Plugin SDK, reuse as-is |
+| **esbuild** | ^0.27.3 | Bundling (worker, manifest, UI) | Paperclip standard; handles `.tsx` + CSS tokens seamlessly |
+| **Tailwind CSS v4** | (via host) | Utility-first CSS framework | **Not bundled by Compass**; host loads globally; Compass inherits tokens |
+| **lucide-react** | ^1.14.0 | SVG icons | Already in Compass; matches Paperclip icon library |
+
+### Build & Testing (Compass v1.0 — Already Correct)
+
+| Technology | Version | Purpose | Why Kept |
+|------------|---------|---------|----------|
+| **TypeScript Compiler** | ^5.7.3 | Type checking (CI/pre-commit) | Already used; `tsc --noEmit` works fine |
+| **Vitest** | ^3.0.5 | Unit tests + component DOM inspection | Already in use; sufficient for theme token validation without screenshots |
+| **pnpm** | >=9.15.4 | Package manager | Paperclip monorepo standard; already in use |
+
+### Theme Token System (From Host)
+
+Paperclip host provides via `paperclip-temp/ui/src/index.css`:
+
+**Color tokens (CSS variables, light + dark mode):**
+- Surfaces: `--color-background`, `--color-card`, `--color-muted`, `--color-popover`
+- Text: `--color-foreground`, `--color-muted-foreground`
+- Semantic: `--color-primary`, `--color-secondary`, `--color-accent`, `--color-destructive`
+- Borders: `--color-border`, `--color-input`, `--color-ring`
+- Sidebar: `--color-sidebar`, `--color-sidebar-foreground`, `--color-sidebar-border`, `--color-sidebar-accent`
+- Chart colors: `--color-chart-1` through `--color-chart-5`
+
+**Radius tokens:**
+- `--radius-sm: 0.375rem` (6px)
+- `--radius-md: 0.5rem` (8px)
+- `--radius-lg: 0px` (sharp corners — **key design difference**)
+- `--radius-xl: 0px` (sharp corners)
+
+**Dark mode:** Defined via `.dark` class selector (e.g., `<div class="dark">` on root); Paperclip toggles this dynamically.
+
+**Tailwind version:** v4.0.7 (host), uses inline `@theme { ... }` syntax (no separate `tailwind.config.js`).
+
+## Migration Rules — No New Dependencies
+
+### 1. Replace Light-Only Color Classes
+
+| Current (broken) | Host Token Replacement | Why |
+|---|---|---|
+| `bg-green-50 text-green-700 border-green-200` | `bg-emerald-500/10 text-emerald-500 border-emerald-500/20` | Fallback for status/success; host doesn't provide semantic "success" token |
+| `bg-red-50 text-red-700 border-red-200` | `bg-destructive/10 text-destructive border-destructive/20` | Uses host's destructive token for errors |
+| `bg-slate-50 text-slate-600 border-slate-200` | `bg-muted text-muted-foreground border-border` | Neutral surfaces map to muted |
+| `bg-white` / `bg-gray-50` (panels) | `bg-card` | Host card surface token |
+| `text-gray-900` | `text-foreground` | Dark text always maps to foreground |
+| `text-gray-500` / `text-gray-600` | `text-muted-foreground` | Secondary text maps to muted-foreground |
+| `border-gray-200` | `border-border` | Borders always use border token |
+| `rounded-lg` / `rounded-xl` | `rounded-none` | Host radius is 0 (sharp corners, not rounded) |
+
+### 2. Eliminate Nonexistent Custom Utilities
+
+Currently cause silent no-op, breaking layout:
+
+| Current | Replace With | Reasoning |
+|---|---|---|
+| `gap-xs` | `gap-1` (4px) | Smallest Tailwind gap |
+| `gap-sm` | `gap-2` (8px) | Small gap |
+| `gap-md` | `gap-3` (12px) | Medium gap |
+| `px-xs` | `px-1` (4px) | Smallest padding |
+| `px-sm` | `px-2` (8px) | Small padding |
+| `px-md` | `px-3` (12px) | Medium padding |
+| `py-xs` | `py-1` (4px) | Smallest padding |
+| `py-sm` | `py-2` (8px) | Small padding |
+| `py-md` | `py-3` (12px) | Medium padding |
+
+### 3. Use Host Semantic Tokens (Already Available)
+
+No imports or installs needed — Tailwind classes automatically resolve to host CSS variables:
+
+- `bg-card` → `var(--color-card)` (auto-switches in dark mode)
+- `text-foreground` → `var(--color-foreground)` (auto-switches)
+- `border-border` → `var(--color-border)` (auto-switches)
+- `bg-sidebar` → `var(--color-sidebar)` (sidebar-specific surface)
+
+## What NOT to Add
+
+### Anti-Dependencies (Explicitly Avoided)
+
+| What | Why Not | Alternative |
+|---|---|---|
+| **Custom Tailwind config** (`tailwind.config.js`) | Plugin runs in host React tree; host Tailwind is global. Custom config = override conflicts. | Use host tokens via CSS variable utility classes |
+| **CSS Modules / styled-components** | Defeats token parity; adds build complexity; increases bundle size. | Plain Tailwind utilities inherit host tokens automatically |
+| **Tailwind CSS bundle** | Host already loads Tailwind v4 globally; bundling creates duplication + version conflicts. | Reference host tokens via Tailwind classes (peer dependency) |
+| **Design system extraction libraries** (Storybook, chromatic, etc.) | Plugin is part of host, not a standalone system. | Run theme validation in Vitest against host's .dark class |
+| **CSS-in-JS** (emotion, linaria, etc.) | Adds runtime overhead; conflicts with host's CSS variable system; unnecessary. | Tailwind utilities + host tokens |
+| **Screenshot diff tools** (Percy, Chromatic, etc.) | Early stage; manual visual QA sufficient for v1.1. Defer to v1.2 if drift emerges. | Vitest DOM inspection + manual host browser verification |
+| **PostCSS plugins** (autoprefixer, etc.) | Host Tailwind already handles vendor prefixes; bundler (esbuild) handles the rest. | Let esbuild and host's Tailwind handle it |
+| **Theme toggle library** (next-themes, etc.) | Paperclip host manages dark mode state globally; plugin just renders. | Use `dark:` prefix in Tailwind classes; host controls `.dark` class |
+| **Type-safe color utility library** | Tailwind's class-based system is already type-safe with TypeScript. | Stick with strings; linters catch typos. |
+
+## Testing & Verification Strategy (No New Tools)
+
+### Unit Tests (Vitest — Already in Use)
+
+Theme token migration is verified by:
+
+1. **DOM class inspection:** Render component with both light + dark host context, inspect computed styles match host tokens
+2. **No broken class patterns:** Grep `src/ui/**/*.tsx` for broken patterns from migration map above; expect **zero hits**
+3. **Type safety:** TypeScript `strict: true` already catches invalid class names (though TypeScript doesn't know about host's Tailwind)
+
+### Verification Workflow (Verifier Acceptance Criteria)
+
+After each phase migration:
 
 ```bash
-# Install into local Paperclip instance
-curl -X POST http://127.0.0.1:3100/api/plugins/install \
-  -H "Content-Type: application/json" \
-  -d '{"packageName":"/absolute/path/to/paperclip-plugin-compass","isLocalPath":true}'
+# 1. Grep for broken class patterns
+grep -r "gap-xs\|gap-sm\|gap-md\|px-xs\|px-sm\|px-md\|py-xs\|py-sm\|py-md\|bg-green-50\|bg-red-50\|bg-slate-50\|text-slate-600\|border-green-200\|border-red-200\|border-slate-200\|rounded-lg\|rounded-xl" src/ui --include="*.tsx"
+# Expected: 0 matches (all migrated)
+
+# 2. Build and typecheck
+pnpm build && pnpm typecheck
+# Expected: No errors
+
+# 3. Manual verification in browser
+# Load plugin in local Paperclip instance
+# Switch dark mode toggle in host
+# Visually confirm colors, padding, gaps look consistent with rest of app
 ```
 
-Host watches local-path plugins for file changes → auto-restarts worker on rebuild.
+### Why NOT Screenshot Testing in v1.1
 
-## Distribution Checklist
+- **Overhead:** Requires Playwright (not in host's devDeps for UI), Percy or Chromatic integration, baseline storage
+- **Early stage:** Plugin styling is mostly spacing + color swaps; manual verification catches regressions faster than image diffs at this scale
+- **Host-dependent:** Host may change theme tokens between versions; screenshot baselines would break
+- **Deferrable:** Adopt Percy/Chromatic in v1.2 if drift testing becomes frequent
 
-Before releasing Compass v1.0:
+**Recommendation:** Defer screenshot-diff testing to v1.2+ when component library matures and changes stabilize.
 
-- [ ] `dist/manifest.js` exports `PaperclipPluginManifestV1` (TypeScript-first, esbuild outputs CommonJS)
-- [ ] `dist/worker.js` exports default plugin from `definePlugin()` and calls `runWorker()`
-- [ ] `dist/ui/index.{ts,tsx}` exports named components for all declared slots
-- [ ] `package.json#paperclipPlugin` points to correct paths
-- [ ] React is peer dependency, not bundled (esbuild external rule)
-- [ ] `npm run build && npm run typecheck && npm run test:run` all pass
-- [ ] `npm publish` pushes to `@paperclipai/paperclip-plugin-compass`
-- [ ] GitHub release includes `.tgz` artifact for local installs
-- [ ] README credits Aron Prins and links to `paperclip-vision` repo
+## Installation & Build Verification
+
+No new package installs needed. Verify existing setup:
+
+```bash
+cd ~/Development/Paperclip/paperclip-plugin-compass
+
+# Current stack
+pnpm install  # Already has all deps
+
+# Verify no bundled Tailwind conflict
+grep -A3 '"react"\|"tailwindcss"' package.json
+# Expected: React as peerDependency, NO tailwindcss in dependencies/devDependencies
+
+# Build
+pnpm build
+# Expected: dist/ui bundle < 200KB (Compass: ~45KB gzipped currently)
+
+# Typecheck
+pnpm typecheck
+# Expected: No errors
+```
 
 ## Sources
 
-- Paperclip Plugin Specification: `/Users/nicholasrhodes/Development/paperclip-temp/doc/plugins/PLUGIN_SPEC.md`
-- Paperclip Plugin Authoring Guide: `/Users/nicholasrhodes/Development/paperclip-temp/doc/plugins/PLUGIN_AUTHORING_GUIDE.md`
-- Paperclip Core package.json (TypeScript 5.7.3, React 19.0.0, Vitest 3.0.5, Node >=20)
-- Plugin SDK 1.0.0 package.json with subpath exports (worker, ui, bundlers, testing)
-- Company Wizard reference (esbuild config, manifest shape, preset usage)
-- File Viewer 0.4.0 reference (npm distribution, dev workflow, GitHub-based standalone plugin)
-- Plugin Hello World example (minimal manifest + worker shape)
-- Paperclip root tsconfig.json (ES2022 target, strict mode, ESNext modules)
+- **Paperclip host CSS:** `/Users/nicholasrhodes/Development/paperclip-temp/ui/src/index.css` (Tailwind v4, inline `@theme`, CSS variables, dark mode)
+- **Paperclip host package.json:** `/Users/nicholasrhodes/Development/paperclip-temp/ui/package.json` (Tailwind v4.0.7, React 19.0.0, Vitest 3.0.5)
+- **Compass current stack:** `/Users/nicholasrhodes/Development/Paperclip/paperclip-plugin-compass/package.json` (v0.1.9, TypeScript 5.7.3, esbuild 0.27.3, lucide-react 1.14.0)
+- **Plugin SDK:** `@paperclipai/plugin-sdk` v2026.428.0 (no Tailwind exports; theme tokens via host global Tailwind)
+- **UI_REDO_HANDOFF.md:** Class migration map reference
+
+## Confidence Assessment
+
+| Component | Level | Rationale |
+|-----------|-------|-----------|
+| No new runtime deps | **HIGH** | Verified: host loads Tailwind globally; Compass shares React tree; all tokens available via host CSS variables |
+| Tailwind v4 support | **HIGH** | Verified: host uses v4.0.7 with inline `@theme`; Compass esbuild config already works with Tailwind v4 (no config file needed) |
+| Theme token availability | **HIGH** | Verified: `/paperclip-temp/ui/src/index.css` exports 25+ color tokens + radius tokens; all accessible via standard Tailwind utility classes |
+| Dark mode handling | **HIGH** | Verified: host uses `.dark` class selector; Compass uses `dark:` Tailwind prefix; no new logic needed |
+| No config conflicts | **MEDIUM** | Assumption: Compass bundled UI will not declare a Tailwind config that conflicts with host. esbuild preset doesn't generate tailwind.config.js, so risk is low. **Action:** Confirm in phase 1 build that no config collision occurs. |
+| Vitest sufficiency for theme QA | **MEDIUM** | Vitest 3.0.5 + DOM testing covers styling verification at unit level; manual browser verification still required for confident visual parity. No automated screenshot-diff = less coverage than Percy/Chromatic, but acceptable for v1.1 scope. |
+
+## Next Steps (Handoff to Phase 1 — Design Primitives)
+
+1. **Phase 1:** Migrate shell components (`MainPanel`, `SidebarLink`, `ModeBanner`, `StatusBadge`, shared `Card`/`Section`/`Button` wrappers)
+   - Replace classes per migration map above
+   - Build and verify no broken utilities
+   - Grep `src/ui/**/*.tsx` — confirm zero matches on broken patterns
+   - Manual host browser check: light + dark mode, padding/spacing looks correct
+
+2. **Phase 2:** Assess + Found panels (10+ components per panel)
+   - Use same migration pattern
+   - Vitest DOM inspection for color tokens if needed (e.g., verify `bg-muted` renders correctly in both modes)
+
+3. **Phase 3:** Revive + Reposition panels
+
+4. **Phase 4:** Memory/History + polish + final verification
+
+**Do not add:**
+- Tailwind config file
+- CSS modules / styled-components
+- Screenshot diff tools
+- Theme toggle libraries
+- Storybook / design system extraction
+
+Stick to Tailwind utilities + host tokens. Keep bundle < 200KB. Ship to production.

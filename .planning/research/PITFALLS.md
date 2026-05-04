@@ -1,732 +1,756 @@
-# Domain Pitfalls: Paperclip Plugins & Autonomous AI Org Tools
+# Domain Pitfalls: Embedding Plugin UI in Host Shadcn Token System
 
-**Domain:** Paperclip plugins + autonomous AI organization strategy consultants
-**Researched:** 2026-05-02
-**Scope:** Pitfalls specific to writing back into live multi-agent company systems, plugin SDK boundaries, approval flows, and strategic-advisor UX failure modes
-
-This research extends the PROMPT.md "Don't do" list with deeper ecosystem warnings discovered from Paperclip plugin history, vision-quest collaboration patterns, and autonomous agent governance research.
+**Domain:** Plugin UI migration to host CSS variable theming (shadcn palette + Tailwind v4)
+**Researched:** 2026-05-04
+**Scope:** Compass UI → Paperclip host token system (55 components, 5 mode panels, Tailwind v3→v4 path)
 
 ---
 
-## Critical Pitfalls (BLOCKER)
+## Executive Summary
 
-### Pitfall 1: Wakeup Duplication via Missing Idempotency Key
+Migrating ~55 Compass components from light-only Tailwind utilities to host shadcn tokens introduces 6 **critical** pitfalls:
+
+1. **Dark mode not cascading** — CSS variable inheritance breaks if plugin CSS loads before host .dark class propagates
+2. **Nonexistent custom tokens silently no-op'd** — 162 uses of `gap-xs`, `px-sm`, `py-md` create 0 CSS rules, collapse layouts in production
+3. **Tailwind v3 HSL vs v4 OKLCH color format mismatch** — Host uses OKLCH; plugin inherits HSL; opacity modifiers misfire
+4. **CSS specificity collisions** — Host token utilities (`.bg-card { background-color: hsl(var(--card)) }`) overridden by plugin inline styles
+5. **Dynamic class safelist failures** — If Compass maps colors via JS (e.g., `statusColor[status]` → `bg-emerald-500/10`), JIT purge strips unmatched variants
+6. **Accessibility contrast loss in dark mode** — Token values pass WCAG 4.5:1 in light; dark-mode saturated accent colors (emerald, red) fail WCAG at 3:1+ when overlaid
+
+**Critical pre-migration verification flagged:** UI_REDO_HANDOFF.md claims `--radius-lg: 0px` (flat corners) and "emerald palette" without grep-verification. **Verification result:** Both claims **VERIFIED** (radius confirmed in host CSS line 41; emerald used throughout host codebase) but "emerald palette as primary green" is **unconfirmed** — host uses neutral theme, not emerald as default. Emerald is an *accent* color for status badges only.
+
+---
+
+## Critical Pitfalls
+
+### Pitfall 1: Dark Mode CSS Variable Inheritance Breaks at Plugin Boundary
 
 **What goes wrong:**
-Plugin queues multiple agent_wakeup_requests for the same work (e.g., cascade plan creates 5 agents, plugin retries on partial failure, duplicate wakeups fire). Agents wake up 2–3x, execute the same task multiple times, produce duplicate outputs, flood issue comments, bloat company state.
+Host applies `.dark` class to `<html>` or parent container. CSS variables redefine (`--foreground: oklch(0.985 0 0)` in dark vs `oklch(0.145 0 0)` in light). But plugin renders **inside** a React subtree that was already mounted when dark-mode toggle fires. CSS cascade doesn't automatically re-evaluate plugin components because:
+
+1. Plugin stylesheet loaded *before* host theme stylesheet
+2. Compass uses old host-color utilities (`bg-green-50 text-green-700`) that have explicit RGB/HSL values, not CSS variables
+3. When host injects `.dark` class, plugin's non-variable utilities don't know to change — they're hard-coded colors
+
+**Example:** User toggles dark mode in Paperclip. Assessment badge is styled `bg-green-50 text-green-700`. Host token `bg-emerald-500/10` recalculates correctly. Compass badge stays light green on dark background (contrast FAIL, unreadable).
 
 **Why it happens:**
-- Plugin call to `agent_wakeup_requests` API doesn't include `idempotency_key` parameter
-- Retry logic in apply step re-queues without checking if wakeup already exists
-- Paperclip heartbeat poller sees duplicate queue entries and respects them as distinct work
+- Plugin CSS bundles independently; no knowledge of host theme lifecycle
+- Plugin renders in same React tree but may have its own CSS scoping or stylesheet order
+- CSS variables must be used *consistently* — mixing hardcoded colors + variables = broken dark mode
 
 **Consequences:**
-- Agents repeatedly execute the same task (e.g., weekly check-in runs 3x in one day)
-- Issue comments spam: 15 comments instead of 5 from duplicate runs
-- Founder confusion: "Why did my agent work three times?"
-- Data pollution: duplicate documents, duplicate metrics, compound cascades
-- Trust erosion: plugin appears flaky or broken
+- Light mode = correct appearance
+- Dark mode = wrong colors (light on dark or faint text)
+- Contrast violations (WCAG AA fails)
+- User perception: "Plugin is broken in dark mode"
 
 **Prevention:**
-- **Code pattern:** Every `agent_wakeup_requests` insert must include a stable `idempotency_key` derived from the change itself (e.g., `sha256(agentId + "cascade-found-mode-" + timestamp.toDate().toISOString().slice(0,10))`)
-- **Test:** Unit tests that verify idempotency key generation; integration tests that verify second apply with same payload generates no new wakeup entries
-- **Documentation:** Add explicit warning to wakeup queueing code: "idempotency_key is required — see PR #2550 for reasoning"
-- **Runtime check:** Before queuing, query existing `agent_wakeup_requests` table for same `idempotency_key` and status; if `queued` or `pending`, skip insert
+1. **Replace all hardcoded colors with host tokens FIRST**, before testing dark mode
+2. **Verify no light-only utilities remain:**
+   ```bash
+   grep -r "bg-green-\|bg-red-\|bg-slate-\|bg-gray-\|bg-white\|text-green-\|text-red-\|text-slate-\|text-gray-\|border-green-\|border-red-\|border-gray-" src/ui --include="*.tsx" --include="*.ts"
+   ```
+   Expected: **0 hits** (except for Lucide icon `text-green-600` / `text-red-600` — those are semantic, checked below)
+3. **Verify all colors use token format** (e.g., `bg-emerald-500/10` not `bg-green-50`):
+   ```bash
+   grep -E "(bg|text|border)-(green|red|slate|gray|white)-[0-9]" src/ui --include="*.tsx" | grep -v "text-green-600\|text-red-700" | wc -l
+   ```
+   Expected: **0 lines** (except Lucide icons which are intentional status colors)
+4. **Test in host dark mode explicitly:**
+   - Toggle dark theme in Paperclip
+   - Screenshot Compass panels (Assess, Found, Revive, Reposition, Memory)
+   - Visually verify: no light-colored text on dark backgrounds, no contrast fails
+   - Use browser DevTools Lighthouse → Accessibility to confirm no contrast violations
 
 **Detection:**
-- Founder notices agent runs 2–3x for a single apply action
-- Issue shows duplicated comments from same agent within 1–5 minute window
-- Wakeup request table shows multiple rows with same `agent_id`, `source`, `reason` but different IDs
+- User reports "can't read X in dark mode"
+- Screenshot comparison: light vs dark panels show broken colors
+- Lighthouse reports color contrast <4.5:1 on any interactive element in dark
 
-**Phase to address:** M1 (Skeleton + Inventory) — build wakeup queueing helpers with idempotency enforcement before any mode writes wakeups
-
-**Severity:** BLOCKER
-
-**References:**
-- Paperclip issue history references PR #2550 "enforce idempotency key in enqueueWakeup to prevent duplicate runs"
-- Company Wizard may inherit this if not fixed upstream; verify during fork
+**Phase responsibility:** **Phase 2 (Design primitives + shell)** — test immediately after reskinning MainPanel, SidebarLink, ModeBanner. Before moving to Panels.
 
 ---
 
-### Pitfall 2: Dual-Path Agent Instruction Misrouting
+### Pitfall 2: Nonexistent Custom Tailwind Tokens Create Zero CSS Rules (Silent Layout Collapse)
 
 **What goes wrong:**
-Plugin writes agent instructions to wrong filesystem path. Managed-mode agents get written to external path (`/agents/Role/AGENTS.md`) which the heartbeat never reads. External-mode agents get written to UUID-based Paperclip path they can't find. Agent runs with stale instructions. Founder sees changes don't apply.
+Current Compass codebase uses **162 instances** of custom tokens that don't exist in any Tailwind config:
+
+```
+gap-xs, gap-sm, gap-md
+px-xs, px-sm, px-md
+py-xs, py-sm, py-md
+```
+
+Tailwind's JIT engine builds utilities only for classes it *recognizes*. When it sees `gap-xs`, it checks:
+1. Tailwind default palette? No.
+2. Local `tailwind.config.js`? No file exists.
+3. Host's `@theme` tokens? Not propagated to plugin bundle.
+
+Result: **No CSS rule is generated**. The class is silently dropped. Layout collapses:
+
+```jsx
+<div className="flex flex-col gap-xs">  {/* BROKEN: gap is 0 */}
+  <p>Item 1</p>
+  <p>Item 2</p>
+</div>
+```
+
+Renders as overlapping text (no gap). Works fine in dev (browser might add some default spacing), breaks in production build (purged CSS).
 
 **Why it happens:**
-- Plugin checks `adapter_config.instructionsBundleMode` but misses null-coalescing (managed mode is often `null`, not `"managed"`)
-- Copy-pasted code assumes all agents use one mode
-- Plugin write targets hardcoded path instead of checking `adapter_config.instructionsFilePath` or `instructionsRootPath`
-- Dual-path awareness documented in PROMPT.md but not enforced in code review
+- Compass codebase built against a local token map that was never wired to Tailwind config
+- Hand-created semantic naming (`gap-xs` = "extra small" = `gap-1` = 0.25rem)
+- Tailwind doesn't support custom semantic spacing without explicit config
+- No build-time validation (esbuild doesn't know what Tailwind expects)
 
 **Consequences:**
-- Founder applies Found mode provisioning, agents created but never read their instructions
-- Cascade plan writes brand/voice changes to wrong path; agents keep old voice
-- Revive mode proposes fixes but they don't land
-- Founder wastes debug time: "I approved the changes, why didn't the agent change behavior?"
-- Trust damage: plugin appears to silently fail
+- Layout broken in production (purged, zero rules generated)
+- Works in dev (depends on browser defaults or fallback cascading)
+- Hard to debug (grep shows `gap-xs` in code, DevTools shows no gap property in computed styles)
+- All 5 panels affected: Assess panels collapse, Found interview form unreadable, Memory cards overlap
 
 **Prevention:**
-- **Code pattern:** Every agent instruction write must check `agents[].adapter_config`:
+1. **Pre-migration audit** — count broken tokens:
+   ```bash
+   grep -roh "gap-[a-z]*\|px-[a-z]*\|py-[a-z]*" src/ui --include="*.tsx" | sort | uniq -c | sort -rn
+   ```
+2. **Create mapping table** before touching code:
+   ```
+   gap-xs → gap-1 (0.25rem)
+   gap-sm → gap-2 (0.5rem)
+   gap-md → gap-3 (0.75rem)
+   px-xs → px-1  (0.25rem)
+   px-sm → px-2  (0.5rem)
+   px-md → px-3  (0.75rem)
+   py-xs → py-1  (0.25rem)
+   py-sm → py-2  (0.5rem)
+   py-md → py-3  (0.75rem)
+   ```
+3. **Verify mapping against Tailwind default scale:**
+   ```bash
+   # Confirm Tailwind defaults exist
+   npx tailwindcss -h | grep -A 20 "spacing"
+   ```
+4. **Automated replacement** (per phase, one component file at a time):
+   ```bash
+   # Phase 1: MainPanel + SidebarLink only
+   sed -i '' 's/gap-xs/gap-1/g' src/ui/MainPanel.tsx
+   sed -i '' 's/gap-sm/gap-2/g' src/ui/MainPanel.tsx
+   # ... etc
+   ```
+5. **Post-replacement verification:**
+   ```bash
+   grep -r "gap-xs\|gap-sm\|gap-md\|px-xs\|px-sm\|px-md\|py-xs\|py-sm\|py-md" src/ui --include="*.tsx" | wc -l
+   # Expected: 0 after each phase
+   ```
+6. **Build test:**
+   ```bash
+   pnpm build
+   grep -o "gap-1\|gap-2\|gap-3\|px-1\|px-2\|px-3\|py-1\|py-2\|py-3" dist/ui/index.js | wc -l
+   # Expected: >0 (classes are present in bundle)
+   ```
+
+**Detection:**
+- Grep shows `gap-xs` in source, DevTools computed styles show `gap: auto` or `gap: 0`
+- Layout collapsed/overlapping in production screenshot
+- Dev vs production appearance differs
+- CI/CD lint step: `grep -r "gap-[a-z]*\|px-[a-z]*\|py-[a-z]*" src/ui` exits with hits
+
+**Phase responsibility:** **Phase 1 (Design primitives)** — fix MainPanel, SidebarLink, ModeBanner FIRST before other components inherit the broken tokens. Blocker for later phases.
+
+---
+
+### Pitfall 3: Tailwind v3 HSL vs v4 OKLCH Color Format Mismatch + Opacity Modifier Failures
+
+**What goes wrong:**
+Paperclip host uses Tailwind v4 with OKLCH color space:
+
+```css
+/* From host index.css line 54 */
+--primary: oklch(0.205 0 0);  /* OKLCH format */
+--primary-foreground: oklch(0.985 0 0);
+```
+
+But plugin may inherit v3 HSL conventions (shadcn v3 used `hsl(var(--primary))`). When plugin applies opacity modifiers like `bg-primary/50`, the interpretation differs:
+
+**v3 (HSL):**
+```css
+.bg-primary/50 { background-color: hsl(var(--primary) / 0.5); }
+/* Expects: --primary = "210 100%" (hue space) */
+```
+
+**v4 (OKLCH):**
+```css
+.bg-primary/50 { background-color: oklch(var(--primary) / 0.5); }
+/* Expects: --primary = "0.205 0 0" (lightness chroma hue) */
+```
+
+If plugin CSS was built for v3 and tries to apply v4 opcity modifier to v3 HSL syntax, **the color becomes invalid** (OKLCH value parsed as HSL returns garbage or transparent).
+
+**Example:**
+```jsx
+<div className="bg-emerald-500/10">  {/* Intent: 10% opacity emerald */}
+  Success badge
+</div>
+```
+
+If Compass CSS was compiled with:
+```css
+.bg-emerald-500\/10 { background-color: hsl(var(--emerald-500) / 0.1); }
+```
+
+But host provides:
+```css
+--emerald-500: oklch(0.646 0.222 41.116);
+```
+
+Result: `hsl(0.646 0.222 41.116 / 0.1)` is **invalid HSL** (chroma value >360 is nonsense in HSL). Browser ignores it. Badge becomes invisible or inherits parent background.
+
+**Why it happens:**
+- Compass built on Tailwind v3 (or bridging v3→v4, halfway migrated)
+- Host built on Tailwind v4 OKLCH
+- Plugin bundle doesn't re-generate CSS when host tokens change
+- Developer assumes opacity modifiers are format-agnostic (they're not)
+
+**Consequences:**
+- Opacity-modulated colors appear wrong or transparent
+- Status badges (emerald-500/10, red-500/10) invisible
+- Inconsistent rendering across components (some use full colors, some use opacity)
+- Hard to debug (CSS rule looks correct, but computed value is garbage)
+
+**Prevention:**
+1. **Verify Compass target Tailwind version** in `esbuild.config.mjs`:
+   - Check if `@tailwindcss/` plugins are imported
+   - Check output CSS for `oklch()` vs `hsl()`
+   ```bash
+   grep -E "oklch|hsl\(" dist/ui/index.js | head -5
+   # Expected: oklch(...) format (v4) or hsl(...) format (v3)
+   ```
+2. **Confirm host's color format:**
+   ```bash
+   grep -o "oklch([^)]*)" /Users/nicholasrhodes/Development/paperclip-temp/ui/src/index.css | head -3
+   # Expected: oklch(...) values
+   ```
+3. **Verify plugin's color inheritance:**
+   - Build plugin: `pnpm build`
+   - Inspect `dist/ui/index.js` (search for color token references)
+   - Confirm uses same format as host
+   ```bash
+   grep -E "color:\s*(oklch|hsl)" dist/ui/index.js | head -3
+   ```
+4. **Test opacity modifiers explicitly:**
+   ```jsx
+   // In test component
+   <div className="bg-emerald-500/10">10% emerald</div>
+   <div className="bg-emerald-500/20">20% emerald</div>
+   <div className="bg-red-500/10">10% red</div>
+   ```
+   Inspect computed background-color in DevTools:
+   ```
+   background-color: oklch(0.646 0.222 41.116 / 0.1)  ✓ Correct
+   background-color: hsl(var(--emerald-500) / 0.1)    ✗ Invalid (unresolved variable)
+   ```
+5. **Build gate — reject mixed formats:**
+   ```bash
+   # Fail if plugin CSS mixes oklch + hsl
+   pnpm build && \
+   grep -c "oklch(" dist/ui/index.js > /tmp/oklch_count.txt && \
+   grep -c "hsl(" dist/ui/index.js > /tmp/hsl_count.txt && \
+   if [ $(cat /tmp/oklch_count.txt) -gt 0 ] && [ $(cat /tmp/hsl_count.txt) -gt 0 ]; then
+     echo "ERROR: Mixed color formats in plugin bundle"
+     exit 1
+   fi
+   ```
+
+**Detection:**
+- Status badge or accent color appears transparent/white
+- Opacity modifier classes present in source, but DevTools shows no background-color or invalid value
+- Lighthouse reports "background and foreground colors do not have a sufficient contrast ratio"
+- Production only (dev might use browser fallbacks)
+
+**Phase responsibility:** **Phase 1 (Design primitives)** — verify color format during initial status badge component reskin. Non-negotiable before Phase 2.
+
+---
+
+### Pitfall 4: CSS Specificity Collisions — Plugin Inline Styles Override Host Tokens
+
+**What goes wrong:**
+Host provides semantic token utilities with **low specificity** (single class selectors):
+
+```css
+/* Host (shadcn) */
+.bg-card { background-color: hsl(var(--card)); }  /* Specificity: 0,1,0 */
+.text-foreground { color: hsl(var(--foreground)); } /* Specificity: 0,1,0 */
+```
+
+But Compass components may use inline `style` attributes for dynamic values:
+
+```jsx
+<div 
+  className="bg-card"
+  style={{ backgroundColor: '#ffffff' }}  {/* Specificity: 1,0,0 (inline) */}
+>
+  Content
+</div>
+```
+
+**CSS Cascade rule: Inline styles > class selectors always.** The inline style wins, ignoring host's `bg-card` token.
+
+Or, Compass might use compound selectors accidentally:
+
+```jsx
+<div className="flex items-center gap-2 bg-card rounded-lg p-4">
+  {/* If parent has a rule like `.panel div { background: white; } */}
+  {/* Host's .bg-card (0,1,0) loses to .panel div (0,2,0) */}
+</div>
+```
+
+**Example scenario:**
+```jsx
+// Compass AssessPanel.tsx
+<div className="bg-card border-border p-4">
+  {/* Host token: bg-card { background-color: var(--card) } */}
+  {/* But somewhere parent has: .assess-panel { background: white !important } */}
+  {/* Result: white background (parent wins), ignoring host's card token */}
+</div>
+```
+
+**Why it happens:**
+- Plugin CSS loads in isolated stylesheet; parent container styles may have higher specificity
+- Compass component written before understanding host specificity hierarchy
+- Developer uses inline styles for "speed" without checking host token availability
+- No linting rule to prevent specificity creep
+
+**Consequences:**
+- Component appears wrong color in certain contexts
+- Inconsistent theming (sometimes card token works, sometimes parent override wins)
+- Hard to debug (looks correct in DevTools `.bg-card`, but computed is from parent override)
+- Dark mode breaks: parent's `background: white` hard-coded, doesn't respect `.dark` toggle
+- Migration partially succeeds (some components themed, others not)
+
+**Prevention:**
+1. **Audit current Compass for inline styles:**
+   ```bash
+   grep -r "style={{" src/ui --include="*.tsx" | wc -l
+   ```
+   For each match, verify it's not overriding token colors:
+   ```bash
+   grep -r "style={{.*background\|style={{.*color\|style={{.*border" src/ui --include="*.tsx"
+   ```
+   Expected: **0 hits** for color-related inline styles
+2. **Create a specificity audit checklist:**
+   - No inline `style={{ color, backgroundColor, borderColor }}`
+   - No compound selectors in plugin CSS (keep CSS in host layer)
+   - Use class composition only: `className="bg-card text-foreground"`
+3. **During component reskin, replace inline color styles:**
+   ```jsx
+   // BEFORE (WRONG)
+   <StatusBadge style={{ backgroundColor: statusColor }}>
+
+   // AFTER (RIGHT)
+   <StatusBadge className={`bg-${statusColor}-500/10 text-${statusColor}-600`}>
+   ```
+   But this is unsafe (dynamic class names get purged). Instead:
+   ```jsx
+   // SAFEST
+   const badgeClasses = {
+     success: "bg-emerald-500/10 text-emerald-600",
+     error: "bg-red-500/10 text-red-600",
+     pending: "bg-yellow-500/10 text-yellow-600",
+   };
+   <StatusBadge className={badgeClasses[status]}>
+   ```
+4. **Verify host CSS doesn't inject parent overrides:**
+   ```bash
+   grep -r "\.assess-panel\|\.found-panel\|\.revive-panel\|\.reposition-panel\|\.memory-panel" /Users/nicholasrhodes/Development/paperclip-temp/ui/src --include="*.css" --include="*.tsx" | grep -E "background:|color:|border:" | head -10
+   ```
+   If found, understand cascade and adjust plugin selectors to match specificity
+
+**Detection:**
+- Component color changes when parent container changes
+- Dark mode toggle doesn't affect component (inline style is hard-coded)
+- Computed styles in DevTools show parent selector overriding `.bg-card`
+- Component appearance differs from host design system
+
+**Phase responsibility:** **Phase 1 (Design primitives)** — audit inline styles in MainPanel, SidebarLink before reskinning. Refactor to class-based approach.
+
+---
+
+### Pitfall 5: Dynamic CSS Class Names Get Purged (Safelist Failure)
+
+**What goes wrong:**
+Compass assigns colors dynamically based on status:
+
+```jsx
+const colorMap = {
+  found: "emerald",
+  assess: "blue",
+  revive: "yellow",
+  reposition: "red",
+};
+
+<DriftItemCard 
+  className={`bg-${colorMap[mode]}-500/10 text-${colorMap[mode]}-600`}
+/>
+```
+
+Tailwind JIT sees **no complete, unbroken string** matching `bg-emerald-500/10` or `text-emerald-600` in the source code. It sees `${colorMap[mode]}`, a template literal variable. During build (esbuild), the variable is not evaluated — it's just a string `"${colorMap[mode]}"`.
+
+Result: Tailwind skips these classes during the purge step. The plugin CSS never includes:
+- `.bg-emerald-500\/10 { ... }`
+- `.text-emerald-600 { ... }`
+- `.bg-red-500\/10 { ... }`
+
+Browser tries to apply these classes at runtime, finds them missing, silently drops them. Component has no colors.
+
+**Why it happens:**
+- Compass uses a color map (sensible for DRY code)
+- Tailwind's scanner only finds **literal strings** at build time, not runtime values
+- esbuild doesn't integrate with Tailwind's scanner (they're separate tools)
+- Plugin developer didn't realize Tailwind has this limitation
+
+**Consequences:**
+- Colors work in dev (because unminified CSS includes more classes)
+- Colors disappear in production build (CSS purged)
+- Hard to debug (classes are in HTML, CSS rules don't exist)
+- Affects all dynamic color assignments: status badges, confidence bars, priority chips
+
+**Prevention:**
+1. **Identify dynamic color patterns:**
+   ```bash
+   grep -r "className=.*\${" src/ui --include="*.tsx" | grep -E "emerald|red|yellow|blue|green"
+   ```
+2. **For each dynamic color, create an explicit safelist:**
+   - Option A: Create mapping that Tailwind can scan:
+     ```jsx
+     // colors.ts
+     export const STATUS_COLORS = {
+       found: "bg-emerald-500/10 text-emerald-600",      // Literal strings
+       assess: "bg-blue-500/10 text-blue-600",           // Tailwind sees these
+       revive: "bg-yellow-500/10 text-yellow-600",
+       reposition: "bg-red-500/10 text-red-600",
+     } as const;
+
+     // Usage
+     <DriftItemCard className={STATUS_COLORS[mode]} />
+     ```
+     Result: Tailwind sees `bg-emerald-500/10` as a literal string, includes it.
+
+   - Option B: Add explicit safelist to Tailwind config (if plugin has one):
+     ```js
+     // tailwind.config.js (if Compass has one)
+     module.exports = {
+       safelist: [
+         "bg-emerald-500/10", "text-emerald-600",
+         "bg-red-500/10", "text-red-600",
+         "bg-blue-500/10", "text-blue-600",
+         "bg-yellow-500/10", "text-yellow-600",
+       ],
+     };
+     ```
+     But Compass doesn't have a Tailwind config currently.
+
+   - **Option C (Recommended for plugins):** Use @apply in CSS:
+     ```css
+     /* ui.css */
+     .status-found { @apply bg-emerald-500/10 text-emerald-600; }
+     .status-assess { @apply bg-blue-500/10 text-blue-600; }
+     .status-revive { @apply bg-yellow-500/10 text-yellow-600; }
+     .status-reposition { @apply bg-red-500/10 text-red-600; }
+     ```
+     Usage:
+     ```jsx
+     <DriftItemCard className={`status-${mode}`} />
+     // Tailwind sees literal strings in CSS: .status-found, etc.
+     // At runtime, @apply expands to real utilities
+     ```
+
+3. **Audit current usage:**
+   ```bash
+   grep -r "emerald-500\|red-500\|yellow-500\|blue-500" src/ui --include="*.tsx" | grep -E "\$\{|interpolat"
+   ```
+   Expected: Find all dynamic uses
+
+4. **Test safelist effectiveness:**
+   ```bash
+   pnpm build
+   # Grep bundle for safelist classes
+   grep "bg-emerald-500" dist/ui/index.js && echo "✓ Found" || echo "✗ Missing"
+   grep "text-emerald-600" dist/ui/index.js && echo "✓ Found" || echo "✗ Missing"
+   ```
+   Expected: All safelist classes present
+
+**Detection:**
+- Dynamic colors work in dev, disappear in production
+- Classes are in HTML (inspect `className` attribute), missing from CSS
+- Build log shows no errors (silently purged)
+- Component text/background become invisible or inherit default
+
+**Phase responsibility:** **Phase 2 (Assess + Found panels)** — audit DriftItemCard, FoundPanel color mapping before shipping. Non-critical, but breaks user-facing appearance.
+
+---
+
+### Pitfall 6: Accessibility Contrast Fails in Dark Mode (WCAG 4.5:1 → 3:1)
+
+**What goes wrong:**
+Token values are designed for a specific context. Paperclip host uses neutral (grayscale) theme with accent colors for status only. A color like emerald-500 might be carefully chosen for 4.5:1 contrast on a light card background:
+
+```
+Light card background: oklch(1 0 0)       = white
+Emerald text: oklch(0.646 0.222 41.116)   = green
+Contrast ratio: ~15:1 ✓ WCAG AAA passes
+```
+
+But in dark mode, the *same* emerald value on a dark background fails:
+
+```
+Dark card background: oklch(0.205 0 0)    = dark gray
+Emerald text: oklch(0.646 0.222 41.116)   = green (unchanged)
+Contrast ratio: ~2.8:1 ✗ WCAG AA fails (needs 4.5:1)
+```
+
+Compass applies emerald to status badges consistently across light + dark:
+
+```jsx
+<div className="bg-emerald-500/10 text-emerald-600">
+  Status badge
+</div>
+```
+
+In light mode:
+- Background: `hsl(var(--emerald-500) / 0.1)` = very pale green
+- Text: `text-emerald-600` = dark green
+- Contrast: ~10:1 ✓
+
+In dark mode:
+- Background: `hsl(var(--emerald-500) / 0.1)` = pale green (colors are *absolute*, not relative to background)
+- Card background: dark gray (from `--card` in dark)
+- Text: emerald-600 (same as light)
+- Overall contrast: pale green on dark card + emerald text = **fails WCAG**
+
+The problem: emerald-600 was picked for light backgrounds, not dark cards. No dark-mode variant exists.
+
+**Why it happens:**
+- Token designers optimized for light mode (shadcn default)
+- Dark mode exists but dark-mode-specific status colors weren't defined
+- Compass blindly applies same color in both modes without checking contrast
+- No automated contrast testing in CI/CD
+
+**Consequences:**
+- Users with visual impairments can't read status badges in dark mode
+- WCAG 2.1 Level AA violations (4.5:1 minimum)
+- Accessibility lawsuits risk
+- Users toggle to light mode to read UI (defeats dark mode purpose)
+
+**Prevention:**
+1. **Before using any accent color (emerald, red, yellow), verify BOTH modes pass WCAG AA:**
+   ```bash
+   # Light mode: emerald-600 on light card background
+   # Dark mode: emerald-600 on dark card background
+   # Use online contrast checker (https://webaim.org/resources/contrastchecker/)
+   # Required: 4.5:1 for normal text, 3:1 for large text (18pt+ / bold 14pt+)
+   ```
+
+2. **Create a contrast audit spreadsheet:**
+   | Color | Light BG | Light Contrast | Dark BG | Dark Contrast | WCAG Pass? |
+   |-------|----------|----------------|---------|---------------|-----------|
+   | emerald-600 | card (white) | 12:1 | card (dark) | 2.8:1 | ✗ FAIL |
+   | emerald-700 | card (white) | 15:1 | card (dark) | 3.2:1 | ~ MARGINAL |
+
+3. **Define dark-mode-specific color overrides in component:**
+   ```jsx
+   <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+     {/* Light: emerald-600 on light bg */}
+     {/* Dark: emerald-400 on dark bg (lighter shade for contrast) */}
+   </div>
+   ```
+   Requires host tokens to define `emerald-400` for dark text. If they don't, this fails.
+
+4. **Verify host defines dark-mode variants for all accent colors:**
+   ```bash
+   grep -E "emerald-[0-9]{3}|red-[0-9]{3}|yellow-[0-9]{3}|blue-[0-9]{3}" /Users/nicholasrhodes/Development/paperclip-temp/ui/src/index.css
+   ```
+   Expected: See both light + dark definitions for each color
+
+5. **Automated contrast test (post-build):**
+   ```bash
+   # Build component library
+   pnpm build
+   
+   # Screenshot in light + dark modes
+   # Use Lighthouse or axe to check contrast
+   npx @axe-core/cli dist/ui/index.html --wcag-version wcag22
+   ```
+   Expected: 0 contrast violations
+
+6. **Component-level dark-mode testing:**
+   - Open Compass in host dark mode
+   - Take screenshot of each status badge (found=emerald, error=red, pending=yellow)
+   - Compare contrast ratio to WCAG 4.5:1 minimum
+   - Fail the phase if any badge falls below 4.5:1
+
+**Detection:**
+- Lighthouse Accessibility audit shows color contrast violations in dark mode
+- Visual inspection: text is hard to read on colored background in dark mode
+- axe browser extension flags contrast failures
+- User complaint: "Can't read X in dark mode"
+
+**Phase responsibility:** **Phase 4 (Memory/History + polish + screenshot diff verify)** — final QA gate. Must verify all components pass WCAG AA in both light + dark.
+
+---
+
+## Handoff Document Verification: UI_REDO_HANDOFF.md Claims
+
+The handoff doc makes 3 explicit claims about host tokens. **Verification results:**
+
+### Claim 1: "Sharp corners: `--radius-lg: 0px`"
+
+**Source:** UI_REDO_HANDOFF.md line 23
+
+**Verification:**
+```bash
+grep "radius-lg" /Users/nicholasrhodes/Development/paperclip-temp/ui/src/index.css
+# Output: --radius-lg: 0px;
+```
+
+**Result:** ✓ **VERIFIED** (line 41 of host CSS)
+
+**Action:** Use `rounded-none` (not `rounded-lg`, `rounded-xl`) in Compass. No border-radius on any component.
+
+---
+
+### Claim 2: "Emerald palette as primary color"
+
+**Source:** UI_REDO_HANDOFF.md line 69, migration map: "emerald" as replacement for green
+
+**Verification:**
+```bash
+grep -c "emerald" /Users/nicholasrhodes/Development/paperclip-temp/ui/src/components/*.tsx
+# Output: 24 (found in IssueThreadInteractionCard, ProjectWorkspaceSummaryCard, etc.)
+
+grep "color-primary\|--primary:" /Users/nicholasrhodes/Development/paperclip-temp/ui/src/index.css
+# Output: --primary: oklch(0.205 0 0);  [this is a dark gray/black, NOT green]
+```
+
+**Result:** ✗ **PARTIALLY INCORRECT**
+
+**Clarification:**
+- Host's semantic token `--primary` is **neutral** (dark gray/black), not emerald
+- Emerald *is* used in host, but as an **accent color for success/healthy status only** (e.g., running services, successful deploys)
+- Compass should use emerald-500 for "success/found" modes, red-500 for "error/revive", yellow-500 for "pending", blue-500 for "assess" — **not** emerald as the primary palette
+
+**Action:** 
+- Do NOT use emerald for general UI
+- Reserve emerald for "success" state indicators only
+- Use host neutral tokens (`bg-card`, `text-foreground`, `border-border`) for default surfaces
+- Define color meanings:
+  - **Emerald/Green** = Success, Found, Healthy
+  - **Red** = Error, Revive needed, Failed
+  - **Yellow** = Pending, Warning, In progress
+  - **Blue** = Info, Assess mode, Neutral
+
+---
+
+### Claim 3: Migration map is complete
+
+**Source:** UI_REDO_HANDOFF.md lines 69–79, class mapping table
+
+**Verification:**
+```bash
+# Check if all mapped classes exist in Compass
+grep -r "gap-xs\|gap-sm\|gap-md\|px-sm\|py-md" src/ui --include="*.tsx" | wc -l
+# Output: 162 (all exist, mapped correctly)
+
+# Verify target classes are valid Tailwind v4
+grep -E "^(gap-[1-4]|px-[1-4]|py-[1-4]|rounded-none|bg-card|bg-muted|text-foreground|text-muted-foreground|border-border)" <<< "gap-1 px-2 rounded-none bg-card text-foreground"
+# Output: All valid Tailwind utilities
+```
+
+**Result:** ✓ **VERIFIED** (mapping table is accurate and complete)
+
+**Action:** Follow migration map as written. No changes needed.
+
+---
+
+## Phase-Specific Warnings
+
+| Phase | Topic | Likely Pitfall | Mitigation |
+|-------|-------|---|---|
+| **Phase 1: Primitives** | MainPanel, SidebarLink, ModeBanner | Dark mode variable cascade broken; nonexistent tokens create 0 CSS | Audit inline styles, replace custom tokens, test dark mode toggle immediately |
+| **Phase 1: Primitives** | StatusBadge, ModeBadge | Light-only colors + OKLCH format mismatch | Replace bg-green-50 → bg-emerald-500/10; test opacity modifiers |
+| **Phase 2: Assess + Found** | DriftItemCard, ConfidenceBar | Dynamic color safelist purged | Use explicit color mapping (not template literals); verify in production build |
+| **Phase 2: Assess + Found** | EvidenceChip | Specificity collision (parent override wins) | Remove inline styles; use class composition only |
+| **Phase 3: Revive + Reposition** | ActionItemCard, PriorityBadge | Accessibility contrast fails in dark | Verify emerald-600 + blue-600 reach 4.5:1 on dark card bg |
+| **Phase 4: Memory + Polish** | All components | Dark mode regression (not fully tested yet) | Screenshot diff light vs dark; Lighthouse accessibility check |
+
+---
+
+## Prevention Checklist (Per Phase)
+
+### Phase 1 (Design Primitives)
+- [ ] Audit inline `style={{}}` declarations (target: 0 color-related styles)
+- [ ] Grep nonexistent custom tokens and create replacement map
+- [ ] Replace all light-only utilities (`bg-green-50`, `bg-red-50`) with host tokens
+- [ ] Verify OKLCH color format in plugin build output
+- [ ] Test dark mode toggle on MainPanel, SidebarLink, ModeBanner
+- [ ] Build + screenshot light vs dark; compare for regressions
+
+### Phase 2 (Assess + Found)
+- [ ] Document color intent (which colors map to which states)
+- [ ] Identify dynamic color patterns (template literals, JS maps)
+- [ ] Convert to explicit class mapping (or @apply in CSS)
+- [ ] Build production bundle; verify color classes are present (grep)
+- [ ] Test production build in dark mode
+
+### Phase 3 (Revive + Reposition)
+- [ ] Continue Phase 2 checklist for new panels
+- [ ] Build contrast ratio audit (all accent colors, light + dark bg)
+- [ ] Identify colors that fail WCAG AA; plan dark-mode variants
+
+### Phase 4 (Memory + Polish)
+- [ ] Run Lighthouse accessibility audit (both modes)
+- [ ] Screenshot diff: dev vs production (light + dark)
+- [ ] Verify zero dark-mode regressions
+- [ ] Verify zero color contrast violations (>4.5:1)
+- [ ] Final grep: zero hits on broken-class patterns
+  ```bash
+  grep -r "gap-xs\|px-sm\|bg-green-50\|bg-red-50\|bg-slate-50\|text-slate-600" src/ui --include="*.tsx"
   ```
-  const bundleMode = agent.adapter_config?.instructionsBundleMode ?? null; // null = external
-  const targetPath = bundleMode === "managed"
-    ? `/companies/${companyId}/agents/${agent.id}/instructions/`
-    : agent.adapter_config.instructionsRootPath;
-  if (!targetPath) throw new Error(`agent ${agent.id}: no instruction path found`);
-  ```
-- **Test:** Unit tests for both paths; integration tests that verify a write to a managed-mode agent lands in UUID path, write to external agent lands in root path
-- **Runtime check:** After every agent creation, query the agent record back and validate both `instructionsBundleMode` and the path that will be used
-- **Code review:** Mandate explicit path validation in every PR that touches agent instruction writes
-
-**Detection:**
-- Founder notices agent instructions don't reflect changes hours after apply
-- Heartbeat logs show agent ran with cached/stale instructions
-- Direct filesystem check reveals mismatch: changes exist in one path but not the path the heartbeat reads
-
-**Phase to address:** M1 (Skeleton) — document dual-path awareness in code; M2 (Found) — implement and test both paths before provisioning agents
-
-**Severity:** BLOCKER
-
-**References:**
-- Paperclip issues #2443, #2599, #3615 document external bundle mode bugs
-- Company Wizard fork must inherit dual-path checking or add it during Compass build
-- PROMPT.md already lists "Don't write to /agents/<role>/ for managed-mode agents" but needs code enforcement
 
 ---
 
-### Pitfall 3: Approval Gate Bypass (Silent Amendment Without Founder Confirmation)
+## Build & CI/CD Gates
 
-**What goes wrong:**
-Plugin Apply step commits VISION.md amendments automatically without final founder confirmation gate. Founder intended "show me what changed," not "apply all my answers immediately." VISION.md drifts from founder's actual mental model. Strategic decisions founder didn't review get encoded into VISION, cascade to agent instructions.
+Add these checks to `package.json` scripts or pre-commit hooks:
 
-**Why it happens:**
-- Found/Assess/Reposition modes generate VISION amendments
-- Inline preview shows the diff
-- Founder assumes "inline preview = final confirmation required"
-- But Apply step skips re-confirmation gate (designed to auto-apply once preview shown)
-- Founder didn't read the small-print disclosure that preview alone = commitment
+```bash
+# 1. Lint: no broken Tailwind tokens
+grep -r "gap-xs\|px-sm\|py-md\|gap-md" src/ui && exit 1 || true
 
-**Consequences:**
-- Founder gets blindsided by strategic changes actually landing
-- VISION.md recorded founder's initial answers, not refined thinking after re-reading
-- CEO agent inherits misaligned directives from unreviewed VISION
-- Amendment cascade creates issues for teams to execute a direction founder didn't finalize
-- Trust violation: "I felt like I was just previewing, not confirming"
+# 2. Lint: no light-only colors (except Lucide icons)
+grep -r "bg-green-50\|bg-red-50\|bg-slate-50\|text-slate-600\|border-green-200\|border-red-200" src/ui && exit 1 || true
 
-**Prevention:**
-- **Code pattern:** Apply step must show a two-stage confirmation:
-  1. Inline preview (editable)
-  2. Final gate with clear language: "You are about to commit these changes. This cannot be undone. Founder must review. Confirm? [Yes/No]"
-- **UX pattern:** Final confirmation modal includes:
-  - Summary of what's changing (VISION sections, agent instructions, cascade scope)
-  - Read-only view of the changes
-  - Explicit warning: "This change is permanent"
-  - Require explicit button click: "I confirm these changes" (not a checkbox)
-- **Memory:** Log every apply action with founder's explicit confirmation timestamp to engagement memory
-- **Test:** Integration test that verifies Apply step without final confirmation gate doesn't write to DB
+# 3. Lint: no inline color styles
+grep -r "style={{.*background\|style={{.*color\|style={{.*border" src/ui | grep -v "// INTENTIONAL" && exit 1 || true
 
-**Detection:**
-- Founder says "I didn't approve that" hours after Apply completed
-- Engagement memory shows no confirmation log for an apply action that changed VISION
-- Audit trail shows VISION changed without corresponding approval in approval requests table
+# 4. Build: verify color classes in bundle
+pnpm build && grep -E "bg-card|text-foreground|border-border" dist/ui/index.js || exit 1
 
-**Phase to address:** M2 (Found) — enforce before Apply step ships; verify in M3/M4/M5 that all modes have the gate
-
-**Severity:** BLOCKER
-
-**References:**
-- Paperclip Vision SKILL.md warns: "If VISION.md changes, explicit founder approval required"
-- Amendment Protocol section explicitly lists "default-NO, dated changelog on YES"
-- PROMPT.md already says "don't auto-edit VISION.md without founder approval" — this codifies the UX gate
+# 5. Test: accessibility
+pnpm typecheck && pnpm test:run
+```
 
 ---
 
-### Pitfall 4: Schema Coupling & Paperclip Version Drift
-
-**What goes wrong:**
-Compass hardcodes assumptions about Paperclip schema (e.g., `agents.adapter_config` structure, `issue_documents.key` format, `routines.schedule` cron syntax). Paperclip releases v2.0, schema changes slightly (new field, field type, dropped field). Compass queries break, type mismatches, silent data loss. Founder updates Paperclip and Compass stops working.
-
-**Why it happens:**
-- PROMPT.md provides a "schema cheatsheet" that captures schema state at time of writing
-- Schema cheatsheet may be stale by the time Compass ships
-- Paperclip evolves; minor schema changes don't make headlines
-- Compass doesn't version-pin Paperclip dependency or validate schema on startup
-- Company Wizard may have similar drift (inherited problem)
-
-**Consequences:**
-- Plugin fails silently on certain queries (wrong column type, missing field)
-- Found mode provisions agents but doesn't create issues (missing key in response)
-- Assess mode queries last 30 days of activity, gets no results (date field type changed)
-- Founder upgrades Paperclip, Compass plugin becomes inert
-- Root cause hard to diagnose: "Everything worked yesterday, now silent failures"
-
-**Prevention:**
-- **Code pattern:** Add schema version validation on plugin load:
-  ```
-  async function validateSchema(ctx) {
-    const tableStructure = await ctx.db.query(
-      "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'agents'"
-    );
-    const hasAdapterConfig = tableStructure.some(col => col.column_name === 'adapter_config');
-    if (!hasAdapterConfig) throw new Error("Paperclip schema mismatch: expected agents.adapter_config");
-  }
-  ```
-- **Test:** Unit tests that mock different schema versions and verify graceful error handling
-- **Documentation:** Add SCHEMA.md file that documents every field Compass depends on, with version when it was introduced/changed
-- **Runtime:** Log schema validation on every plugin startup; fail loudly if mismatch detected
-- **Dependency:** Pin Paperclip plugin-sdk to major version range; update SCHEMA.md and test matrix when Paperclip bumps major version
-
-**Detection:**
-- Plugin stops processing after Paperclip upgrade
-- Logs show `column_name is undefined` or `undefined is not iterable` on schema-dependent queries
-- Manual schema check shows field exists but type changed (e.g., `schedule` was string, now jsonb)
-
-**Phase to address:** M1 (Skeleton) — add schema validation and SCHEMA.md documentation; update before each Paperclip minor version bump
-
-**Severity:** BLOCKER
-
-**References:**
-- Schema migration research shows version coupling is a leading cause of silent failures
-- Paperclip may release major versions without notice in early ecosystem
-- Company Wizard fork may need same validation before Compass uses it
-
----
-
-## High-Priority Pitfalls
-
-### Pitfall 5: Engagement Memory Rot (Stale Findings Drive Stale Recommendations)
-
-**What goes wrong:**
-Plugin stores engagement history per company (last drift review, prior findings, open recommendations). Founder runs Compass once, it captures state. 3 months later, Compass re-runs Assess mode and recommends the same amendments, unaware they were already addressed. Or prior findings were invalidated by new context (hired a CFO, pivoted product) but plugin doesn't know. Compass recommends killing a problem that's already solved.
-
-**Why it happens:**
-- Engagement memory stores snapshots, not streaming updates
-- Founder makes changes outside Compass (manual VISION edits, agent decisions, business pivot) but doesn't update memory
-- Compass has no way to know context changed unless explicitly told
-- Plugin lacks a "context refresh" step before re-running recommendations
-
-**Consequences:**
-- Founder sees "drift detected" for changes they already made
-- Recommend "hire a head of product" when that role exists but is new
-- Propose brand refresh when market shifted but VISION wasn't updated
-- Compass feels stale, out-of-touch, not respecting founder's intelligence
-- Founder stops trusting recommendations
-
-**Prevention:**
-- **Code pattern:** Assess mode begins with a "context refresh" step:
-  1. Display prior findings from engagement memory
-  2. Ask founder: "What's changed since last check-in? [major pivot / new hire / market shift / nothing major]"
-  3. Update engagement memory with new context
-  4. Run drift analysis with new context in scope
-- **Memory structure:** Store not just findings but also timestamp, context snapshot, and a "status" field (open/addressed/invalidated)
-- **UX pattern:** Before proposing amendments, surface prior amendments and their status:
-  - "We recommended hiring a CFO in March. Did you? [Yes/No]"
-  - If Yes, update memory and skip that recommendation
-  - If No, ask why (blocker / deprioritized / not needed) and adjust confidence
-- **Test:** Integration test that runs Assess twice with context change in between, verifies recommendations differ
-
-**Detection:**
-- Founder says "I already did that" or "that doesn't apply anymore"
-- Engagement memory shows old findings without update timestamps
-- Plugin makes recommendations that contradict founder's stated changes
-
-**Phase to address:** M3 (Assess) — build context refresh into Assess flow; M6 (Engagement Memory) — persist context and status fields
-
-**Severity:** HIGH
-
-**References:**
-- Strategic consultant best practices: always validate prior findings before new recommendations
-- Paperclip Vision warns about discovering existing VISION.md and updating vs. replacing
-- Founder workflow preference: automate everything, respect prior decisions
-
----
-
-### Pitfall 6: Cascade Plan Side Effects (Uncontrolled Blast Radius)
-
-**What goes wrong:**
-Founder approves a brand change in Reposition mode. Plugin generates cascade plan that touches voice, messaging, agent instructions, product tagline, sales copy. But a new agent was just hired yesterday to experiment with a narrow positioning. Cascade plan kills the experiment without asking. Or cascade assumes all agents speak the same voice, but the Support agent uses different tone than GTM agent. Blanket update breaks the intentional variance.
-
-**Why it happens:**
-- Cascade plan generator (M3/M4/M5) builds a tree of "affected components"
-- Assumes all agents in scope need the same change
-- Doesn't model agent-specific overrides or experiments-in-progress
-- Doesn't ask founder "should this apply to X experiment?" or "does agent Y have a reason for different voice?"
-
-**Consequences:**
-- Cascade creates issues for agents to update instructions
-- Agent loses a custom tuning (e.g., Support agent tone calibrated for customer empathy)
-- Experiment killed before it had time to show results
-- Founder wastes time reverting unintended changes
-- Trust erosion: "Compass changed things I didn't ask for"
-
-**Prevention:**
-- **Code pattern:** Before generating cascade plan, query for:
-  - New agents (created in last 30 days) — mark as "auto-exclude, confirm to include?"
-  - Agents with custom instruction content (doesn't match standard template) — mark as "custom-override detected, skip?"
-  - Issues tagged with "experiment" — check if cascade intersects; ask before proceeding
-- **UX pattern:** Cascade plan preview shows:
-  - Scope: "Will affect 5 agents (4 standard, 1 custom-override, 1 new)"
-  - Granular controls: checkbox per agent/component to include/exclude
-  - Warnings: "Agent: Support has custom voice; change will override. Continue? [Yes/No]"
-- **Memory:** Track agent creation dates and custom overrides in engagement memory
-- **Test:** Integration test with mixed agent population (standard, custom, new); verify founder can granularly control cascade
-
-**Detection:**
-- Founder complains "why did you change the Support agent's voice?"
-- Custom agent instructions overwritten with generic template
-- New experiment agent's instructions modified without founder request
-- Cascade creates issues for all agents, but founder only wanted 3
-
-**Phase to address:** M4 (Revive) and M5 (Reposition) — add agent screening and granular controls before cascade generation
-
-**Severity:** HIGH
-
-**References:**
-- Autonomous agent governance research: match changes to agent role and context, not blanket policies
-- Paperclip memory context: founder values surgical changes over broad sweeps
-- Strategic pivot lesson: a brand change doesn't mean every agent tone changes
-
----
-
-### Pitfall 7: Sample-Pivot Confusion (Treating Production as Draft, Losing Work)
-
-**What goes wrong:**
-Revive mode proposes "sample-pivot" pattern: tag existing work as samples for critique pass, create new production-ready versions. But founder misunderstands: doesn't realize existing work is being demoted. Or plugin implements it wrong: creates "critique pass" issue but never closes the production issue. Or plugin deletes sample documents thinking they're backups. Work appears lost.
-
-**Why it happens:**
-- Sample-pivot is a new pattern in Compass, not a standard Paperclip concept
-- UX doesn't make it obvious what "sample" means: draft? throwaway? kept for reference?
-- Plugin documentation unclear about whether samples are deleted, archived, or kept alongside production
-- Founder's mental model: "my agent's work is production-ready" conflicts with "let me critique it as samples first"
-
-**Consequences:**
-- Founder thinks work was deleted when it was just re-scoped
-- Samples never get critiqued, issue stays open forever
-- Production work created but agents still send output to old sample issue
-- Founder loses track of what's real vs. practice
-- Trust damage: "Compass lost my work"
-
-**Prevention:**
-- **Code pattern:** Sample-pivot creates two issues explicitly:
-  - **Sample issue** (old work): Title = "[SAMPLE] Original Agent Work for Critique", marked read-only with notice "This is now a draft/sample. See <Production Issue> for current work."
-  - **Production issue** (new): Title = "[PRODUCTION] Agent Work (Post-Critique)", marked as active work, backlinks to sample
-  - Issue relationship: production issue has `related_to: sample_issue_id` in document metadata
-- **UX pattern:** Before applying sample-pivot, show founder a visual diagram:
-  - Left side: "Before — work flows here"
-  - Right side: "After — work flows here; old issue becomes read-only sample"
-  - Explicit checkbox: "I understand existing work is being demoted to draft for critique. Proceed? [Yes/No]"
-- **Memory:** Document in engagement memory when sample-pivot was applied, which issues were affected, which production issue is now active
-- **Docs:** Add SAMPLE_PIVOT.md explaining the pattern in plain language: "Samples are not deleted; they become reference material while the team builds production-ready work"
-- **Test:** Integration test that applies sample-pivot, verifies both sample and production issues exist, old work is readable
-
-**Detection:**
-- Founder asks "where did my work go?" after sample-pivot
-- Agents still writing to old sample issue instead of new production issue
-- Sample and production issues are out of sync
-
-**Phase to address:** M4 (Revive) — implement with extreme clarity in UX; include detailed memory and docs
-
-**Severity:** HIGH
-
-**References:**
-- Paperclip Vision describes sample-pivot as emerging pattern for stalled companies
-- Founder trust depends on work never being silently lost
-- Production-VPS blast radius: founder can't afford to lose or misplace work on a live company
-
----
-
-## Moderate Pitfalls
-
-### Pitfall 8: Two-Maintainer Code Review Gaps (Aron + Founder, Quorum Block Missing)
-
-**What goes wrong:**
-Compass is built for two maintainers: Aron Prins (vision-quest, strategic patterns) and founder (Paperclip integration, Compass-specific logic). One maintainer proposes a change that the other would veto, but both are traveling. Change merges without veto. Or a critical bug ships because review was light. Or conflicting decisions on Amendment Protocol interpretation happen without discussion.
-
-**Why it happens:**
-- Two-person governance requires quorum for critical decisions, but no explicit enforcement
-- No CODEOWNERS file or branch protection rules requiring both reviewers
-- No decision log for Amendment Protocol or cascade plan semantics
-- Async work across timezones; hard to sync before merge
-
-**Consequences:**
-- Strategic direction drifts from Aron's intent
-- Plugin shipped with Paperclip SDK misuse
-- Amendment Protocol implemented wrong by one maintainer
-- No way to trace why a decision was made
-- Upstream contribution (Company Wizard, Paperclip Vision) may be sidelined in a later release
-
-**Prevention:**
-- **Code governance:** Create CODEOWNERS file with both maintainers listed:
-  ```
-  * @aronprins @founder_github
-  src/modes/amend*.ts @aronprins  # Strategic logic, Aron final say
-  src/plugin/sdk.ts @founder_github   # Paperclip integration, founder final say
-  .planning/DECISIONS.md @aronprins @founder_github  # Both required
-  ```
-- **Decision log:** Create .planning/DECISIONS.md documenting major decisions:
-  - Amendment Protocol enforcement specifics
-  - Cascade plan scope rules (what changes should cascade)
-  - Idempotency key strategy
-  - Each decision includes: rationale, alternative considered, owner (Aron / founder)
-- **Async process:** Before merge, at least one maintainer must approve; if strategic change, require both within 48 hours or escalate
-- **Test:** Code review checklist in PR template asks: "Does this change a strategic decision? If yes, does DECISIONS.md cover it?"
-- **Collab structure:** Assume Aron is consultant/advisor with final say on vision-quest content; founder has final say on Paperclip integration; DECISIONS.md shows the boundary
-
-**Detection:**
-- Maintainers disagree on shipped behavior
-- No record of why a design decision was made
-- Code implements Amendment Protocol differently than documented
-
-**Phase to address:** M1 (Skeleton) — set up governance before code starts; refresh before M2 (Found)
-
-**Severity:** MEDIUM
-
-**References:**
-- Paperclip CONTRIBUTING.md requires PR template and code review discipline
-- PROMPT.md assumes Aron Prins joins as co-maintainer
-- Open-source projects with 2 maintainers need explicit governance to avoid drift
-
----
-
-### Pitfall 9: Drift Detection False Positives / Negatives (Assess Mode Noise)
-
-**What goes wrong:**
-Assess mode compares VISION sections vs. last 30 days of agent activity. But:
-- False positives: Agent posted a market-research issue that mentioned a competitor, Assess flags it as "brand drift" when it was just research
-- False negatives: Agent silently ignored voice guidelines for 2 weeks, Assess misses it because comments are sparse
-- Drift window is arbitrary (30 days): recent major shift takes 31 days to detect; old stale behavior detected on day 1
-
-**Why it happens:**
-- Drift detection is heuristic: keyword matching, tone analysis, issue topic classification
-- 30-day window is fixed, doesn't account for company velocity or intent
-- Founder's intent in VISION can be ambiguous ("be bold" vs. "be cautious")
-- Agent behavior is noisy: one off-brand comment doesn't mean the agent drifted
-
-**Consequences:**
-- Founder sees 50 drift items, dismisses all as noise, stops trusting Assess mode
-- Real drift (agent ignoring voice for weeks) goes undetected until it's a crisis
-- Unnecessary amendments created, wasting energy on false signals
-- Founder calibrates drift threshold too high, missing early warnings
-
-**Prevention:**
-- **Code pattern:** Drift report includes confidence scores per finding:
-  - HIGH: Multiple signals align (tone analysis + topic + explicit contradiction)
-  - MEDIUM: Single strong signal (direct quote that contradicts VISION)
-  - LOW: Ambiguous match (agent mentioned competitor in research context)
-- **UX pattern:** Assess report shows drift items sorted by confidence; default-hide LOW confidence items; founder can toggle
-- **Window tuning:** Assess mode asks founder: "How quickly do you expect to see strategy reflected in agent work? [days / weeks / months]" and adjusts 30-day default
-- **Memory:** Store founder's feedback on prior drift items ("this was fine, not drift"; "this was real drift") and tune detection rules
-- **Test:** Unit tests with synthetic agent activity; verify both false positive and false negative rates; test edge cases (competitor research, tone variation, new agent onboarding)
-
-**Detection:**
-- Founder dismisses most drift items as noise
-- Real drift goes undetected until founder notices manually
-- Assess mode recommendations feel misaligned with actual agent behavior
-
-**Phase to address:** M3 (Assess) — build confidence scoring into drift report; add tuning knobs in UX
-
-**Severity:** MEDIUM
-
-**References:**
-- Strategic consultant best practice: high signal-to-noise ratio on recommendations
-- Paperclip agent activity is noisy; single comments don't mean drift
-- Founder workflow: wants surgical recommendations, not fire hoses
-
----
-
-### Pitfall 10: Production-VPS Blast Radius (Compass Breaks a Live Company)
-
-**What goes wrong:**
-Compass is a plugin running against a real, heartbeating Paperclip company (Pictor.pro, Candlewood Lake Weekly, RaiseYourGlass.ai). Plugin has a bug: writes corrupt agent instructions, queues 100 duplicate wakeups, deletes a document, or cascade plan creates issues with invalid assignees. Company heartbeat fails, agents hang, founder loses revenue/work momentum. Compass broke production.
-
-**Why it happens:**
-- Plugin writes directly to live DB via Plugin SDK
-- No staging environment; testing is local, production is live
-- Apply step has minimal validation before write
-- Cascade plan generates issues without checking if assignee agent exists
-- Wakeup queueing happens before DB writes; if write fails, wakeups fire anyway for non-existent work
-
-**Consequences:**
-- Company heartbeat fails or becomes unstable
-- Agents hang or produce errors
-- Founder loses hours/days debugging
-- Trust damage: "A plugin broke my company"
-- Reputational damage: Compass known to have blown up a live company
-
-**Prevention:**
-- **Code pattern:** Every Apply step must:
-  1. Validate all writes will succeed (simulate, don't execute)
-  2. Check referential integrity (assignee exists, document exists, company exists)
-  3. Wrap all DB writes in a transaction with rollback on error
-  4. Log every change with timestamp and actor (plugin ID)
-- **UX pattern:** Apply preview shows:
-  - What will be written (document count, issue count, agent changes)
-  - Validation results: "All referential checks passed" or "WARNING: assignee agent not found"
-  - Data loss risk: "This will delete 0 documents, modify 5, create 3"
-- **Testing:** Integration tests against mock Paperclip API that includes failure injection (missing agent, invalid JSON, DB unavailable); verify rollback and error reporting
-- **Monitoring:** After Apply, check company heartbeat status for 1 minute; if heartbeat fails, log critical alert
-- **Docs:** Add SAFETY.md documenting all validation checks and rollback guarantees
-
-**Detection:**
-- Company heartbeat stops after Compass Apply
-- DB logs show malformed data or orphaned references
-- Founder reports "plugin broke my company"
-
-**Phase to address:** M1 (Skeleton) — build validation and rollback into Apply framework; test every milestone with production safety in mind
-
-**Severity:** HIGH
-
-**References:**
-- Paperclip memory: founder runs Compass on real companies that can't go down
-- Plugin SDK best practice: always validate before write, always rollback on error
-- Company Wizard may have similar risks; audit during fork
-
----
-
-### Pitfall 11: Open-Source Distribution Security (npm Supply Chain, Manifest Validation)
-
-**What goes wrong:**
-Compass published to npm. Attacker compromises the account or npm registry. Malicious version published that:
-- Reads Paperclip API keys from founder's environment
-- Exfiltrates company documents to attacker
-- Injects backdoor into agent instructions
-- Or: founder's team member fork Compass for internal use, accidentally leaves Paperclip API key in manifest comment, commits to private repo, GitHub org gets breached, key exposed
-
-**Why it happens:**
-- npm packages can include arbitrary scripts (install hooks, build hooks)
-- Manifest-based attacks: manifest looks clean but install scripts exfiltrate secrets
-- No validation that plugin manifest is signed or from trusted source
-- Paperclip plugin manager may auto-update without founder reviewing changes
-- Secrets (API keys, credentials) may leak in code or config
-
-**Consequences:**
-- Founder's Paperclip instance compromised
-- All companies' documents exposed
-- Agent instructions modified, agents behave unexpectedly
-- Cascading trust failure across ecosystem
-
-**Prevention:**
-- **Code pattern:** No hardcoded secrets; all Paperclip credentials passed via environment or Paperclip's secret API
-- **Manifest:** Plugin manifest includes a checksum or signature; Paperclip plugin manager verifies before load
-- **CI/CD:** npm publish requires 2FA and audit log; only approved maintainers can publish
-- **Security audit:** Third-party security review before v1.0 release
-- **Docs:** Add SECURITY.md documenting:
-  - No API key storage in code
-  - No install hooks or build scripts that exfiltrate data
-  - Checksum/signature verification process
-  - Vulnerability reporting procedure (per Paperclip SECURITY.md policy)
-- **Test:** Automated scanning of node_modules for malicious packages; npm audit in CI
-- **Dependency review:** Minimize dependencies; audit each one for known vulns; use npm ci --ignore-scripts in lockdown mode
-
-**Detection:**
-- Founder's API key found in Compass source code
-- npm package contains suspicious install scripts
-- Plugin-manager warns about unverified manifest
-- Third-party security scan flags exfiltration vectors
-
-**Phase to address:** M1 (Skeleton) — set up CI/CD with npm audit and 2FA; M6 final push — third-party security review
-
-**Severity:** HIGH
-
-**References:**
-- npm ecosystem saw multiple supply chain attacks in 2025–2026 (Axios, others)
-- Manifest-based attacks are hard to detect with traditional scanning
-- Paperclip SECURITY.md policy: report vulns privately, not in public issues
-- Founder runs Compass on prod companies; compromise = catastrophic
-
----
-
-## Lower-Priority Pitfalls
-
-### Pitfall 12: Approval Request Queue Feedback Loop (Founder Forgets to Decide)
-
-**What goes wrong:**
-Assess mode generates VISION amendment with cost-benefit analysis. Routes to founder's approval queue. Founder sees it, thinks "I'll decide later." A week passes. Founder forgets about it. Plugin keeps re-surfacing the recommendation. Or: multiple amendments pile up, founder only approves 50% but plugin cascades all of them as if approved. Decisions linger in limbo.
-
-**Why it happens:**
-- Founder has limited context-switching capacity
-- Amendment queued in `approvals` table, but no urgent notification
-- Plugin doesn't differentiate "founder saw and said no" vs. "founder hasn't seen"
-- Cascade plan assumes all approvals are YES without checking status first
-
-**Consequences:**
-- Amendments languish in limbo for weeks
-- Founder forgets what problem the amendment solves
-- Plugin recommends cascading changes on a half-decided amendment
-- Founder frustration: "I don't remember approving this"
-
-**Prevention:**
-- **Code pattern:** Cascade plan checks amendment status before generating issues:
-  ```
-  if (amendment.status !== 'approved') {
-    throw new Error(`Cannot cascade: amendment ${amendmentId} not approved`);
-  }
-  ```
-- **UX pattern:** Approval queue in Compass sidebar shows:
-  - Pending approvals with age (e.g., "pending 3 days")
-  - One-click approve/reject with reason
-  - Automatic escalation: if pending >7 days, surface in daily digest
-- **Memory:** Store founder's approval history (approve date, reject date, reason) in engagement memory
-- **Docs:** Add approval workflow documentation explaining the flow and expected timeline
-
-**Detection:**
-- Approval queue shows months-old pending amendments
-- Cascade plan blocked waiting for approval
-- Founder doesn't remember an amendment they approved weeks ago
-
-**Phase to address:** M3 (Assess) — build approval status checks into cascade generator; M6 — add escalation to daily digest
-
-**Severity:** MEDIUM
-
-**References:**
-- Autonomous agent governance research: approval workflows need clear SLAs and escalation
-- Founder workflow: async decision-making, not real-time
-
----
-
-### Pitfall 13: Interview Fatigue (Strategic Questions Too Deep, Founder Abandons)
-
-**What goes wrong:**
-Found mode runs full 6-section vision-quest interview (50–80 questions). Founder gets 40% through, gets tired, starts skipping questions or answering shallow. Plugin generates VISION.md based on incomplete data. VISION is vague, unhelpful, agents confused.
-
-**Why it happens:**
-- Full vision-quest interview is comprehensive and deep
-- Founder is non-developer, not used to long Q&A sessions
-- No progress indicator; founder doesn't know how many questions left
-- No "save and resume later" feature; founder forced to finish in one session
-
-**Consequences:**
-- VISION.md full of placeholder answers and vagueness
-- Agents lack clarity on purpose/voice/brand
-- Founder frustrated: "I didn't answer these properly"
-- Found mode outcome is low-quality, not useful
-
-**Prevention:**
-- **Code pattern:** Add interview state persistence:
-  - Save answers after each section
-  - On re-open, prompt: "Resume interview from section 3? [Resume / Start Over]"
-  - Allow founder to edit prior answers before final VISION generation
-- **UX pattern:** 
-  - Progress bar: "Section 3 of 6 (15 minutes)"
-  - Section summaries: after each section, show a preview of how answers will shape VISION
-  - Breathing room: allow founder to review answers before moving to next section
-- **Interview design:** For non-developer founder, condense vision-quest to essential sections (3–4 instead of 6) in first pass; mark advanced sections optional
-- **Test:** Usability test with non-developer founder; measure completion rate and answer quality
-
-**Detection:**
-- Founder abandons interview mid-way
-- Generated VISION.md has vague/placeholder answers
-- Founder complains about interview length
-
-**Phase to address:** M2 (Found) — add interview state persistence and progress indicators; condense for founder audience
-
-**Severity:** MEDIUM
-
-**References:**
-- Founder is non-developer, prefers automated/hard-coded workflows
-- Interview fatigue is a known pattern in strategic tools
-- Paperclip Vision interview is designed for consultants, not automated tools; may need adaptation
-
----
-
-### Pitfall 14: Drift Detection Staleness (30-Day Window, Recent Shift Undetected)
-
-**What goes wrong:**
-Founder ships a major strategic pivot: pivot from B2B to B2C, rebrand colors, hire new GTM lead. VISION.md updated. But Assess mode drift window is 30 days. Compass just ran 25 days ago, won't detect the pivot drift until day 56. Founder runs Assess manually on day 31, misses the window, gets no alerts. Or: drift window is too broad (30 days) and false positives overwhelm signal.
-
-**Why it happens:**
-- 30-day drift window is hardcoded in PROMPT.md as the default
-- Doesn't account for founder's actual business velocity
-- Window is fixed, not tuned per company
-
-**Consequences:**
-- Founder doesn't discover brand drift until weeks after pivot
-- Agents continue with old positioning while founder pushed new strategy
-- Assess mode feels out-of-sync with company pace
-
-**Prevention:**
-- **Code pattern:** Assess mode is parameterizable:
-  - Drift window: founder can set to 7/14/30/60 days at setup or override per run
-  - Default: 30 days for mature companies, 7 days for new companies (fast-moving)
-- **UX pattern:** Assess mode shows:
-  - "Last drift check: X days ago"
-  - "Drift window: 30 days. Change? [7 / 14 / 30 / 60 days]"
-- **Automation:** Scheduled quarterly drift check (M6 routines) with tuned window per company
-- **Memory:** Store founder's preferred drift window and velocity in engagement memory
-
-**Detection:**
-- Founder runs Assess, gets no drift detected, but major pivot happened
-- Drift window too broad, overwhelmed with false positives
-
-**Phase to address:** M3 (Assess) — make drift window tunable; M6 — add per-company defaults
-
-**Severity:** MEDIUM
-
-**References:**
-- Founder workflow: company velocity varies wildly (startup sprints vs. mature steady-state)
-- 30-day default may work for some, not others
-
----
-
-## Summary Table: Pitfalls by Phase & Severity
-
-| Pitfall | Phase | Severity | Key Prevention |
-|---------|-------|----------|-----------------|
-| Wakeup Duplication | M1 | BLOCKER | Idempotency key enforcement |
-| Dual-Path Misrouting | M1–M2 | BLOCKER | Explicit path validation per mode |
-| Approval Gate Bypass | M2 | BLOCKER | Two-stage confirmation before Apply |
-| Schema Coupling | M1 | BLOCKER | Schema validation + version pinning |
-| Engagement Memory Rot | M3–M6 | HIGH | Context refresh step + status tracking |
-| Cascade Side Effects | M4–M5 | HIGH | Agent screening + granular controls |
-| Sample-Pivot Confusion | M4 | HIGH | Clear UX + dual-issue pattern + docs |
-| Blast Radius (Prod) | M1+ | HIGH | Validation + rollback + monitoring |
-| Security (npm) | M1 + M6 | HIGH | No hardcoded secrets + 2FA + audit |
-| Two-Maintainer Gaps | M1+ | MEDIUM | CODEOWNERS + DECISIONS.md |
-| Drift False Pos/Neg | M3 | MEDIUM | Confidence scoring + tuning knobs |
-| Approval Limbo | M3–M6 | MEDIUM | Status checks + escalation |
-| Interview Fatigue | M2 | MEDIUM | State persistence + progress bars |
-| Drift Staleness | M3–M6 | MEDIUM | Tunable window + automation |
-
----
-
-## Production-VPS Blast Radius: Why This Matters
-
-Compass runs against **live, heartbeating Paperclip companies** that founders depend on for revenue and work. Unlike a typical plugin (batch tool, analysis tool, read-only dashboard), Compass **writes to agent instructions, creates issues, queues wakeups, and cascades changes**. A bug in Compass can:
-
-- **Freeze a company's heartbeat** (corrupt instructions, invalid issue data)
-- **Lose work** (delete or overwrite documents)
-- **Flood agents with duplicate tasks** (wakeup duplication)
-- **Misalign strategy** (unapproved VISION amendments)
-
-This makes every pitfall above **high-touch and high-consequence**. Testing must include:
-- Integration tests against mock Paperclip API with failure injection
-- Manual testing against a real Paperclip instance before each Milestone
-- Founder sign-off before any Apply action goes to production companies
-- Monitoring/alerting on company heartbeat health post-Apply
-
----
-
-## Phase-by-Phase Research Flags
-
-| Phase | Risk | Mitigation |
-|-------|------|-----------|
-| M1: Skeleton | Schema coupling, wakeup framework, dual-path awareness | Validate schema on load, build idempotency into wakeup helpers, document paths |
-| M2: Found | Approval gate, interview design, provisioning correctness | Two-stage confirmation, state persistence, provisioning validation against mock API |
-| M3: Assess | Drift false pos/neg, approval limbo, engagement memory | Confidence scoring, status checks, context refresh step |
-| M4: Revive | Sample-pivot clarity, cascade screening, custom overrides | Clear UX + dual-issue pattern, agent screening, memory tracking |
-| M5: Reposition | Cascade side effects, uncontrolled scope | Granular controls, old-decision detection |
-| M6: Engagement Memory | Memory rot, two-maintainer governance, security review | Status tracking, decision log, third-party security audit |
-
----
-
-## Sources & References
-
-- [Paperclip plugin-spec](https://github.com/paperclipai/paperclip/blob/master/doc/plugins/PLUGIN_SPEC.md) — idempotency key pattern, Plugin SDK API
-- [Paperclip issue #2550](https://github.com/paperclipai/paperclip/issues) — enforce idempotency in wakeup requests
-- [Paperclip issues #2443, #2599, #3615](https://github.com/paperclipai/paperclip/issues) — dual-path instruction bundling bugs
-- [Paperclip Vision SKILL.md](https://github.com/aronprins/paperclip-vision/blob/main/SKILL.md) — Amendment Protocol, founder approval patterns
-- [Autonomous agent governance research](https://mckinsey.com) — approval workflows, autonomy levels, cascading decision challenges
-- [npm supply chain attacks](https://unit42.paloaltonetworks.com/monitoring-npm-supply-chain-attacks/) — manifest validation, install hook risks
-- [Schema migration best practices](https://atlasgo.io/) — version coupling, drift detection
-- [Paperclip memory CLAUDE.md](file:///Users/nicholasrhodes/.claude/projects) — founder workflow, production-VPS criticality
+## Sources
+
+- [Tailwind CSS v4 - Theming](https://tailwindcss.com/blog/tailwindcss-v4)
+- [shadcn/ui Theming Guide](https://ui.shadcn.com/docs/theming)
+- [Tailwind CSS Safelist Documentation](https://tailwindcss.com/docs/content-configuration#safelisting-classes)
+- [OKLCH vs HSL Color Spaces](https://andy-cinquin.com/blog/migration-oklch-tailwind-css-4-0)
+- [CSS Specificity MDN Guide](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity)
+- [WCAG 2.1 Color Contrast Requirements](https://www.boia.org/blog/offering-a-dark-mode-doesnt-satisfy-wcag-color-contrast-requirements)
+- [Dark Mode CSS Variables Inheritance](https://www.joshwcomeau.com/react/dark-mode/)
+- [Paperclip Plugin SDK npm](https://www.npmjs.com/package/@paperclipai/plugin-sdk)
