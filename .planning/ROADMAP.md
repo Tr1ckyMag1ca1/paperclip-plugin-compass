@@ -12,7 +12,7 @@
 
 ## Active Milestone: v1.1 Compass UI Parity with Paperclip Host
 
-**Status:** Planning (Phase 7 plan complete)
+**Status:** Phase 7 executed + verified PASS; Phase 8 next
 **Phases:** 4 (7–10, continuing from v1.0)
 **Total Requirements:** 38 v1.1
 **Granularity:** Coarse (per config.json)
