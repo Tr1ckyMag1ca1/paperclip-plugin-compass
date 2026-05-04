@@ -336,7 +336,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // Detects drift by comparing last 30 days of activity against VISION.md
   // Returns drift report grouped by section with confidence scoring
   // Per Phase 6 Gap 2 (ASSESS-09): loads prior open findings and passes to detectDrift for context-refresh dedup
-  ctx.data.register("runDriftAudit", async (params: any) => {
+  ctx.actions.register("runDriftAudit", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -526,7 +526,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   // Per D-01/D-02: deterministic classifier detects stall cause(s) from inventory + VISION + activity
   // Per D-04: writes action queue to documents table with idempotency key
   // Returns ActionQueue for UI review
-  ctx.data.register("classifyStall", async (params: any) => {
+  ctx.actions.register("classifyStall", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -829,7 +829,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: getCurrentVision (REPO-00, D-13)
   // Retrieve current VISION.md for interview pre-filling and cascade planning
-  ctx.data.register("getCurrentVision", async (params: any) => {
+  ctx.actions.register("getCurrentVision", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -874,7 +874,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: getApprovalRouting (REPO-04, D-12)
   // Retrieve approval routing configuration for this company
-  ctx.data.register("getApprovalRouting", async (params: any) => {
+  ctx.actions.register("getApprovalRouting", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -898,7 +898,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: classifyShift (REPO-01, D-01, D-02)
   // Classify founder-described strategic shift into affected VISION sections
-  ctx.data.register("classifyShift", async (params: any) => {
+  ctx.actions.register("classifyShift", async (params: any) => {
     const { companyId, description } = params as {
       companyId: string;
       description: string;
@@ -1023,7 +1023,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: planRepositionCascade (REPO-03, D-09)
   // Plan cascading changes for affected agents
-  ctx.data.register("planCascade", async (params: any) => {
+  ctx.actions.register("planCascade", async (params: any) => {
     const { companyId, amendments } = params as {
       companyId: string;
       amendments: Amendment[];
@@ -1157,7 +1157,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
 
   // Handler: loadRepositionRunState (D-13, D-14)
   // Load persisted reposition run state for recovery on reload
-  ctx.data.register("loadRepositionRunState", async (params: any) => {
+  ctx.actions.register("loadRepositionRunState", async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -1219,13 +1219,60 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
     }
   });
 
+  // Handler: loadAssessRunState — mirrors reposition pattern
+  ctx.actions.register("loadAssessRunState", async (params: any) => {
+    const companyId = params.companyId as string;
+    try {
+      const state = await ctx.state.get({
+        scopeKind: "company" as const,
+        scopeId: companyId,
+        namespace: "compass:assess:run",
+        stateKey: "current",
+      });
+      return state ?? null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Handler: updateAssessRunState
+  ctx.actions.register("updateAssessRunState", async (params: any) => {
+    const { companyId, state } = params as { companyId: string; state: any };
+    try {
+      if (state === null) {
+        await ctx.state.delete({
+          scopeKind: "company" as const,
+          scopeId: companyId,
+          namespace: "compass:assess:run",
+          stateKey: "current",
+        });
+      } else {
+        await ctx.state.set(
+          {
+            scopeKind: "company" as const,
+            scopeId: companyId,
+            namespace: "compass:assess:run",
+            stateKey: "current",
+          },
+          state
+        );
+      }
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  });
+
   // ============================
   // ENGAGEMENT MEMORY HANDLERS (Phase 6, MEM-01..MEM-06)
   // ============================
 
   // Handler: memory.load (MEM-01, D-03)
   // Load engagement history from documents table (cached via worker-state with 60s TTL)
-  ctx.data.register("memory.load", async (params: any) => {
+  const memoryLoadHandler = async (params: any) => {
     const companyId = params.companyId as string;
 
     try {
@@ -1251,7 +1298,9 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
         error: message,
       };
     }
-  });
+  };
+  ctx.data.register("memory.load", memoryLoadHandler);
+  ctx.actions.register("memory.load", memoryLoadHandler);
 
   // Handler: memory.recordFindings (MEM-02, D-06, D-07)
   // Record findings from a completed Apply run into engagement history

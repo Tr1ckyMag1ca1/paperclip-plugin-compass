@@ -1,19 +1,32 @@
 const manifest = {
   id: "paperclip-plugin-compass",
   apiVersion: 1,
-  version: "0.1.0",
+  version: "0.1.6",
   displayName: "Compass",
   description: "Strategic consultant for AI company lifecycle \u2014 diagnose, found, revive, reposition",
   author: "Paperclip AI",
   categories: ["ui", "automation"],
-  minimumPaperclipVersion: "1.0.0",
   capabilities: [
+    "ui.page.register",
     "ui.sidebar.register",
     "agents.read",
+    "agents.pause",
+    "agents.resume",
     "issues.read",
+    "issues.create",
+    "issues.update",
+    "issues.wakeup",
+    "issue.comments.read",
+    "issue.comments.create",
+    "issue.documents.read",
+    "issue.documents.write",
     "plugin.state.read",
     "plugin.state.write",
-    "companies.read"
+    "companies.read",
+    "activity.log.write",
+    "events.subscribe",
+    "events.emit",
+    "jobs.schedule"
   ],
   entrypoints: {
     worker: "./dist/worker.js",
@@ -22,10 +35,17 @@ const manifest = {
   ui: {
     slots: [
       {
-        type: "sidebarPanel",
-        id: "compass-main-panel",
+        type: "page",
+        id: "compass-page",
         displayName: "Compass",
-        exportName: "MainPanel"
+        exportName: "MainPanel",
+        routePath: "compass"
+      },
+      {
+        type: "sidebar",
+        id: "compass-sidebar-link",
+        displayName: "Compass",
+        exportName: "SidebarLink"
       }
     ]
   }

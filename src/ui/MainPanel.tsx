@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import {
   usePluginData,
   usePluginAction,
+  useHostContext,
 } from "@paperclipai/plugin-sdk/ui";
 import type { InventorySnapshot, Mode } from "../types.js";
 import { ModeBanner } from "./components/ModeBanner.js";
@@ -95,18 +96,20 @@ function HistoryTabBar({
 export function MainPanel(): React.ReactElement {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedTab, setSelectedTab] = useState<TabType>("mode");
+  const hostContext = useHostContext();
+  const companyId = ((hostContext as any)?.companyId as string | undefined) ?? "";
 
   // Fetch inventory snapshot on plugin open (D-04)
   const { data: inventory, loading: inventoryLoading, error: inventoryError } =
-    usePluginData<InventorySnapshot>("getInventory");
+    usePluginData<InventorySnapshot>("getInventory", { companyId });
 
   // Fetch detected mode from inventory (MODE-01, MODE-02)
   const { data: modeData, loading: modeLoading, error: modeError } =
-    usePluginData<{ mode: Mode; inventory: InventorySnapshot }>("getDetectedMode");
+    usePluginData<{ mode: Mode; inventory: InventorySnapshot }>("getDetectedMode", { companyId });
 
   // Fetch stored mode override (D-09, MODE-03)
   const { data: storedOverride, loading: overrideLoading } =
-    usePluginData<Mode | null>("getModeOverride");
+    usePluginData<Mode | null>("getModeOverride", { companyId });
 
   // Set mode override action handler (D-09, MODE-03)
   const setModeOverrideAction = usePluginAction("setModeOverride");
@@ -171,7 +174,6 @@ export function MainPanel(): React.ReactElement {
 
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
-  const companyId = inventory?.companyId || "";
   const visionExists = inventory?.visionExists ?? false;
 
   // Render tab-based interface (D-10: History tab sibling to mode panels)

@@ -2,7 +2,8 @@
 import { useCallback as useCallback21, useState as useState29 } from "react";
 import {
   usePluginData as usePluginData3,
-  usePluginAction as usePluginAction9
+  usePluginAction as usePluginAction9,
+  useHostContext
 } from "@paperclipai/plugin-sdk/ui";
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
@@ -4665,7 +4666,7 @@ function useReviveRunState(companyId) {
 import { Fragment as Fragment5, jsx as jsx43, jsxs as jsxs41 } from "react/jsx-runtime";
 function RevivePanel({ companyId, companyName }) {
   const classifyStallAction = usePluginAction6("classifyStall");
-  const { data: inventory } = usePluginData2("getInventory");
+  const { data: inventory } = usePluginData2("getInventory", { companyId });
   const { queue, saveQueue } = useReviveRunState(companyId);
   const [panelState, setPanelState] = useState20("empty");
   const [isLoading, setIsLoading] = useState20(false);
@@ -6016,9 +6017,11 @@ function HistoryTabBar({
 function MainPanel() {
   const [refreshing, setRefreshing] = useState29(false);
   const [selectedTab, setSelectedTab] = useState29("mode");
-  const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData3("getInventory");
-  const { data: modeData, loading: modeLoading, error: modeError } = usePluginData3("getDetectedMode");
-  const { data: storedOverride, loading: overrideLoading } = usePluginData3("getModeOverride");
+  const hostContext = useHostContext();
+  const companyId = hostContext?.companyId ?? "";
+  const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData3("getInventory", { companyId });
+  const { data: modeData, loading: modeLoading, error: modeError } = usePluginData3("getDetectedMode", { companyId });
+  const { data: storedOverride, loading: overrideLoading } = usePluginData3("getModeOverride", { companyId });
   const setModeOverrideAction = usePluginAction9("setModeOverride");
   const handleModeOverride = useCallback21(
     async (newMode) => {
@@ -6054,7 +6057,6 @@ function MainPanel() {
   }
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
-  const companyId = inventory?.companyId || "";
   const visionExists = inventory?.visionExists ?? false;
   const renderContent = () => {
     if (selectedTab === "history") {
@@ -6131,8 +6133,33 @@ function MainPanel() {
     selectedTab === "mode" && /* @__PURE__ */ jsx52(ChatPanel, { detectedMode: currentMode })
   ] });
 }
+
+// src/ui/SidebarLink.tsx
+import { jsx as jsx53, jsxs as jsxs51 } from "react/jsx-runtime";
+function SidebarLink({ context }) {
+  const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
+  const isActive = typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (href !== "#") window.history.pushState({}, "", href);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+  return /* @__PURE__ */ jsxs51(
+    "a",
+    {
+      href,
+      onClick: handleClick,
+      className: `flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-zinc-800 ${isActive ? "bg-zinc-800 text-white" : "text-zinc-400"}`,
+      children: [
+        /* @__PURE__ */ jsx53(Compass, { size: 16 }),
+        /* @__PURE__ */ jsx53("span", { children: "Compass" })
+      ]
+    }
+  );
+}
 export {
-  MainPanel
+  MainPanel,
+  SidebarLink
 };
 /*! Bundled license information:
 

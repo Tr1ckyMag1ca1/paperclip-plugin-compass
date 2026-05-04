@@ -30,7 +30,7 @@ interface RevivePanelProps {
  */
 export function RevivePanel({ companyId, companyName }: RevivePanelProps): React.ReactElement {
   const classifyStallAction = usePluginAction("classifyStall");
-  const { data: inventory } = usePluginData<InventorySnapshot>("getInventory");
+  const { data: inventory } = usePluginData<InventorySnapshot>("getInventory", { companyId });
 
   const { queue, saveQueue } = useReviveRunState(companyId);
   const [panelState, setPanelState] = useState<PanelState>("empty");

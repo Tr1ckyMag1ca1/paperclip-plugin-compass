@@ -11438,7 +11438,7 @@ async function registerDataHandlers(ctx) {
       }
     }
   );
-  ctx.data.register("runDriftAudit", async (params) => {
+  ctx.actions.register("runDriftAudit", async (params) => {
     const companyId = params.companyId;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -11568,7 +11568,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("classifyStall", async (params) => {
+  ctx.actions.register("classifyStall", async (params) => {
     const companyId = params.companyId;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -11779,7 +11779,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("getCurrentVision", async (params) => {
+  ctx.actions.register("getCurrentVision", async (params) => {
     const companyId = params.companyId;
     try {
       const issues = await ctx.issues.list({ companyId });
@@ -11814,7 +11814,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("getApprovalRouting", async (params) => {
+  ctx.actions.register("getApprovalRouting", async (params) => {
     const companyId = params.companyId;
     try {
       const routing = "founder";
@@ -11830,7 +11830,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("classifyShift", async (params) => {
+  ctx.actions.register("classifyShift", async (params) => {
     const { companyId, description } = params;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -11917,7 +11917,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("planCascade", async (params) => {
+  ctx.actions.register("planCascade", async (params) => {
     const { companyId, amendments } = params;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -12011,7 +12011,7 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("loadRepositionRunState", async (params) => {
+  ctx.actions.register("loadRepositionRunState", async (params) => {
     const companyId = params.companyId;
     try {
       const state = await ctx.state.get({
@@ -12058,7 +12058,50 @@ async function registerDataHandlers(ctx) {
       };
     }
   });
-  ctx.data.register("memory.load", async (params) => {
+  ctx.actions.register("loadAssessRunState", async (params) => {
+    const companyId = params.companyId;
+    try {
+      const state = await ctx.state.get({
+        scopeKind: "company",
+        scopeId: companyId,
+        namespace: "compass:assess:run",
+        stateKey: "current"
+      });
+      return state ?? null;
+    } catch {
+      return null;
+    }
+  });
+  ctx.actions.register("updateAssessRunState", async (params) => {
+    const { companyId, state } = params;
+    try {
+      if (state === null) {
+        await ctx.state.delete({
+          scopeKind: "company",
+          scopeId: companyId,
+          namespace: "compass:assess:run",
+          stateKey: "current"
+        });
+      } else {
+        await ctx.state.set(
+          {
+            scopeKind: "company",
+            scopeId: companyId,
+            namespace: "compass:assess:run",
+            stateKey: "current"
+          },
+          state
+        );
+      }
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error"
+      };
+    }
+  });
+  const memoryLoadHandler = async (params) => {
     const companyId = params.companyId;
     try {
       const adapter = new PaperclipAdapter(ctx);
@@ -12078,7 +12121,9 @@ async function registerDataHandlers(ctx) {
         error: message
       };
     }
-  });
+  };
+  ctx.data.register("memory.load", memoryLoadHandler);
+  ctx.actions.register("memory.load", memoryLoadHandler);
   ctx.actions.register("memory.recordFindings", async (params) => {
     const {
       companyId,
