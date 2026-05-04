@@ -1,9 +1,9 @@
 import { Compass } from "lucide-react";
 
 export function SidebarLink({ context }: { context: { companyPrefix?: string } }) {
-  const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
+  const href = context.companyPrefix ? `/${context.companyPrefix}/plugins/compass` : "#";
   const isActive =
-    typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
+    typeof window !== "undefined" && window.location.pathname.endsWith("/plugins/compass");
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
