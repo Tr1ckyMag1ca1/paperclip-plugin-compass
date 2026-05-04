@@ -65,10 +65,10 @@ function HistoryTabBar({
   );
 
   return (
-    <div className="border-b px-lg py-sm flex gap-sm">
+    <div className="border-b px-4 py-2 flex gap-2">
       <button
         onClick={() => onSelectTab("mode")}
-        className={`text-label font-medium px-md py-sm rounded transition-colors ${
+        className={`text-xs font-medium px-4 py-2 rounded transition-colors ${
           selectedTab === "mode"
             ? "bg-accent text-accent-foreground"
             : "text-foreground/60 hover:text-foreground"
@@ -78,7 +78,7 @@ function HistoryTabBar({
       </button>
       <button
         onClick={() => onSelectTab("history")}
-        className={`text-label font-medium px-md py-sm rounded transition-colors flex items-center gap-sm ${
+        className={`text-xs font-medium px-4 py-2 rounded transition-colors flex items-center gap-2 ${
           selectedTab === "history"
             ? "bg-accent text-accent-foreground"
             : "text-foreground/60 hover:text-foreground"
@@ -159,9 +159,9 @@ export function MainPanel(): React.ReactElement {
   // Loading state
   if (inventoryLoading || modeLoading || overrideLoading || storedOverride === undefined) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-[400px]">
+      <div className="flex items-center justify-center p-4 min-h-[400px]">
         <div className="text-center">
-          <p className="text-body text-foreground/70">Loading diagnostic dashboard...</p>
+          <p className="text-sm text-foreground/70">Loading diagnostic dashboard...</p>
         </div>
       </div>
     );
@@ -253,11 +253,11 @@ export function MainPanel(): React.ReactElement {
 
       {/* Manual refresh button (D-04) - only show in mode tab */}
       {selectedTab === "mode" && (
-        <div className="border-t px-lg py-md">
+        <div className="border-t px-4 py-4">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-sm rounded px-md py-sm text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50"
           >
             {refreshing ? "Refreshing..." : "Refresh"}
           </button>
