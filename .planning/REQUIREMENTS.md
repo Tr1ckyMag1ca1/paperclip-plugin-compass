@@ -95,7 +95,47 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 
 ## Traceability
 
-To be filled by roadmap (Step 10).
+| Requirement | Category | Phase | Status |
+|-------------|----------|-------|--------|
+| UIF-01 | UI-FOUND | 7 | Pending |
+| UIF-02 | UI-FOUND | 7 | Pending |
+| UIF-03 | UI-FOUND | 7 | Pending |
+| UIF-04 | UI-FOUND | 7 | Pending |
+| UIF-05 | UI-FOUND | 7 | Pending |
+| UIF-06 | UI-FOUND | 7 | Pending |
+| UIF-07 | UI-FOUND | 7 | Pending |
+| UIF-08 | UI-FOUND | 7 | Pending |
+| UIF-09 | UI-FOUND | 7 | Pending |
+| UIA-01 | UI-ASSESS | 8 | Pending |
+| UIA-02 | UI-ASSESS | 8 | Pending |
+| UIA-03 | UI-ASSESS | 8 | Pending |
+| UIA-04 | UI-ASSESS | 8 | Pending |
+| UIA-05 | UI-ASSESS | 8 | Pending |
+| UIFM-01 | UI-FOUND-MODE | 8 | Pending |
+| UIFM-02 | UI-FOUND-MODE | 8 | Pending |
+| UIFM-03 | UI-FOUND-MODE | 8 | Pending |
+| UIR-01 | UI-REVIVE | 9 | Pending |
+| UIR-02 | UI-REVIVE | 9 | Pending |
+| UIR-03 | UI-REVIVE | 9 | Pending |
+| UIR-04 | UI-REVIVE | 9 | Pending |
+| UIRP-01 | UI-REPO | 9 | Pending |
+| UIRP-02 | UI-REPO | 9 | Pending |
+| UIRP-03 | UI-REPO | 9 | Pending |
+| UIM-01 | UI-MEM | 10 | Pending |
+| UIM-02 | UI-MEM | 10 | Pending |
+| UIM-03 | UI-MEM | 10 | Pending |
+| UIM-04 | UI-MEM | 10 | Pending |
+| UIM-05 | UI-MEM | 10 | Pending |
+| UIV-01 | UI-VERIFY | 10 | Pending |
+| UIV-02 | UI-VERIFY | 10 | Pending |
+| UIV-03 | UI-VERIFY | 10 | Pending |
+| UIV-04 | UI-VERIFY | 10 | Pending |
+| UIV-05 | UI-VERIFY | 10 | Pending |
+| UID-01 | UI-DOCS | 10 | Pending |
+| UID-02 | UI-DOCS | 10 | Pending |
+
+**Coverage:** 38/38 requirements mapped to phases 7-10. No orphaned requirements.
 
 ---
-*Last updated: 2026-05-04 — milestone v1.1 requirements defined*
+
+*Last updated: 2026-05-04 — milestone v1.1 roadmap created with full traceability*

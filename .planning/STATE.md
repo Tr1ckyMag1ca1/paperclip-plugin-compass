@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Compass UI parity with Paperclip host
 status: planning
-last_updated: "2026-05-04T14:45:02.464Z"
+last_updated: "2026-05-04T17:00:00.000Z"
 last_activity: 2026-05-04
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -16,414 +16,128 @@ progress:
 # STATE — Compass Project Memory
 
 **Project:** Paperclip Plugin — Strategic Consultant for AI Company Lifecycle  
-**Initialized:** 2026-05-02  
-**Current Phase:** 02
-**Status:** Ready to execute
+**Milestone:** v1.1 — Compass UI parity with Paperclip host  
+**Initialized:** 2026-05-04  
+**Current Phase:** Planning  
+**Status:** Ready to execute Phase 7
 
 ## Project Reference
 
 **Core Value:** Founders get one in-app surface for strategic + operational guidance across the full company lifecycle, with every change written natively into Paperclip — no founder-side tooling roundtrip.
 
-**Key Constraint:** All 6 milestones must ship for v1.0 — no partial release.
+**Milestone v1.1 Goal:** Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishable from Paperclip host shell. Fix layout bugs caused by nonexistent custom Tailwind tokens and light-only color utilities. Zero behavior changes.
 
-**Milestone Structure:** Pre-determined by PROMPT.md, derived directly into 6-phase roadmap:
-
-1. Skeleton + Inventory + Mode Detection (read-only diagnostic)
-2. Found Mode (vision-quest interview → VISION.md → agent provisioning)
-3. Assess Mode (drift audit → amendments → cascade)
-4. Revive Mode (diagnostic flowchart → action queue → sample-pivot)
-5. Reposition Mode (scoped re-interview → targeted amendments)
-6. Engagement Memory + Scheduled Check-ins (persisted state + routines)
+**Phase Structure (v1.1):**
+1. Phase 7: Foundations + Shared Primitives (9 reqs)
+2. Phase 8: Assess + Found Panels (8 reqs)
+3. Phase 9: Revive + Reposition Panels (7 reqs)
+4. Phase 10: Memory + Verification + Documentation (14 reqs)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 7 (not yet started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-05-04 — Milestone v1.1 started
+Status: Ready for Phase 7 plan-phase
+Last activity: 2026-05-04 — v1.1 roadmap created
 
 ## Coverage Summary
 
-**Requirements:** 72 total v1
+**Requirements:** 38 total v1.1
 
-- SKEL: 12 (Skeleton — plugin shell, packaging, testing)
-- INV: 7 (Inventory — read DB + filesystem + git)
-- MODE: 4 (Mode Detection — auto-detect + override)
-- FOUND: 12 (Found Mode — vision-quest + provisioning)
-- ASSESS: 9 (Assess Mode — drift report + amendments)
-- REVIVE: 7 (Revive Mode — diagnostic + action queue)
-- REPO: 5 (Reposition Mode — scoped re-interview)
-- MEM: 6 (Engagement Memory — persisted state + routines)
-- XC: 10 (Cross-Cutting — SDK adapter, idempotency, tests)
+- UIF (UI Foundations): 9 (Phase 7)
+- UIA (UI Assess): 5 (Phase 8)
+- UIFM (UI Found Mode): 3 (Phase 8)
+- UIR (UI Revive): 4 (Phase 9)
+- UIRP (UI Reposition): 3 (Phase 9)
+- UIM (UI Memory): 5 (Phase 10)
+- UIV (UI Verify): 5 (Phase 10)
+- UID (UI Docs): 2 (Phase 10)
 
-**Mapped:** 72/72 (100%)
+**Mapped:** 38/38 (100%)
 
 ## Key Decisions
 
 | Decision | Rationale | Implementation |
 |----------|-----------|-----------------|
-| 6 coarse-grained phases | Founder wants full taxonomy; each milestone is self-contained and shippable | Phases match PROMPT.md milestones exactly |
-| Phase 1 is read-only | Diagnostic dashboard foundation; zero DB writes until Found mode | XC-06 enforces no-write checks; all VISION/agent/issue writes require explicit founder gate |
-| SDK adapter chokepoint (XC-01) in Phase 1 | No direct Postgres, no raw HTTP, no filesystem for managed agents | All writes route through `src/sdk/adapter.ts` in Phase 2+ |
-| Hard-rules mode detection (not LLM) | Predictable, fast, debuggable, zero token cost | MODE-01/MODE-02 use deterministic rules; MODE-04 uses lightweight keyword classifier for chat |
-| Amendment Protocol default-NO | Safety: preserve intent until founder approves; cascade visibility | ASSESS-05, REPO-04 enforce dated changelog on YES |
-| Engagement memory in `documents` table | Native to Paperclip, versioned, no invasive migrations, survives plugin reinstall | MEM-02 stores `compass-engagement-history` doc; MEM-01/MEM-03/MEM-04 reference it |
+| 4 coarse-grained phases | UI reskin is mechanically grouped by panel scope + verification gates; dependencies force sequence | Phases 7-10 follow recommended split from UI_REDO_HANDOFF.md |
+| Phase 7 foundations first | Card/SectionHeader primitives and token baseline required before scaling; addresses 3 Phase 1 blockers (dark-mode, token syntax, color format) | UIF-01 through UIF-09 establish reusable wrappers + token baseline verification |
+| Semantic palette (emerald=accent, not primary) | Corrects v1.0 design error; Paperclip host uses emerald for success/healthy state only | All StatusBadge/ModeBanner components use semantic colors (red=error, yellow=warning, blue=info) |
+| Host token parity (no custom config) | Plugin renders in host React tree; custom Tailwind config conflicts; inherit shared tokens | All classes map to `@paperclipai/plugin-sdk/ui` host design tokens |
+| Production verification gating Phase 10 | Grep verifier (broken patterns), manual light/dark checks, WCAG AA contrast, production build with Tailwind JIT | UIV-01 through UIV-05 + UID-01/UID-02 are shipping gates |
+| One PR per phase | Independent reviewability; each phase ships usable without waiting for next | Phases 7-10 can be PR'd sequentially |
 
 ## Performance Metrics
 
 | Metric | Target | Status |
 |--------|--------|--------|
-| Phase 1 → 2 lead time | TBD | — |
-| Founder interview time (Found mode) | ~30–50 min | Inherited from vision-quest |
-| Drift detection false-positive rate | <10% | Confidence scoring in ASSESS-02 |
-| Sample-pivot setup time | <2 min | One-click action per REVIVE-04 |
+| Component migration rate | ~14 components per phase | — Pending |
+| Dark-mode regression detection | 100% (automated + manual) | — Pending |
+| Bundle size delta | ≤0 bytes (no inflation from host token adoption) | — Pending |
+| Verification gate cycle time | <30 min (grep + manual spot-checks) | — Pending |
 
 ## Accumulated Context
 
-### Inherited Source Repos
+### v1.0 Build Artifacts
 
-- **company-wizard** (`yesterday-ai/paperclip-plugin-company-wizard`) — TypeScript/React plugin chassis, preset library, provisioning code, UX shells
-- **vision-quest** (`aronprins/paperclip-vision`) — 6-section interview structure, VISION.md template, Amendment Protocol, operating philosophy framework
+- **Shipped:** 2026-05-03 — 6 phases, 22 plans, 829 tests, 72/72 requirements
+- **Build:** clean (dist/{worker.js, manifest.js, ui/index.js})
+- **Plugin works:** loads in Paperclip host, all 4 modes functional, engagement memory persisted
+- **Audit:** PASSED (see `.planning/v1.0-MILESTONE-AUDIT.md`)
 
-### Paperclip Schema Load-Bearing Tables
+### v1.1 Problem Statement (from v1.0 live feedback)
 
-- `agents` (id, role, status, last_heartbeat_at, adapter_config)
-- `issues` (company_id, identifier, title, description, status, assignee_agent_id)
-- `documents` (company_id, title, latest_body) — stores VISION.md and compass-engagement-history
-- `approvals` (company_id, type, status, payload, decided_by_user_id) — routes amendments when `founder+ceo` approval required
-- `agent_wakeup_requests` (company_id, agent_id, idempotency_key, status) — queues heartbeats
-- `routines` (company_id, title, schedule, status) — triggers scheduled check-ins
+**UI Broken:**
+- 173 broken Tailwind class references: 146 nonexistent custom spacing (`gap-xs`, `px-sm`, `py-md`), 8 light-only color utilities, 7 radius conflicts
+- Root cause: Compass v1.0 was styled in isolation; not tested in host Paperclip React tree until post-ship
+- Impact: Collapsed/overlapping layouts in Reposition panel, dark-mode color bleeds, rounded corners conflict with host's flat `--radius-lg: 0px`
 
-### Critical Patterns
+**Host Token Baseline (from `paperclip-temp/ui/src/index.css`):**
+- Surfaces: `bg-background`, `bg-card`, `bg-muted`, `bg-popover`
+- Text: `text-foreground`, `text-muted-foreground`
+- Borders: `border-border`, `border-input`
+- Sidebar: `bg-sidebar`, `text-sidebar-foreground`, `border-sidebar-border`
+- Semantic: emerald (success), red (error), yellow (warning), blue (info)
+- Corners: sharp (`rounded-none`), NOT rounded-lg/rounded-xl
+- Icons: Lucide only
 
-1. **Dual-path agent instructions:** `adapter_config.instructionsBundleMode` = 'managed' (UUID path) or null (external friendly path). Phase 2+ must inspect before every write.
-2. **No-write enforcement:** Phase 1 validates that zero DB writes occur during inventory; XC-06 enforces approval gates before all VISION/agent/issue writes.
-3. **Idempotency keys:** Every `agent_wakeup_requests` insert includes idempotency_key to prevent duplicates on retry (XC-03).
-4. **Founder approval gates:** Two-stage gate on all Apply steps — preview + "I confirm" modal (FOUND-11, ASSESS enforcement, REPO-04).
-5. **Amendment Protocol:** Every VISION write includes dated changelog entry on YES; default behavior is NO (preserves intent) (ASSESS-05, REPO-04).
+### Reference Implementation Files
+
+- **Design source:** `~/Development/paperclip-temp/ui/src/components/` (shadcn "new-york", baseColor: neutral)
+- **Host CSS variables:** `~/Development/paperclip-temp/ui/src/index.css`
+- **Migration map:** UI_REDO_HANDOFF.md (concrete class swap table)
 
 ### Contributor Notes
 
-- **Aron Prins** offered co-maintainership; build assumes he joins. README + outreach issue (per COLLAB.md). CODEOWNERS + DECISIONS.md established for two-maintainer governance (SKEL-10).
-- **Non-developer founder:** Plugin must automate everything; hard-coded content over abstractions; founder-friendly UX.
-- **Production safety:** Compass runs against live Paperclip companies (Pictor.pro, Candlewood Lake Weekly, RaiseYourGlass.ai). No direct Postgres writes, no unvetted cascades, no heartbeat disruption.
+- **Aron Prins** (v1.0 co-maintainer) — build assumes ongoing collaboration; CODEOWNERS and DECISIONS.md established
+- **Non-developer founder** — UI must be intuitive; high contrast for accessibility
+- **Production companies** — Pictor.pro, Candlewood Lake Weekly, RaiseYourGlass.ai rely on Compass; v1.1 reskin must not break functionality
 
-## Execution Summary — Phase 1 Plans 1–3
+## Execution Summary — v1.1 Planning
 
-### Plan 1 (Plugin Skeleton)
+### Roadmap Created
 
-**Completed:** 2026-05-03 06:15:00 UTC  
-**Duration:** 38 minutes
+**Completed:** 2026-05-04 17:00:00 UTC  
+**Duration:** ~15 minutes
 
-**Tasks Executed:**
+**Artifacts Created:**
+- `.planning/ROADMAP.md` (phases 7-10 with success criteria)
+- `.planning/STATE.md` (this file, v1.1 milestone memory)
+- `.planning/REQUIREMENTS.md` (traceability section filled)
 
-1. ✓ Task 1: Set up plugin project structure and TypeScript configuration
-2. ✓ Task 2: Create plugin manifest and worker entry point with schema validation
-3. ✓ Task 3: Establish SDK adapter chokepoint and schema validator utilities
-4. ✓ Task 4: Create governance and contributor documentation
+**Phase Structure Finalized:**
+1. Phase 7: Foundations + Shared Primitives (9 reqs) — token baseline + Card/SectionHeader primitives
+2. Phase 8: Assess + Found Panels (8 reqs) — 2 major mode panels migrated
+3. Phase 9: Revive + Reposition Panels (7 reqs) — remaining mode panels
+4. Phase 10: Memory + Verify + Docs (14 reqs) — history panel + verification gates + documentation
 
-**Commits:**
-
-- 5b42d5f: feat(01-01): set up plugin project structure and TypeScript configuration
-- 2197881: feat(01-01): create plugin manifest and worker with schema validation
-- 2767a0c: feat(01-01): establish SDK adapter chokepoint and schema validator utilities
-- 7d6d573: docs(01-01): add governance and contributor documentation
-- b256aad: docs(01-01): complete plan summary with execution results
-
-**Requirements Coverage:**
-
-- SKEL: 10/12 (SKEL-01, SKEL-02, SKEL-04, SKEL-05, SKEL-06, SKEL-07, SKEL-09, SKEL-10, SKEL-11, SKEL-12)
-- INV: 2/7 (INV-06, INV-07)
-- XC: 1/10 (XC-01)
-- Total Plan 1: 13/29 requirements
-
-### Plan 2 (Inventory Snapshot + Mode Detection)
-
-**Completed:** 2026-05-03 05:46:17 UTC  
-**Duration:** 4 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Implement inventory snapshot types and loader
-2. ✓ Task 2: Implement deterministic mode detection logic
-3. ✓ Task 3: Wire inventory and mode detection into worker setup
-
-**Commits:**
-
-- 9977c6f: feat(01-02): implement inventory snapshot and deterministic mode detection
-- 4da7615: docs(01-02): complete plan summary with execution results
-
-**Requirements Coverage:**
-
-- INV: 4/7 (INV-01, INV-02, INV-03, INV-07)
-- MODE: 3/4 (MODE-01, MODE-02, MODE-04)
-- XC: 1/10 (XC-06)
-- Total Plan 2: 8/29 requirements
-- ### Plan 3 (UI Dashboard + Test Harness)
-
-**Completed:** 2026-05-03 01:54:00 UTC
-**Duration:** ~100 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Build UI component structure and main panel (50 min)
-2. ✓ Task 2: Wire mode override persistence in worker and UI (5 min)
-3. ✓ Task 3: Establish Vitest test harness and test fixtures (45 min)
-
-**Commits:**
-
-- 0726acf: feat(01-03): build UI component structure and main panel
-- 91a55b8: feat(01-03): wire mode override persistence in worker and UI
-- 293524e: feat(01-03): establish Vitest test harness and test fixtures
-- bc92c20: docs(01-03): complete plan summary with execution results
-
-**Requirements Coverage:**
-
-- SKEL: 12/12 ✓ (SKEL-03, SKEL-08 in Plan 3)
-- INV: 7/7 ✓ (INV-04 in Plan 3)
-- MODE: 4/4 ✓ (MODE-03, MODE-04 in Plan 3)
-- XC: 6/10 (XC-08 in Plan 3; 4 remaining in Phase 2+)
-- **Total Plan 3: 6 requirements**
-- **Phase 1 Cumulative: 29/29 requirements (100%)**
-
-**Deviations (All Auto-Fixed):**
-
-1. Rule 2: Added lucide-react to dependencies (missing icon library)
-2. Rule 1: Fixed ActivityTimeline `issue.created_at` → `createdAt` (type error)
-3. Rule 1: Updated AgentCard `getHeartbeatLabel()` to accept Date/string (type mismatch)
-4. Rule 1: Fixed MainPanel usePluginAction hook usage pattern (type error)
-5. Rule 1: Fixed ErrorBoundary error type handling (type conversion needed)
-
-**Architecture Locked In:**
-
-- D-04: Inventory loads once on plugin open, passed to mode detection
-- D-20: Mode detection as pure functions (no I/O)
-- D-21: InventorySnapshot typed payload passed to mode controllers
-- MODE-01/MODE-02: Hard rules only (no LLM), deterministic output
-- MODE-04: Lightweight keyword classifier for chat routing
-- D-09: Mode override persistence in worker-state
+**Coverage:** 38/38 requirements mapped, 0 orphans, 0 duplicates ✓
 
 ---
-
-## Phase 1 Execution Complete
-
-Phase 1 (Skeleton + Inventory + Mode Detection) is fully complete:
-
-- ✓ 10 total tasks executed
-- ✓ 46 files created/modified
-- ✓ 10 commits (including summaries)
-- ✓ 29/29 requirements covered (100%)
-- ✓ 66 unit tests passing
-- ✓ Build + typecheck passing
-- ✓ 0 open questions or blockers
-
-**Test Results:**
-
-- mode-detect.spec.ts: 37 tests ✓
-- inventory.spec.ts: 15 tests ✓
-- plugin.spec.ts: 14 tests ✓
-- Total: 66/66 ✓
 
 ## Open Questions / Blockers
 
-None. Phase 1 complete. Phase 2 (Found Mode) ready to begin.
+None. Roadmap approved. Ready to begin Phase 7.
 
 ---
 
----
-
-## Phase 2 Plan 1 Execution Summary
-
-### Plan 1: Interview Content & Service Layer
-
-**Completed:** 2026-05-03 07:51:17 UTC  
-**Duration:** ~34 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Define types for Found mode (interview, answers, VISION, quality check)
-2. ✓ Task 2: Create interview markdown content (6 section files + VISION template)
-3. ✓ Task 3: Implement pure-function service layer (derive, template-fill, quality-check)
-
-**Commits:**
-
-- 9e66a91: feat(02-01): define Found mode type contracts (interview, answers, VISION, quality)
-- ea00d1d: feat(02-01): create 6-section interview content and VISION.md template
-- e20f15d: feat(02-01): implement pure-function service layer (derive, template-fill, quality-check)
-- 9a36bc4: docs(02-01): complete plan summary with execution results
-
-**Requirements Coverage:**
-
-- FOUND: 6/12 (FOUND-01, FOUND-02, FOUND-04, FOUND-12)
-- XC: 2/10 (XC-07, XC-08)
-- Total Plan 1: 6 requirements
-- Phase 2 Cumulative: 6/43 requirements (FOUND + ASSESS + REVIVE + REPO + MEM)
-
-**Key Artifacts:**
-
-- src/types/found.ts: 6 interfaces (Question, InterviewSection, InterviewAnswers, FilledVision, QualityCheckResult, PresetDefinition)
-- src/content/interview/*.md: 6 sections with 29 questions total (portable, markdown-based)
-- src/content/vision-template.md: 19 {{slot}} placeholders (ready for template-fill)
-- src/found/derive.ts: 5 pure functions (derivePrinciples, derive12MonthGoal, deriveSuccessCriteria, deriveAmendmentProtocol, deriveOperatingPhilosophy)
-- src/found/template-fill.ts: fillVisionTemplate orchestrator (deterministic slot replacement)
-- src/found/quality-check.ts: checkVisionQuality validation (required-slot enforcement, blocks Apply on failure)
-- src/types/raw.d.ts: TypeScript declarations for esbuild ?raw imports
-
-**Deviations:**
-
-None. Plan executed exactly as written.
-
----
-
----
-
-## Phase 3 Plan 4 Execution Summary
-
-### Plan 4: Worker Integration & Handlers
-
-**Completed:** 2026-05-03 09:06:41 UTC  
-**Duration:** 4 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Register Assess handlers in worker and wire MainPanel routing
-
-**Commits:**
-
-- edb0da9: feat(03-04): register assess handlers and wire mainpanel routing
-- 759e188: test(03-04): add assess worker handler integration tests
-- 7540550: docs(03-04): complete assess mode worker integration plan summary
-
-**Requirements Coverage:**
-
-- ASSESS: 2/9 (ASSESS-02, ASSESS-09)
-- XC: 1/10 (XC-09)
-- Total Plan 4: 3 requirements
-- **Phase 3 Cumulative: 9/9 requirements (100%)**
-
-**Key Artifacts:**
-
-- 3 worker handlers: runDriftAudit, applyAmendments, checkApprovalStatus
-- MainPanel mode routing: Assess → AssessPanel, Found → FoundPanel, default → diagnostic
-- 15 integration tests covering both founder and founder+ceo routing flows
-- All 268 tests passing, typecheck clean
-
-**Deviations:**
-
-None. Plan executed exactly as written.
-
----
-
-**Last updated:** 2026-05-03 09:06:41 UTC (Phase 3 Plan 4 execution complete)  
-**Phase 3 Status:** ALL 4 PLANS COMPLETE (9/9 ASSESS requirements, all worker integration done)  
-**Next action:** Execute Phase 4 (Revive Mode) when ready
-
----
-
-## Phase 4 Plan 1 Execution Summary
-
-### Plan 1: Types + Classify Logic + Adapter Extensions + Idempotency Namespace
-
-**Completed:** 2026-05-03 05:27:00 UTC  
-**Duration:** ~45 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Define Revive Mode Types
-2. ✓ Task 2: Implement classifyStall Pure Function (5 Cause Detection Rules)
-3. ✓ Task 3: Extend SDK Adapter (closeIssue, addIssueComment, updateIssue)
-4. ✓ Task 4: Extend Idempotency Utility (Revive Namespace)
-5. ✓ Task 5: Create Barrel Export
-
-**Commits:**
-
-- 2219274: feat(04-01): implement revive mode types, classify logic, and adapter extensions
-
-**Requirements Coverage:**
-
-- REVIVE: 2/7 (REVIVE-01, REVIVE-02)
-- XC: 1/10 (XC-03)
-- Total Plan 1: 3 requirements
-
-**Key Artifacts:**
-
-- src/types/revive.ts: 5 types (StallCause, ActionType, ActionItem, ActionQueue, StallClassification)
-- src/revive/classify.ts: classifyStall + 5 scorers (50+ test cases)
-- src/sdk/adapter.ts: 3 new methods (closeIssue, addIssueComment, updateIssue)
-- src/found/idempotency.ts: 2 new functions (generateReviveActionKey, isValidReviveIdempotencyKey)
-- 50 unit tests, all passing
-
----
-
-## Phase 4 Plan 2 Execution Summary
-
-### Plan 2: Actions Handlers + Sample-Pivot + Queue Persistence + Tests
-
-**Completed:** 2026-05-03 05:35:00 UTC  
-**Duration:** ~2 hours
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Action Handler Registry (7 handlers)
-2. ✓ Task 2: Sample-Pivot Dual-Issue Logic
-3. ✓ Task 3: Action Queue Serialization & Persistence
-
-**Commits:**
-
-- 8b58aaa: feat(04-02): implement 7 action handlers + registry for Revive mode
-- cd5c47f: feat(04-02): implement sample-pivot dual-issue logic for REVIVE-04
-- e50f8ac: feat(04-02): implement action queue serialization + document persistence
-- 0bbb978: feat(04-02): extend SDK adapter with getIssue and overloaded writeDocument
-
-**Requirements Coverage:**
-
-- REVIVE: 4/7 (REVIVE-03, REVIVE-04, REVIVE-05, REVIVE-07)
-- Total Plan 2: 4 requirements
-- **Phase 4 Cumulative: 7/7 requirements (100%)**
-
-**Key Artifacts:**
-
-- src/revive/actions.ts: 7 typed handlers + registry (256 lines)
-- src/revive/sample-pivot.ts: Dual-issue + SAMPLE_PIVOT.md (183 lines)
-- src/revive/queue.ts: Serialization + persistence (63 lines)
-- 46 unit tests, all passing
-
----
-
-## Phase 4 Plan 3 Execution Summary
-
-### Plan 3: Incremental Apply Orchestrator
-
-**Completed:** 2026-05-03 05:36:00 UTC  
-**Duration:** ~15 minutes
-
-**Tasks Executed:**
-
-1. ✓ Task 1: Implement Per-Action Apply with Status Updates
-
-**Commits:**
-
-- d5916ab: feat(04-03): implement incremental apply orchestrator for per-action execution and status tracking
-- ac109a0: docs(04-03): complete plan summary with execution results
-
-**Requirements Coverage:**
-
-- REVIVE: 2/7 (REVIVE-02, REVIVE-03, REVIVE-06, REVIVE-07)
-- XC: 2/10 (XC-02, XC-03)
-- Total Plan 3: 4 requirements (note: overlaps with Plan 1-2 reqs but enforces pattern)
-
-**Key Artifacts:**
-
-- src/revive/apply.ts: applyAction + applyAllActions (158 lines)
-- tests/revive/apply.spec.ts: 31 comprehensive unit tests
-- All 395 tests passing, TypeScript strict mode verified, build succeeds
-
-**Deviations:**
-
-None. Plan executed exactly as written.
-
----
-
-**Phase 4 Status:** EXECUTING  
-**Current Plan:** 3 of 5 (Plans 1-3 complete, Plans 4-5 pending)  
-**Next action:** Phase 04 Plan 04 (Worker Integration & UI)
+*Last updated: 2026-05-04 17:00:00 UTC — v1.1 roadmap created and filed*
