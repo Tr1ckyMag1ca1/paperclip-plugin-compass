@@ -23,7 +23,7 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps): React.ReactElement
 
   if (dismissed) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-[400px]">
+      <div className="flex items-center justify-center p-4 min-h-[400px]">
         <p className="text-sm text-foreground/60">Error dismissed. Refresh to retry.</p>
       </div>
     );
@@ -32,20 +32,20 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps): React.ReactElement
   const { title, message, nextSteps } = parseError(error);
 
   return (
-    <div className="flex items-center justify-center p-lg min-h-[400px]">
-      <div className="max-w-md w-full rounded-lg border border-orange-200 bg-orange-50 p-lg">
-        <div className="flex items-start gap-md">
-          <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+    <div className="flex items-center justify-center p-4 min-h-[400px]">
+      <div className="max-w-md w-full rounded-none border border-red-500/20 bg-red-500/10 p-4">
+        <div className="flex items-start gap-4">
+          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm text-orange-900">{title}</h3>
-            <p className="text-sm text-orange-800 mt-md">{message}</p>
+            <h3 className="font-semibold text-sm text-red-500">{title}</h3>
+            <p className="text-sm text-red-500 mt-4">{message}</p>
 
             {nextSteps && (
-              <div className="mt-md pt-md border-t border-orange-200">
-                <p className="text-xs font-semibold text-orange-700 mb-sm">
+              <div className="mt-4 pt-4 border-t border-red-500/20">
+                <p className="text-xs font-semibold text-red-500 mb-2">
                   What to do:
                 </p>
-                <ol className="text-xs text-orange-700 space-y-xs list-decimal list-inside">
+                <ol className="text-xs text-red-500 space-y-1 list-decimal list-inside">
                   {nextSteps.map((step, idx) => (
                     <li key={idx}>{step}</li>
                   ))}
@@ -55,7 +55,7 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps): React.ReactElement
 
             <button
               onClick={() => setDismissed(true)}
-              className="mt-md inline-flex items-center gap-xs px-sm py-xs rounded text-xs font-medium text-orange-700 hover:bg-orange-100"
+              className="mt-4 inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium text-red-500 hover:bg-red-500/20"
             >
               <X className="h-3 w-3" />
               <span>Dismiss</span>

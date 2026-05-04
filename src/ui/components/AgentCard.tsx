@@ -24,14 +24,14 @@ export function AgentCard({ agent }: AgentCardProps): React.ReactElement {
   const heartbeatLabel = getHeartbeatLabel(agent.lastHeartbeatAt);
 
   return (
-    <div className="rounded border border-border bg-card px-md py-md">
-      <div className="flex items-start justify-between gap-md">
+    <div className="rounded-none border border-border bg-card px-4 py-4">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm text-foreground">
             {agent.name}
           </h3>
-          <p className="text-xs text-foreground/60 mt-xs">{agent.role}</p>
-          <div className="flex items-center gap-xs mt-md text-xs text-foreground/60">
+          <p className="text-xs text-foreground/60 mt-1">{agent.role}</p>
+          <div className="flex items-center gap-1 mt-4 text-xs text-foreground/60">
             <Clock className="h-3 w-3 flex-shrink-0" />
             <span>{heartbeatLabel}</span>
           </div>

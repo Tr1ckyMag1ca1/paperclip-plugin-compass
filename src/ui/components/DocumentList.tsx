@@ -23,10 +23,10 @@ export function DocumentList({ documents }: DocumentListProps): React.ReactEleme
   // For now, this is a placeholder that shows document list structure.
 
   return (
-    <div className="space-y-md">
+    <div className="space-y-4">
       {/* VISION.md status — typically shown even if not in documents array */}
-      <div className="flex items-center gap-md">
-        <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+      <div className="flex items-center gap-4">
+        <Check className="h-4 w-4 text-emerald-500 flex-shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground">VISION.md</p>
           <p className="text-xs text-foreground/60">Company vision and strategic plan</p>
@@ -35,8 +35,8 @@ export function DocumentList({ documents }: DocumentListProps): React.ReactEleme
 
       {/* Additional documents */}
       {documents.map((doc) => (
-        <div key={doc.id} className="flex items-center gap-md">
-          <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+        <div key={doc.id} className="flex items-center gap-4">
+          <Check className="h-4 w-4 text-emerald-500 flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground">
               {doc.title || doc.key}

@@ -20,11 +20,11 @@ export function VisionStatusDisplay({
 }: VisionStatusDisplayProps): React.ReactElement {
   if (visionExists) {
     return (
-      <div className="flex items-start gap-md">
-        <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-4">
+        <Check className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-medium text-foreground">VISION.md found</p>
-          <p className="text-xs text-foreground/60 mt-xs">
+          <p className="text-xs text-foreground/60 mt-1">
             Your company has a strategic vision document.
           </p>
         </div>
@@ -33,11 +33,11 @@ export function VisionStatusDisplay({
   }
 
   return (
-    <div className="flex items-start gap-md">
-      <X className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+    <div className="flex items-start gap-4">
+      <X className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
       <div>
         <p className="text-sm font-medium text-foreground">No VISION.md</p>
-        <p className="text-xs text-foreground/60 mt-xs">
+        <p className="text-xs text-foreground/60 mt-1">
           Create one using Found mode to establish your company's strategic foundation.
         </p>
       </div>

@@ -36,7 +36,7 @@ export function InventoryDisplay({
         defaultOpen={true}
       >
         {inventory.agents.length > 0 ? (
-          <div className="space-y-sm">
+          <div className="space-y-2">
             {inventory.agents.map((agent) => (
               <AgentCard key={agent.id} agent={agent} />
             ))}
@@ -111,15 +111,15 @@ function CollapsibleSection({
       onToggle={(e) => setOpen(e.currentTarget.open)}
       className="group"
     >
-      <summary className="flex cursor-pointer items-center gap-md px-lg py-md font-semibold text-sm select-none hover:bg-accent/5">
+      <summary className="flex cursor-pointer items-center gap-4 px-4 py-4 font-semibold text-sm select-none hover:bg-accent/5">
         <ChevronDown
           className={`h-4 w-4 transition-transform flex-shrink-0 ${
             open ? "" : "-rotate-90"
           }`}
         />
-        <span className="text-label font-semibold">{title}</span>
+        <span className="text-xs font-medium">{title}</span>
       </summary>
-      <div className="px-lg py-md text-body">{children}</div>
+      <div className="px-4 py-4 text-sm">{children}</div>
     </details>
   );
 }

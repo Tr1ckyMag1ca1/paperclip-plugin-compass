@@ -30,14 +30,14 @@ export function ActivityTimeline({
   }
 
   return (
-    <div className="space-y-sm">
+    <div className="space-y-2">
       {issues.map((issue) => (
-        <div key={issue.id} className="flex gap-md">
-          <div className="flex flex-col items-center gap-xs">
+        <div key={issue.id} className="flex gap-4">
+          <div className="flex flex-col items-center gap-1">
             <Clock className="h-4 w-4 text-accent flex-shrink-0 mt-1" />
           </div>
-          <div className="flex-1 min-w-0 pb-sm">
-            <div className="flex items-baseline justify-between gap-md">
+          <div className="flex-1 min-w-0 pb-2">
+            <div className="flex items-baseline justify-between gap-4">
               <p className="text-sm font-medium text-foreground line-clamp-2">
                 {issue.title}
               </p>
@@ -46,7 +46,7 @@ export function ActivityTimeline({
               </span>
             </div>
             {issue.status && (
-              <p className="text-xs text-foreground/60 mt-xs">
+              <p className="text-xs text-foreground/60 mt-1">
                 Status: {issue.status}
               </p>
             )}
