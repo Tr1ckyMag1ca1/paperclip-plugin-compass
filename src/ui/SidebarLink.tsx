@@ -15,8 +15,10 @@ export function SidebarLink({ context }: { context: { companyPrefix?: string } }
     <a
       href={href}
       onClick={handleClick}
-      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-zinc-800 ${
-        isActive ? "bg-zinc-800 text-white" : "text-zinc-400"
+      className={`flex items-center gap-2 px-3 py-2 rounded-none text-sm ${
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "bg-sidebar text-sidebar-foreground hover:opacity-80"
       }`}
     >
       <Compass size={16} />
