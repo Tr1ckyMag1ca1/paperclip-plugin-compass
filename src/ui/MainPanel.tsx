@@ -119,12 +119,12 @@ export function MainPanel(): React.ReactElement {
     async (newMode: Mode) => {
       try {
         // Call the action with mode parameter
-        await setModeOverrideAction({ mode: newMode });
+        await setModeOverrideAction({ companyId, mode: newMode });
       } catch (error) {
         console.error("Failed to set mode override:", error);
       }
     },
-    [setModeOverrideAction]
+    [setModeOverrideAction, companyId]
   );
 
   // Handle refresh button click (D-04)

@@ -6026,12 +6026,12 @@ function MainPanel() {
   const handleModeOverride = useCallback21(
     async (newMode) => {
       try {
-        await setModeOverrideAction({ mode: newMode });
+        await setModeOverrideAction({ companyId, mode: newMode });
       } catch (error) {
         console.error("Failed to set mode override:", error);
       }
     },
-    [setModeOverrideAction]
+    [setModeOverrideAction, companyId]
   );
   const handleRefresh = useCallback21(async () => {
     setRefreshing(true);
