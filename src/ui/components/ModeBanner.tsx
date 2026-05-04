@@ -10,6 +10,28 @@ interface ModeBannerProps {
 }
 
 /**
+ * Get icon color based on company mode.
+ *
+ * Per D-04 and UI-SPEC.md, each mode has a distinct accent color for visual hierarchy:
+ * - Found: emerald (success/healthy)
+ * - Assess: blue (info/audit)
+ * - Revive: red (error/critical)
+ * - Reposition: yellow (warning/pivot)
+ *
+ * @param mode The company's current mode
+ * @returns Icon color class name
+ */
+function getModeIconColor(mode: Mode): string {
+  const colors: Record<Mode, string> = {
+    Found: "text-emerald-500",
+    Assess: "text-blue-500",
+    Revive: "text-red-500",
+    Reposition: "text-yellow-500",
+  };
+  return colors[mode];
+}
+
+/**
  * ModeBanner — Displays detected company mode and override dropdown.
  *
  * Per D-03 (mode banner at top with override dropdown) and UI-SPEC.md,
@@ -17,6 +39,7 @@ interface ModeBannerProps {
  * - Mode label (e.g., "Assess mode")
  * - Founder-readable description (e.g., "your company is healthy...")
  * - Override dropdown with four action-focused labels
+ * - Mode-aware Compass icon color (per D-04, UIF-05)
  *
  * On dropdown change, calls onOverrideChange which persists to Plugin SDK state
  * (D-09, MODE-03).
@@ -35,15 +58,15 @@ export function ModeBanner({
   const currentMode = override || detectedMode;
 
   return (
-    <div className="border-b bg-card px-lg py-lg">
-      <div className="flex items-center justify-between gap-md">
-        <div className="flex items-start gap-md flex-1">
-          <Compass className="h-5 w-5 mt-1 text-accent flex-shrink-0" />
+    <div className="border-b bg-card px-4 py-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start gap-4 flex-1">
+          <Compass className={`h-5 w-5 mt-1 ${getModeIconColor(currentMode)} flex-shrink-0`} />
           <div>
-            <h2 className="text-heading font-semibold leading-tight">
+            <h2 className="text-base font-semibold leading-tight">
               {getModeLabel(currentMode)}
             </h2>
-            <p className="text-body text-foreground/70 mt-xs">
+            <p className="text-sm text-foreground/70 mt-1">
               {getModeBannerCopy(currentMode)}
             </p>
           </div>
@@ -53,7 +76,7 @@ export function ModeBanner({
         <select
           value={currentMode}
           onChange={(e) => onOverrideChange(e.target.value as Mode)}
-          className="rounded border border-border bg-background px-md py-sm text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent"
+          className="rounded-none border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent"
         >
           <option value="Found">Found a new company</option>
           <option value="Assess">Run a fresh audit</option>
