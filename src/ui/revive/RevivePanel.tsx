@@ -14,6 +14,7 @@ import { Loader } from "lucide-react";
 import { ActionQueuePanel } from "./ActionQueuePanel.js";
 import { StallSummaryBadge } from "./StallSummaryBadge.js";
 import { useReviveRunState } from "./ReviveRunState.js";
+import { HelpTip } from "../primitives/HelpTip.js";
 import type { ActionQueue, ActionItem } from "../../types/revive.js";
 import type { InventorySnapshot } from "../../types.js";
 
@@ -112,7 +113,15 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
     <div className="flex flex-col h-full bg-background">
       {/* Fixed Header */}
       <header className="p-lg border-b border-border">
-        <h1 className="text-display font-bold mb-sm">{companyName}</h1>
+        <div className="flex items-center gap-2 mb-sm">
+          <h1 className="text-display font-bold">{companyName}</h1>
+          <HelpTip
+            title="What does Revive mode do?"
+            body="Revive runs a stall classifier over this company's recent activity, identifies the most likely root cause, and queues unblocking actions for you to approve."
+            details="Inputs: heartbeat history, blocker counts, agent error states, governance approval queue. The classifier groups detected stalls by cause (single-agent failure / governance loop / dead agent / drift) and emits an ActionQueue. Each action is dismissible; only those you approve are applied."
+            size="sm"
+          />
+        </div>
         <p className="text-body text-foreground/70 mb-md">Fix what's blocking this company</p>
 
         {inventory && <StallSummaryBadge inventory={inventory} />}
@@ -120,6 +129,7 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
         <button
           onClick={handleDiagnose}
           disabled={isLoading || panelState === "diagnosing"}
+          title="Run the stall classifier and queue unblocking actions for review"
           className="mt-md w-full px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-md"
         >
           {isLoading || panelState === "diagnosing" ? (

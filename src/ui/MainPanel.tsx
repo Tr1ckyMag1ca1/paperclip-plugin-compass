@@ -6,6 +6,7 @@ import {
 } from "@paperclipai/plugin-sdk/ui";
 import type { InventorySnapshot, Mode } from "../types.js";
 import { ModeBanner } from "./components/ModeBanner.js";
+import { WelcomeCard } from "./components/WelcomeCard.js";
 import { InventoryDisplay } from "./components/InventoryDisplay.js";
 import { ChatPanel } from "./components/ChatPanel.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.js";
@@ -238,6 +239,9 @@ export function MainPanel(): React.ReactElement {
         override={storedOverride}
         onOverrideChange={handleModeOverride}
       />
+
+      {/* v1.2 onboarding: first-run welcome card explaining the four modes */}
+      <WelcomeCard companyId={companyId} detectedMode={currentMode} />
 
       {/* Tab bar with History tab (D-10, MEM-04) */}
       <HistoryTabBar

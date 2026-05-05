@@ -18,6 +18,7 @@ import { ConfirmationModal } from "../found/ConfirmationModal.js";
 import { ApplyProgress } from "../found/ApplyProgress.js";
 import { ApplyErrorDisplay } from "../found/ApplyErrorDisplay.js";
 import { useAssessRunState } from "./AssessRunState.js";
+import { HelpTip } from "../primitives/HelpTip.js";
 import { ContextRefreshBanner, PriorFindingsLink } from "../memory/index.js";
 import type { DriftReport } from "../../types/assess.js";
 
@@ -231,7 +232,15 @@ export function AssessPanel({
       <div className="border-b border-border p-lg space-y-md flex-shrink-0">
         <div className="flex items-start justify-between gap-md">
           <div>
-            <h2 className="text-display font-bold">{companyName}</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-display font-bold">{companyName}</h2>
+              <HelpTip
+                title="What does Assess mode do?"
+                body="Assess compares your VISION.md against the last 30 days of agent activity, scores drift per section, and proposes amendments you can review and approve."
+                details="Drift scoring is deterministic (no LLM): activity counts per VISION section vs expected baseline. Amendments are suggested edits to VISION.md text — you approve, reject, or edit each one. Approved amendments cascade to agent briefings."
+                size="sm"
+              />
+            </div>
             <p className="text-body font-normal text-foreground/70 mt-sm">
               Audit your company's recent work against your vision document. This helps you stay aligned as you grow.
             </p>
@@ -255,7 +264,9 @@ export function AssessPanel({
             onClick={handleRunAudit}
             disabled={!visionExists || panelState === "running"}
             className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-xs"
-            title={!visionExists ? "Create a vision document first by running Found mode." : ""}
+            title={!visionExists
+              ? "Create a vision document first by running Found mode."
+              : "Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments."}
             type="button"
           >
             {panelState === "running" && <Loader className="h-4 w-4 animate-spin" />}
@@ -282,6 +293,7 @@ export function AssessPanel({
             <button
               onClick={handleRunAudit}
               disabled={!visionExists}
+              title="Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments."
               className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body inline-block"
               type="button"
             >
@@ -363,6 +375,7 @@ export function AssessPanel({
           <button
             onClick={handleApplyAmendments}
             disabled={acceptedCount === 0}
+            title="Write the accepted amendments to VISION.md and route any approval-gated changes to the configured approver."
             className="w-full px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
             type="button"
           >

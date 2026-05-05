@@ -1,5 +1,5 @@
 // src/ui/MainPanel.tsx
-import { useCallback as useCallback21, useState as useState29 } from "react";
+import { useCallback as useCallback21, useState as useState31 } from "react";
 import {
   usePluginData as usePluginData3,
   usePluginAction as usePluginAction9,
@@ -110,15 +110,27 @@ var createLucideIcon = (iconName, iconNode) => {
   return Component;
 };
 
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/arrow-right.mjs
+// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/activity.mjs
 var __iconNode = [
+  [
+    "path",
+    {
+      d: "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2",
+      key: "169zse"
+    }
+  ]
+];
+var Activity = createLucideIcon("activity", __iconNode);
+
+// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/arrow-right.mjs
+var __iconNode2 = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
 ];
-var ArrowRight = createLucideIcon("arrow-right", __iconNode);
+var ArrowRight = createLucideIcon("arrow-right", __iconNode2);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/binoculars.mjs
-var __iconNode2 = [
+var __iconNode3 = [
   ["path", { d: "M10 10h4", key: "tcdvrf" }],
   ["path", { d: "M19 7V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3", key: "3apit1" }],
   [
@@ -138,44 +150,52 @@ var __iconNode2 = [
   ],
   ["path", { d: "M9 7V4a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v3", key: "14fczp" }]
 ];
-var Binoculars = createLucideIcon("binoculars", __iconNode2);
+var Binoculars = createLucideIcon("binoculars", __iconNode3);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/check.mjs
-var __iconNode3 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-var Check = createLucideIcon("check", __iconNode3);
+var __iconNode4 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+var Check = createLucideIcon("check", __iconNode4);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
-var __iconNode4 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-var ChevronDown = createLucideIcon("chevron-down", __iconNode4);
+var __iconNode5 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+var ChevronDown = createLucideIcon("chevron-down", __iconNode5);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/chevron-left.mjs
-var __iconNode5 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-var ChevronLeft = createLucideIcon("chevron-left", __iconNode5);
+var __iconNode6 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+var ChevronLeft = createLucideIcon("chevron-left", __iconNode6);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/circle-alert.mjs
-var __iconNode6 = [
+var __iconNode7 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
   ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
 ];
-var CircleAlert = createLucideIcon("circle-alert", __iconNode6);
+var CircleAlert = createLucideIcon("circle-alert", __iconNode7);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/circle-check-big.mjs
-var __iconNode7 = [
+var __iconNode8 = [
   ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
   ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
 ];
-var CircleCheckBig = createLucideIcon("circle-check-big", __iconNode7);
+var CircleCheckBig = createLucideIcon("circle-check-big", __iconNode8);
+
+// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/circle-question-mark.mjs
+var __iconNode9 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
+];
+var CircleQuestionMark = createLucideIcon("circle-question-mark", __iconNode9);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/clock.mjs
-var __iconNode8 = [
+var __iconNode10 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
 ];
-var Clock = createLucideIcon("clock", __iconNode8);
+var Clock = createLucideIcon("clock", __iconNode10);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/compass.mjs
-var __iconNode9 = [
+var __iconNode11 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   [
     "path",
@@ -185,10 +205,10 @@ var __iconNode9 = [
     }
   ]
 ];
-var Compass = createLucideIcon("compass", __iconNode9);
+var Compass = createLucideIcon("compass", __iconNode11);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/file-text.mjs
-var __iconNode10 = [
+var __iconNode12 = [
   [
     "path",
     {
@@ -201,10 +221,10 @@ var __iconNode10 = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-var FileText = createLucideIcon("file-text", __iconNode10);
+var FileText = createLucideIcon("file-text", __iconNode12);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/loader.mjs
-var __iconNode11 = [
+var __iconNode13 = [
   ["path", { d: "M12 2v4", key: "3427ic" }],
   ["path", { d: "m16.2 7.8 2.9-2.9", key: "r700ao" }],
   ["path", { d: "M18 12h4", key: "wj9ykh" }],
@@ -214,10 +234,10 @@ var __iconNode11 = [
   ["path", { d: "M2 12h4", key: "j09sii" }],
   ["path", { d: "m4.9 4.9 2.9 2.9", key: "giyufr" }]
 ];
-var Loader = createLucideIcon("loader", __iconNode11);
+var Loader = createLucideIcon("loader", __iconNode13);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/message-circle.mjs
-var __iconNode12 = [
+var __iconNode14 = [
   [
     "path",
     {
@@ -226,10 +246,10 @@ var __iconNode12 = [
     }
   ]
 ];
-var MessageCircle = createLucideIcon("message-circle", __iconNode12);
+var MessageCircle = createLucideIcon("message-circle", __iconNode14);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/pen.mjs
-var __iconNode13 = [
+var __iconNode15 = [
   [
     "path",
     {
@@ -238,19 +258,19 @@ var __iconNode13 = [
     }
   ]
 ];
-var Pen = createLucideIcon("pen", __iconNode13);
+var Pen = createLucideIcon("pen", __iconNode15);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-var __iconNode14 = [
+var __iconNode16 = [
   ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
   ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
   ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
   ["path", { d: "M8 16H3v5", key: "1cv678" }]
 ];
-var RefreshCw = createLucideIcon("refresh-cw", __iconNode14);
+var RefreshCw = createLucideIcon("refresh-cw", __iconNode16);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/rocket.mjs
-var __iconNode15 = [
+var __iconNode17 = [
   ["path", { d: "M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5", key: "qeys4" }],
   [
     "path",
@@ -268,10 +288,10 @@ var __iconNode15 = [
   ],
   ["path", { d: "M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05", key: "92ym6u" }]
 ];
-var Rocket = createLucideIcon("rocket", __iconNode15);
+var Rocket = createLucideIcon("rocket", __iconNode17);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/send.mjs
-var __iconNode16 = [
+var __iconNode18 = [
   [
     "path",
     {
@@ -281,10 +301,25 @@ var __iconNode16 = [
   ],
   ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
 ];
-var Send = createLucideIcon("send", __iconNode16);
+var Send = createLucideIcon("send", __iconNode18);
+
+// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
+var __iconNode19 = [
+  [
+    "path",
+    {
+      d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
+      key: "1s2grr"
+    }
+  ],
+  ["path", { d: "M20 2v4", key: "1rf3ol" }],
+  ["path", { d: "M22 4h-4", key: "gwowj6" }],
+  ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
+];
+var Sparkles = createLucideIcon("sparkles", __iconNode19);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-var __iconNode17 = [
+var __iconNode20 = [
   [
     "path",
     {
@@ -295,17 +330,17 @@ var __iconNode17 = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-var TriangleAlert = createLucideIcon("triangle-alert", __iconNode17);
+var TriangleAlert = createLucideIcon("triangle-alert", __iconNode20);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/x.mjs
-var __iconNode18 = [
+var __iconNode21 = [
   ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
   ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
 ];
-var X = createLucideIcon("x", __iconNode18);
+var X = createLucideIcon("x", __iconNode21);
 
 // node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/zap.mjs
-var __iconNode19 = [
+var __iconNode22 = [
   [
     "path",
     {
@@ -314,10 +349,103 @@ var __iconNode19 = [
     }
   ]
 ];
-var Zap = createLucideIcon("zap", __iconNode19);
+var Zap = createLucideIcon("zap", __iconNode22);
+
+// src/ui/primitives/HelpTip.tsx
+import { useEffect, useId, useRef, useState } from "react";
+import { jsx, jsxs } from "react/jsx-runtime";
+function HelpTip({
+  title,
+  body,
+  details,
+  learnMoreHref,
+  label,
+  className = "",
+  size = "sm"
+}) {
+  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const containerRef = useRef(null);
+  const popoverId = useId();
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e) => {
+      if (!containerRef.current?.contains(e.target)) {
+        setOpen(false);
+        setExpanded(false);
+      }
+    };
+    const handleKey = (e) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
+  const iconSize = size === "xs" ? "h-3 w-3" : size === "md" ? "h-5 w-5" : "h-4 w-4";
+  return /* @__PURE__ */ jsxs("div", { ref: containerRef, className: `relative inline-block ${className}`, children: [
+    /* @__PURE__ */ jsxs(
+      "button",
+      {
+        type: "button",
+        onClick: () => setOpen((v) => !v),
+        "aria-expanded": open,
+        "aria-controls": popoverId,
+        "aria-label": label ? void 0 : `Help: ${title}`,
+        className: "inline-flex items-center gap-1 text-foreground/60 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-none",
+        children: [
+          label ? /* @__PURE__ */ jsx("span", { className: "text-xs underline-offset-2 hover:underline", children: label }) : null,
+          /* @__PURE__ */ jsx(CircleQuestionMark, { className: iconSize, "aria-hidden": "true" })
+        ]
+      }
+    ),
+    open ? /* @__PURE__ */ jsxs(
+      "div",
+      {
+        id: popoverId,
+        role: "dialog",
+        "aria-labelledby": `${popoverId}-title`,
+        className: "absolute left-0 top-full mt-2 z-50 w-80 max-w-[calc(100vw-2rem)] bg-popover text-popover-foreground border border-border shadow-lg p-4 text-left",
+        children: [
+          /* @__PURE__ */ jsx("h4", { id: `${popoverId}-title`, className: "text-sm font-semibold mb-2 text-foreground", children: title }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-foreground/80 leading-relaxed whitespace-pre-line", children: body }),
+          details ? /* @__PURE__ */ jsxs("div", { className: "mt-3", children: [
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => setExpanded((v) => !v),
+                className: "text-xs text-accent hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "aria-expanded": expanded,
+                children: expanded ? "Hide details" : "Learn more"
+              }
+            ),
+            expanded ? /* @__PURE__ */ jsx("p", { className: "mt-2 text-xs text-foreground/70 leading-relaxed whitespace-pre-line", children: details }) : null
+          ] }) : null,
+          learnMoreHref ? /* @__PURE__ */ jsx(
+            "a",
+            {
+              href: learnMoreHref,
+              target: "_blank",
+              rel: "noreferrer noopener",
+              className: "mt-3 inline-block text-xs text-accent hover:underline",
+              children: "Open documentation \u2192"
+            }
+          ) : null
+        ]
+      }
+    ) : null
+  ] });
+}
 
 // src/ui/components/ModeBanner.tsx
-import { jsx, jsxs } from "react/jsx-runtime";
+import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
 function getModeIconColor(mode) {
   const colors = {
     Found: "text-emerald-500",
@@ -334,30 +462,88 @@ function ModeBanner({
   onOverrideChange
 }) {
   const currentMode = override || detectedMode;
-  return /* @__PURE__ */ jsx("div", { className: "border-b bg-card px-4 py-4", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4", children: [
-    /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-4 flex-1", children: [
-      /* @__PURE__ */ jsx(Compass, { className: `h-5 w-5 mt-1 ${getModeIconColor(currentMode)} flex-shrink-0` }),
-      /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h2", { className: "text-base font-semibold leading-tight", children: getModeLabel(currentMode) }),
-        /* @__PURE__ */ jsx("p", { className: "text-sm text-foreground/70 mt-1", children: getModeBannerCopy(currentMode) })
+  return /* @__PURE__ */ jsx2("div", { className: "border-b bg-card px-4 py-4", children: /* @__PURE__ */ jsxs2("div", { className: "flex items-center justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs2("div", { className: "flex items-start gap-4 flex-1", children: [
+      /* @__PURE__ */ jsx2(Compass, { className: `h-5 w-5 mt-1 ${getModeIconColor(currentMode)} flex-shrink-0` }),
+      /* @__PURE__ */ jsxs2("div", { children: [
+        /* @__PURE__ */ jsxs2("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx2("h2", { className: "text-base font-semibold leading-tight", children: getModeLabel(currentMode) }),
+          /* @__PURE__ */ jsx2(
+            HelpTip,
+            {
+              title: `What is ${currentMode} mode?`,
+              body: MODE_HELP[currentMode].body,
+              details: MODE_HELP[currentMode].details,
+              size: "sm"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx2("p", { className: "text-sm text-foreground/70 mt-1", children: getModeBannerCopy(currentMode) }),
+        override && override !== detectedMode ? /* @__PURE__ */ jsxs2("p", { className: "text-xs text-yellow-600 mt-1", children: [
+          "Manual override active. Compass detected",
+          " ",
+          /* @__PURE__ */ jsx2("strong", { children: detectedMode }),
+          ".",
+          " ",
+          /* @__PURE__ */ jsx2(
+            "button",
+            {
+              type: "button",
+              onClick: () => onOverrideChange(detectedMode),
+              className: "underline hover:no-underline",
+              children: "Reset to detected"
+            }
+          )
+        ] }) : null
       ] })
     ] }),
-    /* @__PURE__ */ jsxs(
-      "select",
-      {
-        value: currentMode,
-        onChange: (e) => onOverrideChange(e.target.value),
-        className: "rounded-none border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent",
-        children: [
-          /* @__PURE__ */ jsx("option", { value: "Found", children: "Found a new company" }),
-          /* @__PURE__ */ jsx("option", { value: "Assess", children: "Run a fresh audit" }),
-          /* @__PURE__ */ jsx("option", { value: "Revive", children: "Get unstuck" }),
-          /* @__PURE__ */ jsx("option", { value: "Reposition", children: "Pivot strategy" })
-        ]
-      }
-    )
+    /* @__PURE__ */ jsxs2("div", { className: "flex items-center gap-2", children: [
+      /* @__PURE__ */ jsx2(
+        HelpTip,
+        {
+          title: "Why a mode dropdown?",
+          body: "Compass auto-detects which lifecycle stage your company is in and routes you to the matching workflow. Override here if the detection is wrong, or if you want to run a different workflow against this company.",
+          details: "Detection rules (deterministic, no LLM):\\n\u2022 Found = no VISION.md exists yet\\n\u2022 Assess = VISION + recent activity (healthy)\\n\u2022 Revive = recent stall (no heartbeats / blockers piling)\\n\u2022 Reposition = healthy company, founder requests pivot\\n\\nYour override persists per-company in plugin state.",
+          label: "Why?",
+          size: "sm"
+        }
+      ),
+      /* @__PURE__ */ jsxs2(
+        "select",
+        {
+          value: currentMode,
+          onChange: (e) => onOverrideChange(e.target.value),
+          "aria-label": "Select Compass mode",
+          className: "rounded-none border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent",
+          children: [
+            /* @__PURE__ */ jsx2("option", { value: "Found", title: "Founding a new company \u2014 full vision quest interview to bootstrap VISION.md and provision agents", children: "Found a new company" }),
+            /* @__PURE__ */ jsx2("option", { value: "Assess", title: "Strategic drift audit \u2014 compares VISION.md vs last 30 days of agent activity, proposes amendments", children: "Run a fresh audit" }),
+            /* @__PURE__ */ jsx2("option", { value: "Revive", title: "Diagnose why a healthy company has gone quiet and propose unblocking actions", children: "Get unstuck" }),
+            /* @__PURE__ */ jsx2("option", { value: "Reposition", title: "Execute a strategic pivot \u2014 re-run scoped vision quest on the deltas, cascade brand/voice/scope changes", children: "Pivot strategy" })
+          ]
+        }
+      )
+    ] })
   ] }) });
 }
+var MODE_HELP = {
+  Found: {
+    body: "You're founding a new company. Compass walks you through a 6-section vision quest interview, then writes VISION.md and provisions agents.",
+    details: "Triggered when no VISION.md document exists for this company yet. The vision quest covers Big Picture, Revenue & Customers, Growth & Marketing, Product Direction, CEO Autonomy, and Vision & Identity. Each section is amendable later via Reposition mode."
+  },
+  Assess: {
+    body: "Your company looks healthy. Compass audits whether daily activity has drifted from your stated VISION and proposes amendments if it has.",
+    details: "Compares the last 30 days of agent activity against each section of VISION.md, scores drift, and routes amendments through your approval gate (founder / founder+ceo / configurable per-company)."
+  },
+  Revive: {
+    body: "Your company has stalled. Compass classifies the blocker (single-agent failure, governance loop, dead agent, etc.) and queues unblocking actions for you to approve.",
+    details: "Stall classifier runs deterministic rules over inventory: no heartbeats in N days, blockers piling in issue queue, agents in error state, governance approvals stuck. Output is an ActionQueue grouped by root cause."
+  },
+  Reposition: {
+    body: "Your company is healthy and you want to pivot. Compass runs a scoped re-interview on just the deltas, then cascades brand/voice/scope changes across VISION, agents, and content.",
+    details: "You describe the strategic shift in plain English. Compass infers which VISION sections it touches, re-asks only those questions, and produces an amendment diff plus a cascade plan (which agents need rebriefing, which content needs rewriting)."
+  }
+};
 function getModeLabel(mode) {
   const labels = {
     Found: "Found mode",
@@ -377,20 +563,104 @@ function getModeBannerCopy(mode) {
   return copy[mode];
 }
 
+// src/ui/components/WelcomeCard.tsx
+import { useState as useState2 } from "react";
+import { Fragment, jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+var STORAGE_KEY_PREFIX = "compass:welcome:dismissed:";
+function WelcomeCard({
+  companyId,
+  detectedMode
+}) {
+  const storageKey = `${STORAGE_KEY_PREFIX}${companyId}`;
+  const initialDismissed = typeof window !== "undefined" && companyId ? window.localStorage?.getItem(storageKey) === "1" : true;
+  const [dismissed, setDismissed] = useState2(initialDismissed);
+  if (!companyId || dismissed) return null;
+  const handleDismiss = () => {
+    try {
+      window.localStorage?.setItem(storageKey, "1");
+    } catch {
+    }
+    setDismissed(true);
+  };
+  return /* @__PURE__ */ jsx3("div", { className: "border-b border-border bg-muted/40 px-4 py-4", children: /* @__PURE__ */ jsxs3("div", { className: "flex items-start justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs3("div", { className: "flex-1", children: [
+      /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-2 mb-2", children: [
+        /* @__PURE__ */ jsx3(Compass, { className: "h-4 w-4 text-accent" }),
+        /* @__PURE__ */ jsx3("h3", { className: "text-sm font-semibold", children: "Welcome to Compass" })
+      ] }),
+      /* @__PURE__ */ jsxs3("p", { className: "text-sm text-foreground/80 leading-relaxed mb-3", children: [
+        "Compass is your strategic consultant for this company. It detects what stage your company is in and routes you to the right workflow.",
+        " ",
+        detectedMode ? /* @__PURE__ */ jsxs3(Fragment, { children: [
+          "Right now Compass thinks you need ",
+          /* @__PURE__ */ jsx3("strong", { children: detectedMode }),
+          " ",
+          "mode \u2014 you can change that anytime with the dropdown above."
+        ] }) : null
+      ] }),
+      /* @__PURE__ */ jsxs3("ul", { className: "grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-foreground/80", children: [
+        /* @__PURE__ */ jsxs3("li", { className: "flex items-start gap-2", children: [
+          /* @__PURE__ */ jsx3(Sparkles, { className: "h-3 w-3 mt-0.5 text-emerald-500 flex-shrink-0" }),
+          /* @__PURE__ */ jsxs3("span", { children: [
+            /* @__PURE__ */ jsx3("strong", { children: "Found" }),
+            " \u2014 bootstrap a brand-new company with the vision quest"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs3("li", { className: "flex items-start gap-2", children: [
+          /* @__PURE__ */ jsx3(Activity, { className: "h-3 w-3 mt-0.5 text-blue-500 flex-shrink-0" }),
+          /* @__PURE__ */ jsxs3("span", { children: [
+            /* @__PURE__ */ jsx3("strong", { children: "Assess" }),
+            " \u2014 audit drift between VISION and recent activity"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs3("li", { className: "flex items-start gap-2", children: [
+          /* @__PURE__ */ jsx3(CircleAlert, { className: "h-3 w-3 mt-0.5 text-red-500 flex-shrink-0" }),
+          /* @__PURE__ */ jsxs3("span", { children: [
+            /* @__PURE__ */ jsx3("strong", { children: "Revive" }),
+            " \u2014 diagnose why a stalled company has gone quiet"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs3("li", { className: "flex items-start gap-2", children: [
+          /* @__PURE__ */ jsx3(RefreshCw, { className: "h-3 w-3 mt-0.5 text-yellow-500 flex-shrink-0" }),
+          /* @__PURE__ */ jsxs3("span", { children: [
+            /* @__PURE__ */ jsx3("strong", { children: "Reposition" }),
+            " \u2014 pivot strategy and cascade brand/voice changes"
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs3("p", { className: "text-xs text-foreground/60 mt-3", children: [
+        "Click the ",
+        /* @__PURE__ */ jsx3("strong", { children: "?" }),
+        " icons next to any heading for inline help. See the README for the full walkthrough."
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx3(
+      "button",
+      {
+        type: "button",
+        onClick: handleDismiss,
+        "aria-label": "Dismiss welcome card",
+        className: "p-1 text-foreground/60 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-none",
+        children: /* @__PURE__ */ jsx3(X, { className: "h-4 w-4" })
+      }
+    )
+  ] }) });
+}
+
 // src/ui/components/InventoryDisplay.tsx
-import { useState } from "react";
+import { useState as useState3 } from "react";
 
 // src/ui/components/StatusBadge.tsx
-import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 function StatusBadge({ status }) {
   const config = {
     healthy: {
-      icon: /* @__PURE__ */ jsx2(Check, { className: "h-3 w-3" }),
+      icon: /* @__PURE__ */ jsx4(Check, { className: "h-3 w-3" }),
       label: "Healthy",
       className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
     },
     stalled: {
-      icon: /* @__PURE__ */ jsx2(X, { className: "h-3 w-3" }),
+      icon: /* @__PURE__ */ jsx4(X, { className: "h-3 w-3" }),
       label: "Stalled",
       className: "bg-red-500/10 text-red-500 border-red-500/20"
     },
@@ -400,33 +670,33 @@ function StatusBadge({ status }) {
       className: "bg-muted text-muted-foreground border-border"
     }
   }[status];
-  return /* @__PURE__ */ jsxs2(
+  return /* @__PURE__ */ jsxs4(
     "div",
     {
       className: `inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium border ${config.className}`,
       children: [
         config.icon,
-        /* @__PURE__ */ jsx2("span", { children: config.label })
+        /* @__PURE__ */ jsx4("span", { children: config.label })
       ]
     }
   );
 }
 
 // src/ui/components/AgentCard.tsx
-import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+import { jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
 function AgentCard({ agent }) {
   const status = getAgentStatus(agent);
   const heartbeatLabel = getHeartbeatLabel(agent.lastHeartbeatAt);
-  return /* @__PURE__ */ jsx3("div", { className: "rounded-none border border-border bg-card px-4 py-4", children: /* @__PURE__ */ jsxs3("div", { className: "flex items-start justify-between gap-4", children: [
-    /* @__PURE__ */ jsxs3("div", { className: "flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsx3("h3", { className: "font-semibold text-sm text-foreground", children: agent.name }),
-      /* @__PURE__ */ jsx3("p", { className: "text-xs text-foreground/60 mt-1", children: agent.role }),
-      /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-1 mt-4 text-xs text-foreground/60", children: [
-        /* @__PURE__ */ jsx3(Clock, { className: "h-3 w-3 flex-shrink-0" }),
-        /* @__PURE__ */ jsx3("span", { children: heartbeatLabel })
+  return /* @__PURE__ */ jsx5("div", { className: "rounded-none border border-border bg-card px-4 py-4", children: /* @__PURE__ */ jsxs5("div", { className: "flex items-start justify-between gap-4", children: [
+    /* @__PURE__ */ jsxs5("div", { className: "flex-1 min-w-0", children: [
+      /* @__PURE__ */ jsx5("h3", { className: "font-semibold text-sm text-foreground", children: agent.name }),
+      /* @__PURE__ */ jsx5("p", { className: "text-xs text-foreground/60 mt-1", children: agent.role }),
+      /* @__PURE__ */ jsxs5("div", { className: "flex items-center gap-1 mt-4 text-xs text-foreground/60", children: [
+        /* @__PURE__ */ jsx5(Clock, { className: "h-3 w-3 flex-shrink-0" }),
+        /* @__PURE__ */ jsx5("span", { children: heartbeatLabel })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3(StatusBadge, { status })
+    /* @__PURE__ */ jsx5(StatusBadge, { status })
   ] }) });
 }
 function getAgentStatus(agent) {
@@ -459,39 +729,39 @@ function getHeartbeatLabel(lastHeartbeatAt) {
 }
 
 // src/ui/components/DocumentList.tsx
-import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
+import { jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
 function DocumentList({ documents }) {
-  return /* @__PURE__ */ jsxs4("div", { className: "space-y-4", children: [
-    /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-4", children: [
-      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
-      /* @__PURE__ */ jsxs4("div", { className: "flex-1 min-w-0", children: [
-        /* @__PURE__ */ jsx4("p", { className: "text-sm font-medium text-foreground", children: "VISION.md" }),
-        /* @__PURE__ */ jsx4("p", { className: "text-xs text-foreground/60", children: "Company vision and strategic plan" })
+  return /* @__PURE__ */ jsxs6("div", { className: "space-y-4", children: [
+    /* @__PURE__ */ jsxs6("div", { className: "flex items-center gap-4", children: [
+      /* @__PURE__ */ jsx6(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
+      /* @__PURE__ */ jsxs6("div", { className: "flex-1 min-w-0", children: [
+        /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "VISION.md" }),
+        /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60", children: "Company vision and strategic plan" })
       ] })
     ] }),
-    documents.map((doc) => /* @__PURE__ */ jsxs4("div", { className: "flex items-center gap-4", children: [
-      /* @__PURE__ */ jsx4(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
-      /* @__PURE__ */ jsx4("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx4("p", { className: "text-sm font-medium text-foreground", children: doc.title || doc.key }) })
+    documents.map((doc) => /* @__PURE__ */ jsxs6("div", { className: "flex items-center gap-4", children: [
+      /* @__PURE__ */ jsx6(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
+      /* @__PURE__ */ jsx6("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: doc.title || doc.key }) })
     ] }, doc.id))
   ] });
 }
 
 // src/ui/components/ActivityTimeline.tsx
-import { jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
+import { jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
 function ActivityTimeline({
   issues
 }) {
   if (issues.length === 0) {
-    return /* @__PURE__ */ jsx5("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." });
+    return /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." });
   }
-  return /* @__PURE__ */ jsx5("div", { className: "space-y-2", children: issues.map((issue) => /* @__PURE__ */ jsxs5("div", { className: "flex gap-4", children: [
-    /* @__PURE__ */ jsx5("div", { className: "flex flex-col items-center gap-1", children: /* @__PURE__ */ jsx5(Clock, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
-    /* @__PURE__ */ jsxs5("div", { className: "flex-1 min-w-0 pb-2", children: [
-      /* @__PURE__ */ jsxs5("div", { className: "flex items-baseline justify-between gap-4", children: [
-        /* @__PURE__ */ jsx5("p", { className: "text-sm font-medium text-foreground line-clamp-2", children: issue.title }),
-        /* @__PURE__ */ jsx5("span", { className: "text-xs text-foreground/60 flex-shrink-0", children: formatDate(new Date(issue.createdAt || Date.now())) })
+  return /* @__PURE__ */ jsx7("div", { className: "space-y-2", children: issues.map((issue) => /* @__PURE__ */ jsxs7("div", { className: "flex gap-4", children: [
+    /* @__PURE__ */ jsx7("div", { className: "flex flex-col items-center gap-1", children: /* @__PURE__ */ jsx7(Clock, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
+    /* @__PURE__ */ jsxs7("div", { className: "flex-1 min-w-0 pb-2", children: [
+      /* @__PURE__ */ jsxs7("div", { className: "flex items-baseline justify-between gap-4", children: [
+        /* @__PURE__ */ jsx7("p", { className: "text-sm font-medium text-foreground line-clamp-2", children: issue.title }),
+        /* @__PURE__ */ jsx7("span", { className: "text-xs text-foreground/60 flex-shrink-0", children: formatDate(new Date(issue.createdAt || Date.now())) })
       ] }),
-      issue.status && /* @__PURE__ */ jsxs5("p", { className: "text-xs text-foreground/60 mt-1", children: [
+      issue.status && /* @__PURE__ */ jsxs7("p", { className: "text-xs text-foreground/60 mt-1", children: [
         "Status: ",
         issue.status
       ] })
@@ -519,52 +789,52 @@ function formatDate(date) {
 }
 
 // src/ui/components/VisionStatusDisplay.tsx
-import { jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
+import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
 function VisionStatusDisplay({
   visionExists
 }) {
   if (visionExists) {
-    return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-4", children: [
-      /* @__PURE__ */ jsx6(Check, { className: "h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "VISION.md found" }),
-        /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-1", children: "Your company has a strategic vision document." })
+    return /* @__PURE__ */ jsxs8("div", { className: "flex items-start gap-4", children: [
+      /* @__PURE__ */ jsx8(Check, { className: "h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsxs8("div", { children: [
+        /* @__PURE__ */ jsx8("p", { className: "text-sm font-medium text-foreground", children: "VISION.md found" }),
+        /* @__PURE__ */ jsx8("p", { className: "text-xs text-foreground/60 mt-1", children: "Your company has a strategic vision document." })
       ] })
     ] });
   }
-  return /* @__PURE__ */ jsxs6("div", { className: "flex items-start gap-4", children: [
-    /* @__PURE__ */ jsx6(X, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
-    /* @__PURE__ */ jsxs6("div", { children: [
-      /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "No VISION.md" }),
-      /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60 mt-1", children: "Create one using Found mode to establish your company's strategic foundation." })
+  return /* @__PURE__ */ jsxs8("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx8(X, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
+    /* @__PURE__ */ jsxs8("div", { children: [
+      /* @__PURE__ */ jsx8("p", { className: "text-sm font-medium text-foreground", children: "No VISION.md" }),
+      /* @__PURE__ */ jsx8("p", { className: "text-xs text-foreground/60 mt-1", children: "Create one using Found mode to establish your company's strategic foundation." })
     ] })
   ] });
 }
 
 // src/ui/components/InventoryDisplay.tsx
-import { jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
+import { jsx as jsx9, jsxs as jsxs9 } from "react/jsx-runtime";
 function InventoryDisplay({
   inventory
 }) {
-  return /* @__PURE__ */ jsxs7("div", { className: "divide-y divide-border", children: [
-    /* @__PURE__ */ jsx7(
+  return /* @__PURE__ */ jsxs9("div", { className: "divide-y divide-border", children: [
+    /* @__PURE__ */ jsx9(
       CollapsibleSection,
       {
         title: `Agents (${inventory.agentCount})`,
         defaultOpen: true,
-        children: inventory.agents.length > 0 ? /* @__PURE__ */ jsx7("div", { className: "space-y-2", children: inventory.agents.map((agent) => /* @__PURE__ */ jsx7(AgentCard, { agent }, agent.id)) }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No agents provisioned yet. Found mode will create them." })
+        children: inventory.agents.length > 0 ? /* @__PURE__ */ jsx9("div", { className: "space-y-2", children: inventory.agents.map((agent) => /* @__PURE__ */ jsx9(AgentCard, { agent }, agent.id)) }) : /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "No agents provisioned yet. Found mode will create them." })
       }
     ),
-    /* @__PURE__ */ jsx7(CollapsibleSection, { title: "Documents", defaultOpen: true, children: inventory.documents.length > 0 ? /* @__PURE__ */ jsx7(DocumentList, { documents: inventory.documents }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No key documents found. VISION.md will be created when you found this company." }) }),
-    /* @__PURE__ */ jsx7(
+    /* @__PURE__ */ jsx9(CollapsibleSection, { title: "Documents", defaultOpen: true, children: inventory.documents.length > 0 ? /* @__PURE__ */ jsx9(DocumentList, { documents: inventory.documents }) : /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "No key documents found. VISION.md will be created when you found this company." }) }),
+    /* @__PURE__ */ jsx9(
       CollapsibleSection,
       {
         title: `Recent Activity (${inventory.recentIssueCount})`,
         defaultOpen: true,
-        children: inventory.recentIssues.length > 0 ? /* @__PURE__ */ jsx7(ActivityTimeline, { issues: inventory.recentIssues }) : /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." })
+        children: inventory.recentIssues.length > 0 ? /* @__PURE__ */ jsx9(ActivityTimeline, { issues: inventory.recentIssues }) : /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." })
       }
     ),
-    /* @__PURE__ */ jsx7(CollapsibleSection, { title: "VISION Status", defaultOpen: true, children: /* @__PURE__ */ jsx7(VisionStatusDisplay, { visionExists: inventory.visionExists }) })
+    /* @__PURE__ */ jsx9(CollapsibleSection, { title: "VISION Status", defaultOpen: true, children: /* @__PURE__ */ jsx9(VisionStatusDisplay, { visionExists: inventory.visionExists }) })
   ] });
 }
 function CollapsibleSection({
@@ -572,31 +842,31 @@ function CollapsibleSection({
   defaultOpen = true,
   children
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return /* @__PURE__ */ jsxs7(
+  const [open, setOpen] = useState3(defaultOpen);
+  return /* @__PURE__ */ jsxs9(
     "details",
     {
       open,
       onToggle: (e) => setOpen(e.currentTarget.open),
       className: "group",
       children: [
-        /* @__PURE__ */ jsxs7("summary", { className: "flex cursor-pointer items-center gap-4 px-4 py-4 font-semibold text-sm select-none hover:bg-accent/5", children: [
-          /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsxs9("summary", { className: "flex cursor-pointer items-center gap-4 px-4 py-4 font-semibold text-sm select-none hover:bg-accent/5", children: [
+          /* @__PURE__ */ jsx9(
             ChevronDown,
             {
               className: `h-4 w-4 transition-transform flex-shrink-0 ${open ? "" : "-rotate-90"}`
             }
           ),
-          /* @__PURE__ */ jsx7("span", { className: "text-xs font-medium", children: title })
+          /* @__PURE__ */ jsx9("span", { className: "text-xs font-medium", children: title })
         ] }),
-        /* @__PURE__ */ jsx7("div", { className: "px-4 py-4 text-sm", children })
+        /* @__PURE__ */ jsx9("div", { className: "px-4 py-4 text-sm", children })
       ]
     }
   );
 }
 
 // src/ui/components/ChatPanel.tsx
-import { useState as useState2, useCallback } from "react";
+import { useState as useState4, useCallback } from "react";
 
 // src/primitives/mode-detect.ts
 function classifyChatInput(input) {
@@ -620,12 +890,12 @@ function classifyChatInput(input) {
 }
 
 // src/ui/components/ChatPanel.tsx
-import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx10, jsxs as jsxs10 } from "react/jsx-runtime";
 function ChatPanel({
   detectedMode
 }) {
-  const [input, setInput] = useState2("");
-  const [submitting, setSubmitting] = useState2(false);
+  const [input, setInput] = useState4("");
+  const [submitting, setSubmitting] = useState4(false);
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -645,8 +915,8 @@ function ChatPanel({
     },
     [input, detectedMode]
   );
-  return /* @__PURE__ */ jsx8("div", { className: "border-t bg-background px-4 py-4", children: /* @__PURE__ */ jsxs8("form", { onSubmit: handleSubmit, className: "flex gap-2", children: [
-    /* @__PURE__ */ jsx8(
+  return /* @__PURE__ */ jsx10("div", { className: "border-t bg-background px-4 py-4", children: /* @__PURE__ */ jsxs10("form", { onSubmit: handleSubmit, className: "flex gap-2", children: [
+    /* @__PURE__ */ jsx10(
       "input",
       {
         type: "text",
@@ -657,15 +927,15 @@ function ChatPanel({
         className: "flex-1 rounded-none border border-border bg-background px-4 py-2 text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
       }
     ),
-    /* @__PURE__ */ jsxs8(
+    /* @__PURE__ */ jsxs10(
       "button",
       {
         type: "submit",
         disabled: submitting || !input.trim(),
         className: "inline-flex items-center gap-1 rounded-none px-4 py-2 font-medium text-accent bg-accent/10 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed",
         children: [
-          /* @__PURE__ */ jsx8(Send, { className: "h-4 w-4" }),
-          /* @__PURE__ */ jsx8("span", { className: "hidden sm:inline", children: "Send" })
+          /* @__PURE__ */ jsx10(Send, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsx10("span", { className: "hidden sm:inline", children: "Send" })
         ]
       }
     )
@@ -673,31 +943,31 @@ function ChatPanel({
 }
 
 // src/ui/components/ErrorBoundary.tsx
-import { useState as useState3 } from "react";
-import { jsx as jsx9, jsxs as jsxs9 } from "react/jsx-runtime";
+import { useState as useState5 } from "react";
+import { jsx as jsx11, jsxs as jsxs11 } from "react/jsx-runtime";
 function ErrorBoundary({ error }) {
-  const [dismissed, setDismissed] = useState3(false);
+  const [dismissed, setDismissed] = useState5(false);
   if (dismissed) {
-    return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx9("p", { className: "text-sm text-foreground/60", children: "Error dismissed. Refresh to retry." }) });
+    return /* @__PURE__ */ jsx11("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx11("p", { className: "text-sm text-foreground/60", children: "Error dismissed. Refresh to retry." }) });
   }
   const { title, message, nextSteps } = parseError(error);
-  return /* @__PURE__ */ jsx9("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx9("div", { className: "max-w-md w-full rounded-none border border-red-500/20 bg-red-500/10 p-4", children: /* @__PURE__ */ jsxs9("div", { className: "flex items-start gap-4", children: [
-    /* @__PURE__ */ jsx9(TriangleAlert, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
-    /* @__PURE__ */ jsxs9("div", { className: "flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsx9("h3", { className: "font-semibold text-sm text-red-500", children: title }),
-      /* @__PURE__ */ jsx9("p", { className: "text-sm text-red-500 mt-4", children: message }),
-      nextSteps && /* @__PURE__ */ jsxs9("div", { className: "mt-4 pt-4 border-t border-red-500/20", children: [
-        /* @__PURE__ */ jsx9("p", { className: "text-xs font-semibold text-red-500 mb-2", children: "What to do:" }),
-        /* @__PURE__ */ jsx9("ol", { className: "text-xs text-red-500 space-y-1 list-decimal list-inside", children: nextSteps.map((step, idx) => /* @__PURE__ */ jsx9("li", { children: step }, idx)) })
+  return /* @__PURE__ */ jsx11("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx11("div", { className: "max-w-md w-full rounded-none border border-red-500/20 bg-red-500/10 p-4", children: /* @__PURE__ */ jsxs11("div", { className: "flex items-start gap-4", children: [
+    /* @__PURE__ */ jsx11(TriangleAlert, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
+    /* @__PURE__ */ jsxs11("div", { className: "flex-1 min-w-0", children: [
+      /* @__PURE__ */ jsx11("h3", { className: "font-semibold text-sm text-red-500", children: title }),
+      /* @__PURE__ */ jsx11("p", { className: "text-sm text-red-500 mt-4", children: message }),
+      nextSteps && /* @__PURE__ */ jsxs11("div", { className: "mt-4 pt-4 border-t border-red-500/20", children: [
+        /* @__PURE__ */ jsx11("p", { className: "text-xs font-semibold text-red-500 mb-2", children: "What to do:" }),
+        /* @__PURE__ */ jsx11("ol", { className: "text-xs text-red-500 space-y-1 list-decimal list-inside", children: nextSteps.map((step, idx) => /* @__PURE__ */ jsx11("li", { children: step }, idx)) })
       ] }),
-      /* @__PURE__ */ jsxs9(
+      /* @__PURE__ */ jsxs11(
         "button",
         {
           onClick: () => setDismissed(true),
           className: "mt-4 inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium text-red-500 hover:bg-red-500/20",
           children: [
-            /* @__PURE__ */ jsx9(X, { className: "h-3 w-3" }),
-            /* @__PURE__ */ jsx9("span", { children: "Dismiss" })
+            /* @__PURE__ */ jsx11(X, { className: "h-3 w-3" }),
+            /* @__PURE__ */ jsx11("span", { children: "Dismiss" })
           ]
         }
       )
@@ -747,14 +1017,14 @@ function parseError(error) {
 }
 
 // src/ui/assess/AssessPanel.tsx
-import { useState as useState14, useCallback as useCallback4, useEffect as useEffect6 } from "react";
+import { useState as useState16, useCallback as useCallback4, useEffect as useEffect7 } from "react";
 import { usePluginAction as usePluginAction3 } from "@paperclipai/plugin-sdk/ui";
 
 // src/ui/assess/DriftReportPanel.tsx
 import { useMemo as useMemo2 } from "react";
 
 // src/ui/assess/ConfidenceBar.tsx
-import { jsx as jsx10, jsxs as jsxs10 } from "react/jsx-runtime";
+import { jsx as jsx12, jsxs as jsxs12 } from "react/jsx-runtime";
 function ConfidenceBar({
   confidence,
   className = ""
@@ -769,8 +1039,8 @@ function ConfidenceBar({
   } else {
     colorClass = "bg-accent";
   }
-  return /* @__PURE__ */ jsxs10("div", { className: `flex items-center gap-sm ${className}`, children: [
-    /* @__PURE__ */ jsx10("div", { className: "flex-1 h-[8px] bg-card rounded overflow-hidden", children: /* @__PURE__ */ jsx10(
+  return /* @__PURE__ */ jsxs12("div", { className: `flex items-center gap-sm ${className}`, children: [
+    /* @__PURE__ */ jsx12("div", { className: "flex-1 h-[8px] bg-card rounded overflow-hidden", children: /* @__PURE__ */ jsx12(
       "div",
       {
         className: `h-full ${colorClass} transition-all duration-300`,
@@ -782,7 +1052,7 @@ function ConfidenceBar({
         "aria-valuemax": 100
       }
     ) }),
-    /* @__PURE__ */ jsxs10("span", { className: "text-label font-normal text-foreground/70 w-12 text-right", children: [
+    /* @__PURE__ */ jsxs12("span", { className: "text-label font-normal text-foreground/70 w-12 text-right", children: [
       percentage,
       "%"
     ] })
@@ -790,7 +1060,7 @@ function ConfidenceBar({
 }
 
 // src/ui/assess/EvidenceChip.tsx
-import { jsx as jsx11, jsxs as jsxs11 } from "react/jsx-runtime";
+import { jsx as jsx13, jsxs as jsxs13 } from "react/jsx-runtime";
 function EvidenceChip({
   evidence,
   onClick,
@@ -799,16 +1069,16 @@ function EvidenceChip({
   let icon;
   let label;
   if (evidence.type === "issue") {
-    icon = /* @__PURE__ */ jsx11(CircleAlert, { className: "h-3.5 w-3.5" });
+    icon = /* @__PURE__ */ jsx13(CircleAlert, { className: "h-3.5 w-3.5" });
     label = `Issue #${evidence.id}`;
   } else if (evidence.type === "comment") {
-    icon = /* @__PURE__ */ jsx11(MessageCircle, { className: "h-3.5 w-3.5" });
+    icon = /* @__PURE__ */ jsx13(MessageCircle, { className: "h-3.5 w-3.5" });
     label = `Comment in #${evidence.id}`;
   } else {
-    icon = /* @__PURE__ */ jsx11(FileText, { className: "h-3.5 w-3.5" });
+    icon = /* @__PURE__ */ jsx13(FileText, { className: "h-3.5 w-3.5" });
     label = `Document: ${evidence.id}`;
   }
-  return /* @__PURE__ */ jsxs11(
+  return /* @__PURE__ */ jsxs13(
     "button",
     {
       onClick,
@@ -818,7 +1088,7 @@ function EvidenceChip({
       type: "button",
       children: [
         icon,
-        /* @__PURE__ */ jsx11("span", { children: label })
+        /* @__PURE__ */ jsx13("span", { children: label })
       ]
     }
   );
@@ -831,8 +1101,8 @@ function EvidenceList({
 }) {
   const visible = evidence.slice(0, maxVisible);
   const hidden = evidence.length - visible.length;
-  return /* @__PURE__ */ jsxs11("div", { className: "flex flex-wrap gap-xs", children: [
-    visible.map((item, idx) => /* @__PURE__ */ jsx11(
+  return /* @__PURE__ */ jsxs13("div", { className: "flex flex-wrap gap-xs", children: [
+    visible.map((item, idx) => /* @__PURE__ */ jsx13(
       EvidenceChip,
       {
         evidence: item,
@@ -840,7 +1110,7 @@ function EvidenceList({
       },
       `${item.id}-${idx}`
     )),
-    hidden > 0 && onExpandAll && /* @__PURE__ */ jsxs11(
+    hidden > 0 && onExpandAll && /* @__PURE__ */ jsxs13(
       "button",
       {
         onClick: onExpandAll,
@@ -857,32 +1127,32 @@ function EvidenceList({
 }
 
 // src/ui/assess/AmendmentDiff.tsx
-import { useState as useState4 } from "react";
-import { jsx as jsx12, jsxs as jsxs12 } from "react/jsx-runtime";
+import { useState as useState6 } from "react";
+import { jsx as jsx14, jsxs as jsxs14 } from "react/jsx-runtime";
 function AmendmentDiff({
   amendment,
   className = ""
 }) {
-  const [isOpen, setIsOpen] = useState4(false);
+  const [isOpen, setIsOpen] = useState6(false);
   const lines = amendment.split("\n").filter((line) => line.trim().length > 0);
-  return /* @__PURE__ */ jsxs12(
+  return /* @__PURE__ */ jsxs14(
     "details",
     {
       open: isOpen,
       onToggle: (e) => setIsOpen(e.currentTarget.open),
       className: `group ${className}`,
       children: [
-        /* @__PURE__ */ jsxs12("summary", { className: "cursor-pointer flex items-center gap-sm text-label font-normal text-foreground hover:text-foreground/80 transition-colors p-sm hover:bg-card rounded select-none", children: [
-          /* @__PURE__ */ jsx12(ChevronDown, { className: "h-4 w-4 transition-transform group-open:rotate-180" }),
-          /* @__PURE__ */ jsx12("span", { children: "Proposed amendment:" })
+        /* @__PURE__ */ jsxs14("summary", { className: "cursor-pointer flex items-center gap-sm text-label font-normal text-foreground hover:text-foreground/80 transition-colors p-sm hover:bg-card rounded select-none", children: [
+          /* @__PURE__ */ jsx14(ChevronDown, { className: "h-4 w-4 transition-transform group-open:rotate-180" }),
+          /* @__PURE__ */ jsx14("span", { children: "Proposed amendment:" })
         ] }),
-        /* @__PURE__ */ jsx12("div", { className: "mt-md p-md bg-card rounded border border-border overflow-x-auto", children: /* @__PURE__ */ jsx12("pre", { className: "text-label font-normal leading-relaxed whitespace-pre-wrap break-words", children: lines.map((line, idx) => {
+        /* @__PURE__ */ jsx14("div", { className: "mt-md p-md bg-card rounded border border-border overflow-x-auto", children: /* @__PURE__ */ jsx14("pre", { className: "text-label font-normal leading-relaxed whitespace-pre-wrap break-words", children: lines.map((line, idx) => {
           if (line.startsWith("+")) {
-            return /* @__PURE__ */ jsx12("div", { className: "text-accent", children: line }, idx);
+            return /* @__PURE__ */ jsx14("div", { className: "text-accent", children: line }, idx);
           } else if (line.startsWith("-")) {
-            return /* @__PURE__ */ jsx12("div", { className: "text-destructive", children: line }, idx);
+            return /* @__PURE__ */ jsx14("div", { className: "text-destructive", children: line }, idx);
           } else {
-            return /* @__PURE__ */ jsx12("div", { className: "text-foreground", children: line }, idx);
+            return /* @__PURE__ */ jsx14("div", { className: "text-foreground", children: line }, idx);
           }
         }) }) })
       ]
@@ -891,7 +1161,7 @@ function AmendmentDiff({
 }
 
 // src/ui/assess/DriftItemCard.tsx
-import { jsx as jsx13, jsxs as jsxs13 } from "react/jsx-runtime";
+import { jsx as jsx15, jsxs as jsxs15 } from "react/jsx-runtime";
 function DriftItemCard({
   item,
   acceptedState,
@@ -907,15 +1177,15 @@ function DriftItemCard({
     warn: "text-accent",
     blocker: "text-destructive"
   };
-  return /* @__PURE__ */ jsxs13("div", { className: "bg-background border border-border rounded-lg overflow-hidden", children: [
-    /* @__PURE__ */ jsx13("div", { className: "p-lg border-b border-border space-y-md", children: /* @__PURE__ */ jsxs13("div", { className: "flex items-start justify-between gap-md", children: [
-      /* @__PURE__ */ jsx13("div", { className: "flex-1", children: /* @__PURE__ */ jsx13(ConfidenceBar, { confidence: item.confidence }) }),
-      /* @__PURE__ */ jsx13("span", { className: `text-label font-normal whitespace-nowrap ${severityColor[item.severity]}`, children: item.severity })
+  return /* @__PURE__ */ jsxs15("div", { className: "bg-background border border-border rounded-lg overflow-hidden", children: [
+    /* @__PURE__ */ jsx15("div", { className: "p-lg border-b border-border space-y-md", children: /* @__PURE__ */ jsxs15("div", { className: "flex items-start justify-between gap-md", children: [
+      /* @__PURE__ */ jsx15("div", { className: "flex-1", children: /* @__PURE__ */ jsx15(ConfidenceBar, { confidence: item.confidence }) }),
+      /* @__PURE__ */ jsx15("span", { className: `text-label font-normal whitespace-nowrap ${severityColor[item.severity]}`, children: item.severity })
     ] }) }),
-    /* @__PURE__ */ jsxs13("div", { className: "p-lg space-y-lg", children: [
-      /* @__PURE__ */ jsxs13("div", { className: "space-y-sm", children: [
-        /* @__PURE__ */ jsx13("h4", { className: "text-heading font-bold", children: "Evidence" }),
-        /* @__PURE__ */ jsx13(
+    /* @__PURE__ */ jsxs15("div", { className: "p-lg space-y-lg", children: [
+      /* @__PURE__ */ jsxs15("div", { className: "space-y-sm", children: [
+        /* @__PURE__ */ jsx15("h4", { className: "text-heading font-bold", children: "Evidence" }),
+        /* @__PURE__ */ jsx15(
           EvidenceList,
           {
             evidence: item.evidence,
@@ -925,11 +1195,11 @@ function DriftItemCard({
           }
         )
       ] }),
-      /* @__PURE__ */ jsx13("div", { className: "space-y-sm", children: /* @__PURE__ */ jsx13(AmendmentDiff, { amendment: item.proposedAmendment }) }),
-      /* @__PURE__ */ jsx13("p", { className: "text-body font-normal text-foreground/70", children: item.explanation })
+      /* @__PURE__ */ jsx15("div", { className: "space-y-sm", children: /* @__PURE__ */ jsx15(AmendmentDiff, { amendment: item.proposedAmendment }) }),
+      /* @__PURE__ */ jsx15("p", { className: "text-body font-normal text-foreground/70", children: item.explanation })
     ] }),
-    /* @__PURE__ */ jsxs13("div", { className: "p-lg border-t border-border flex gap-md justify-end", children: [
-      /* @__PURE__ */ jsxs13(
+    /* @__PURE__ */ jsxs15("div", { className: "p-lg border-t border-border flex gap-md justify-end", children: [
+      /* @__PURE__ */ jsxs15(
         "button",
         {
           onClick: onReject,
@@ -937,12 +1207,12 @@ function DriftItemCard({
           "aria-pressed": isRejected,
           type: "button",
           children: [
-            /* @__PURE__ */ jsx13(X, { className: "h-4 w-4" }),
+            /* @__PURE__ */ jsx15(X, { className: "h-4 w-4" }),
             "Reject"
           ]
         }
       ),
-      /* @__PURE__ */ jsxs13(
+      /* @__PURE__ */ jsxs15(
         "button",
         {
           onClick: onAccept,
@@ -950,7 +1220,7 @@ function DriftItemCard({
           "aria-pressed": isAccepted,
           type: "button",
           children: [
-            /* @__PURE__ */ jsx13(Check, { className: "h-4 w-4" }),
+            /* @__PURE__ */ jsx15(Check, { className: "h-4 w-4" }),
             "Accept"
           ]
         }
@@ -960,7 +1230,7 @@ function DriftItemCard({
 }
 
 // src/ui/assess/DriftReportPanel.tsx
-import { jsx as jsx14, jsxs as jsxs14 } from "react/jsx-runtime";
+import { jsx as jsx16, jsxs as jsxs16 } from "react/jsx-runtime";
 var SECTION_NAMES = {
   mission: "Mission",
   mandate: "Mandate",
@@ -1023,7 +1293,7 @@ function DriftReportPanel({
     "success_criteria"
   ];
   const orderedSections = sectionOrder.filter((s) => groupedItems[s]);
-  return /* @__PURE__ */ jsxs14("div", { className: "space-y-xl", children: [
+  return /* @__PURE__ */ jsxs16("div", { className: "space-y-xl", children: [
     orderedSections.map((sectionKey) => {
       const items = groupedItems[sectionKey];
       const sectionName = SECTION_NAMES[sectionKey] || sectionKey;
@@ -1034,20 +1304,20 @@ function DriftReportPanel({
         warn: "text-accent",
         blocker: "text-destructive"
       };
-      return /* @__PURE__ */ jsxs14("section", { className: "space-y-md", children: [
-        /* @__PURE__ */ jsxs14("div", { className: "flex items-center gap-md", children: [
-          /* @__PURE__ */ jsxs14("h3", { className: "text-heading font-bold", children: [
+      return /* @__PURE__ */ jsxs16("section", { className: "space-y-md", children: [
+        /* @__PURE__ */ jsxs16("div", { className: "flex items-center gap-md", children: [
+          /* @__PURE__ */ jsxs16("h3", { className: "text-heading font-bold", children: [
             sectionName,
             " \u2014 ",
             items.length,
             " drift detected"
           ] }),
-          /* @__PURE__ */ jsx14("span", { className: `text-label font-normal ${severityColor[maxSeverity]}`, children: maxSeverity })
+          /* @__PURE__ */ jsx16("span", { className: `text-label font-normal ${severityColor[maxSeverity]}`, children: maxSeverity })
         ] }),
-        /* @__PURE__ */ jsx14("div", { className: "space-y-md", children: items.map((item, idx) => {
+        /* @__PURE__ */ jsx16("div", { className: "space-y-md", children: items.map((item, idx) => {
           const itemKey = `${sectionKey}-${idx}`;
           const state = acceptedState[itemKey] ?? null;
-          return /* @__PURE__ */ jsx14(
+          return /* @__PURE__ */ jsx16(
             DriftItemCard,
             {
               item,
@@ -1062,26 +1332,26 @@ function DriftReportPanel({
         }) })
       ] }, sectionKey);
     }),
-    report.items.length === 0 && /* @__PURE__ */ jsx14("div", { className: "text-center py-xl space-y-md", children: /* @__PURE__ */ jsx14("p", { className: "text-body font-normal text-foreground/70", children: "No drift detected. Your company is aligned with the vision." }) })
+    report.items.length === 0 && /* @__PURE__ */ jsx16("div", { className: "text-center py-xl space-y-md", children: /* @__PURE__ */ jsx16("p", { className: "text-body font-normal text-foreground/70", children: "No drift detected. Your company is aligned with the vision." }) })
   ] });
 }
 
 // src/ui/assess/ApprovalRoutingModal.tsx
-import { useEffect, useRef, useState as useState5 } from "react";
-import { jsx as jsx15, jsxs as jsxs15 } from "react/jsx-runtime";
+import { useEffect as useEffect2, useRef as useRef2, useState as useState7 } from "react";
+import { jsx as jsx17, jsxs as jsxs17 } from "react/jsx-runtime";
 function ApprovalRoutingModal({
   currentRouting,
   onSaveRouting,
   onCancel
 }) {
-  const modalRef = useRef(null);
-  const confirmButtonRef = useRef(null);
-  const [selectedRouting, setSelectedRouting] = useState5(
+  const modalRef = useRef2(null);
+  const confirmButtonRef = useRef2(null);
+  const [selectedRouting, setSelectedRouting] = useState7(
     currentRouting
   );
-  const [isSaving, setIsSaving] = useState5(false);
-  const [error, setError] = useState5(null);
-  useEffect(() => {
+  const [isSaving, setIsSaving] = useState7(false);
+  const [error, setError] = useState7(null);
+  useEffect2(() => {
     confirmButtonRef.current?.focus();
     const handleEscape = (e) => {
       if (e.key === "Escape") {
@@ -1123,7 +1393,7 @@ function ApprovalRoutingModal({
       setIsSaving(false);
     }
   };
-  return /* @__PURE__ */ jsx15("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-lg", role: "presentation", children: /* @__PURE__ */ jsxs15(
+  return /* @__PURE__ */ jsx17("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-lg", role: "presentation", children: /* @__PURE__ */ jsxs17(
     "div",
     {
       ref: modalRef,
@@ -1132,11 +1402,11 @@ function ApprovalRoutingModal({
       "aria-modal": "true",
       "aria-labelledby": "routing-modal-title",
       children: [
-        /* @__PURE__ */ jsx15("h2", { id: "routing-modal-title", className: "text-heading font-bold", children: "Approval routing" }),
-        /* @__PURE__ */ jsx15("div", { className: "space-y-md text-body font-normal", children: /* @__PURE__ */ jsx15("p", { children: "How should amendments be approved?" }) }),
-        /* @__PURE__ */ jsxs15("div", { className: "space-y-md", children: [
-          /* @__PURE__ */ jsxs15("label", { className: "flex items-start gap-md cursor-pointer group", children: [
-            /* @__PURE__ */ jsx15(
+        /* @__PURE__ */ jsx17("h2", { id: "routing-modal-title", className: "text-heading font-bold", children: "Approval routing" }),
+        /* @__PURE__ */ jsx17("div", { className: "space-y-md text-body font-normal", children: /* @__PURE__ */ jsx17("p", { children: "How should amendments be approved?" }) }),
+        /* @__PURE__ */ jsxs17("div", { className: "space-y-md", children: [
+          /* @__PURE__ */ jsxs17("label", { className: "flex items-start gap-md cursor-pointer group", children: [
+            /* @__PURE__ */ jsx17(
               "input",
               {
                 type: "radio",
@@ -1147,13 +1417,13 @@ function ApprovalRoutingModal({
                 className: "mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
               }
             ),
-            /* @__PURE__ */ jsxs15("div", { className: "flex-1", children: [
-              /* @__PURE__ */ jsx15("p", { className: "text-body font-bold text-foreground group-hover:text-foreground/80", children: "Founder only" }),
-              /* @__PURE__ */ jsx15("p", { className: "text-label font-normal text-foreground/70", children: "Amendments apply immediately after your approval" })
+            /* @__PURE__ */ jsxs17("div", { className: "flex-1", children: [
+              /* @__PURE__ */ jsx17("p", { className: "text-body font-bold text-foreground group-hover:text-foreground/80", children: "Founder only" }),
+              /* @__PURE__ */ jsx17("p", { className: "text-label font-normal text-foreground/70", children: "Amendments apply immediately after your approval" })
             ] })
           ] }),
-          /* @__PURE__ */ jsxs15("label", { className: "flex items-start gap-md cursor-pointer group", children: [
-            /* @__PURE__ */ jsx15(
+          /* @__PURE__ */ jsxs17("label", { className: "flex items-start gap-md cursor-pointer group", children: [
+            /* @__PURE__ */ jsx17(
               "input",
               {
                 type: "radio",
@@ -1164,19 +1434,19 @@ function ApprovalRoutingModal({
                 className: "mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
               }
             ),
-            /* @__PURE__ */ jsxs15("div", { className: "flex-1", children: [
-              /* @__PURE__ */ jsx15("p", { className: "text-body font-bold text-foreground group-hover:text-foreground/80", children: "Founder + CEO agent" }),
-              /* @__PURE__ */ jsx15("p", { className: "text-label font-normal text-foreground/70", children: "Amendments queued for CEO review before applying" })
+            /* @__PURE__ */ jsxs17("div", { className: "flex-1", children: [
+              /* @__PURE__ */ jsx17("p", { className: "text-body font-bold text-foreground group-hover:text-foreground/80", children: "Founder + CEO agent" }),
+              /* @__PURE__ */ jsx17("p", { className: "text-label font-normal text-foreground/70", children: "Amendments queued for CEO review before applying" })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs15("p", { className: "text-label font-normal text-foreground/70", children: [
+        /* @__PURE__ */ jsxs17("p", { className: "text-label font-normal text-foreground/70", children: [
           "Current: ",
-          /* @__PURE__ */ jsx15("span", { className: "text-accent font-bold", children: currentRouting })
+          /* @__PURE__ */ jsx17("span", { className: "text-accent font-bold", children: currentRouting })
         ] }),
-        error && /* @__PURE__ */ jsx15("div", { className: "bg-destructive/10 border border-destructive rounded p-md", children: /* @__PURE__ */ jsx15("p", { className: "text-label font-normal text-destructive", children: error }) }),
-        /* @__PURE__ */ jsxs15("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
-          /* @__PURE__ */ jsx15(
+        error && /* @__PURE__ */ jsx17("div", { className: "bg-destructive/10 border border-destructive rounded p-md", children: /* @__PURE__ */ jsx17("p", { className: "text-label font-normal text-destructive", children: error }) }),
+        /* @__PURE__ */ jsxs17("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
+          /* @__PURE__ */ jsx17(
             "button",
             {
               onClick: onCancel,
@@ -1185,7 +1455,7 @@ function ApprovalRoutingModal({
               children: "Cancel"
             }
           ),
-          /* @__PURE__ */ jsx15(
+          /* @__PURE__ */ jsx17(
             "button",
             {
               ref: confirmButtonRef,
@@ -1202,18 +1472,18 @@ function ApprovalRoutingModal({
 }
 
 // src/ui/assess/ApprovingWaitingState.tsx
-import { useEffect as useEffect2, useState as useState6 } from "react";
-import { jsx as jsx16, jsxs as jsxs16 } from "react/jsx-runtime";
+import { useEffect as useEffect3, useState as useState8 } from "react";
+import { jsx as jsx18, jsxs as jsxs18 } from "react/jsx-runtime";
 function ApprovingWaitingState({
   submittedAt,
   onRefresh,
   onCancel
 }) {
-  const [isRefreshing, setIsRefreshing] = useState6(false);
-  const [isCancelling, setIsCancelling] = useState6(false);
-  const [error, setError] = useState6(null);
-  const [timeAgo, setTimeAgo] = useState6("");
-  useEffect2(() => {
+  const [isRefreshing, setIsRefreshing] = useState8(false);
+  const [isCancelling, setIsCancelling] = useState8(false);
+  const [error, setError] = useState8(null);
+  const [timeAgo, setTimeAgo] = useState8("");
+  useEffect3(() => {
     const updateTimeAgo = () => {
       const submitted = new Date(submittedAt);
       const now = /* @__PURE__ */ new Date();
@@ -1257,22 +1527,22 @@ function ApprovingWaitingState({
       setIsCancelling(false);
     }
   };
-  return /* @__PURE__ */ jsx16("div", { className: "space-y-lg", children: /* @__PURE__ */ jsxs16("div", { className: "bg-card border border-border rounded-lg p-lg space-y-lg", children: [
-    /* @__PURE__ */ jsxs16("div", { className: "flex items-start gap-md", children: [
-      /* @__PURE__ */ jsx16(Clock, { className: "h-5 w-5 text-accent flex-shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsxs16("div", { className: "flex-1", children: [
-        /* @__PURE__ */ jsx16("h2", { className: "text-heading font-bold", children: "Waiting for CEO approval" }),
-        /* @__PURE__ */ jsxs16("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: [
+  return /* @__PURE__ */ jsx18("div", { className: "space-y-lg", children: /* @__PURE__ */ jsxs18("div", { className: "bg-card border border-border rounded-lg p-lg space-y-lg", children: [
+    /* @__PURE__ */ jsxs18("div", { className: "flex items-start gap-md", children: [
+      /* @__PURE__ */ jsx18(Clock, { className: "h-5 w-5 text-accent flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsxs18("div", { className: "flex-1", children: [
+        /* @__PURE__ */ jsx18("h2", { className: "text-heading font-bold", children: "Waiting for CEO approval" }),
+        /* @__PURE__ */ jsxs18("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: [
           "Amendments submitted ",
           timeAgo,
           " for review. Your CEO agent will respond shortly."
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx16("p", { className: "text-label font-normal text-foreground/70", children: "Your CEO agent is reviewing the proposed changes. You'll be notified when a decision is made." }),
-    error && /* @__PURE__ */ jsx16("div", { className: "bg-destructive/10 border border-destructive rounded p-md", children: /* @__PURE__ */ jsx16("p", { className: "text-label font-normal text-destructive", children: error }) }),
-    /* @__PURE__ */ jsxs16("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
-      onCancel && /* @__PURE__ */ jsx16(
+    /* @__PURE__ */ jsx18("p", { className: "text-label font-normal text-foreground/70", children: "Your CEO agent is reviewing the proposed changes. You'll be notified when a decision is made." }),
+    error && /* @__PURE__ */ jsx18("div", { className: "bg-destructive/10 border border-destructive rounded p-md", children: /* @__PURE__ */ jsx18("p", { className: "text-label font-normal text-destructive", children: error }) }),
+    /* @__PURE__ */ jsxs18("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
+      onCancel && /* @__PURE__ */ jsx18(
         "button",
         {
           onClick: handleCancel,
@@ -1282,7 +1552,7 @@ function ApprovingWaitingState({
           children: isCancelling ? "Cancelling\u2026" : "Cancel request"
         }
       ),
-      /* @__PURE__ */ jsxs16(
+      /* @__PURE__ */ jsxs18(
         "button",
         {
           onClick: handleRefresh,
@@ -1290,7 +1560,7 @@ function ApprovingWaitingState({
           className: "px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body flex items-center gap-xs focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50",
           type: "button",
           children: [
-            /* @__PURE__ */ jsx16(RefreshCw, { className: `h-4 w-4 ${isRefreshing ? "animate-spin" : ""}` }),
+            /* @__PURE__ */ jsx18(RefreshCw, { className: `h-4 w-4 ${isRefreshing ? "animate-spin" : ""}` }),
             isRefreshing ? "Refreshing\u2026" : "Refresh"
           ]
         }
@@ -1300,40 +1570,40 @@ function ApprovingWaitingState({
 }
 
 // src/ui/found/ConfirmationModal.tsx
-import { useEffect as useEffect3, useRef as useRef2 } from "react";
+import { useEffect as useEffect4, useRef as useRef3 } from "react";
 
 // src/ui/found/ProvisioningSummary.tsx
-import { jsx as jsx17, jsxs as jsxs17 } from "react/jsx-runtime";
+import { jsx as jsx19, jsxs as jsxs19 } from "react/jsx-runtime";
 function ProvisioningSummary({
   preset
 }) {
   if (!preset) {
-    return /* @__PURE__ */ jsx17("div", {});
+    return /* @__PURE__ */ jsx19("div", {});
   }
   const agentCount = preset.agents.length;
   const issueCount = agentCount;
   const wakeupCount = agentCount;
-  return /* @__PURE__ */ jsxs17("div", { className: "space-y-md border-t border-border pt-lg", children: [
-    /* @__PURE__ */ jsx17("h3", { className: "text-heading font-bold", children: "When you apply" }),
-    /* @__PURE__ */ jsxs17("div", { className: "space-y-md", children: [
-      /* @__PURE__ */ jsxs17("div", { children: [
-        /* @__PURE__ */ jsx17("p", { className: "text-label font-normal", children: "Agents to create" }),
-        /* @__PURE__ */ jsx17("ul", { className: "mt-sm space-y-xs list-none", children: preset.agents.map((agent) => /* @__PURE__ */ jsxs17("li", { className: "text-body text-foreground/70 font-normal", children: [
+  return /* @__PURE__ */ jsxs19("div", { className: "space-y-md border-t border-border pt-lg", children: [
+    /* @__PURE__ */ jsx19("h3", { className: "text-heading font-bold", children: "When you apply" }),
+    /* @__PURE__ */ jsxs19("div", { className: "space-y-md", children: [
+      /* @__PURE__ */ jsxs19("div", { children: [
+        /* @__PURE__ */ jsx19("p", { className: "text-label font-normal", children: "Agents to create" }),
+        /* @__PURE__ */ jsx19("ul", { className: "mt-sm space-y-xs list-none", children: preset.agents.map((agent) => /* @__PURE__ */ jsxs19("li", { className: "text-body text-foreground/70 font-normal", children: [
           agent.name,
           " \u2014 ",
           agent.role
         ] }, agent.id)) })
       ] }),
-      /* @__PURE__ */ jsxs17("div", { children: [
-        /* @__PURE__ */ jsx17("p", { className: "text-label font-normal", children: "Kickoff issues" }),
-        /* @__PURE__ */ jsxs17("p", { className: "text-body text-foreground/70 mt-xs font-normal", children: [
+      /* @__PURE__ */ jsxs19("div", { children: [
+        /* @__PURE__ */ jsx19("p", { className: "text-label font-normal", children: "Kickoff issues" }),
+        /* @__PURE__ */ jsxs19("p", { className: "text-body text-foreground/70 mt-xs font-normal", children: [
           issueCount,
           " ",
           issueCount === 1 ? "issue" : "issues",
           " filed (one per agent)"
         ] })
       ] }),
-      /* @__PURE__ */ jsx17("div", { className: "bg-card p-md rounded border border-border", children: /* @__PURE__ */ jsxs17("p", { className: "text-label font-normal text-foreground", children: [
+      /* @__PURE__ */ jsx19("div", { className: "bg-card p-md rounded border border-border", children: /* @__PURE__ */ jsxs19("p", { className: "text-label font-normal text-foreground", children: [
         "Total: 1 document, ",
         agentCount,
         " ",
@@ -1352,16 +1622,16 @@ function ProvisioningSummary({
 }
 
 // src/ui/found/ConfirmationModal.tsx
-import { jsx as jsx18, jsxs as jsxs18 } from "react/jsx-runtime";
+import { jsx as jsx20, jsxs as jsxs20 } from "react/jsx-runtime";
 function ConfirmationModal({
   vision,
   preset,
   onConfirm,
   onCancel
 }) {
-  const modalRef = useRef2(null);
-  const confirmButtonRef = useRef2(null);
-  useEffect3(() => {
+  const modalRef = useRef3(null);
+  const confirmButtonRef = useRef3(null);
+  useEffect4(() => {
     confirmButtonRef.current?.focus();
     const handleEscape = (e) => {
       if (e.key === "Escape") {
@@ -1395,7 +1665,7 @@ function ConfirmationModal({
   const agentCount = preset?.agents.length ?? 0;
   const issueCount = agentCount;
   const wakeupCount = agentCount;
-  return /* @__PURE__ */ jsx18("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-lg", role: "presentation", children: /* @__PURE__ */ jsxs18(
+  return /* @__PURE__ */ jsx20("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-lg", role: "presentation", children: /* @__PURE__ */ jsxs20(
     "div",
     {
       ref: modalRef,
@@ -1404,25 +1674,25 @@ function ConfirmationModal({
       "aria-modal": "true",
       "aria-labelledby": "confirmation-modal-title",
       children: [
-        /* @__PURE__ */ jsx18("h2", { id: "confirmation-modal-title", className: "text-heading font-bold", children: "Apply changes to Paperclip" }),
-        /* @__PURE__ */ jsxs18("div", { className: "space-y-md text-body font-normal", children: [
-          /* @__PURE__ */ jsx18("p", { children: "Apply will:" }),
-          /* @__PURE__ */ jsxs18("ul", { className: "ml-lg space-y-sm list-disc", children: [
-            /* @__PURE__ */ jsx18("li", { className: "font-normal", children: "Write the company vision document" }),
-            /* @__PURE__ */ jsxs18("li", { className: "font-normal", children: [
+        /* @__PURE__ */ jsx20("h2", { id: "confirmation-modal-title", className: "text-heading font-bold", children: "Apply changes to Paperclip" }),
+        /* @__PURE__ */ jsxs20("div", { className: "space-y-md text-body font-normal", children: [
+          /* @__PURE__ */ jsx20("p", { children: "Apply will:" }),
+          /* @__PURE__ */ jsxs20("ul", { className: "ml-lg space-y-sm list-disc", children: [
+            /* @__PURE__ */ jsx20("li", { className: "font-normal", children: "Write the company vision document" }),
+            /* @__PURE__ */ jsxs20("li", { className: "font-normal", children: [
               "Create ",
               agentCount,
               " agents"
             ] }),
-            /* @__PURE__ */ jsxs18("li", { className: "font-normal", children: [
+            /* @__PURE__ */ jsxs20("li", { className: "font-normal", children: [
               "File ",
               issueCount,
               " kickoff issues"
             ] }),
-            /* @__PURE__ */ jsx18("li", { className: "font-normal", children: "Queue wakeups to start the company heartbeating" })
+            /* @__PURE__ */ jsx20("li", { className: "font-normal", children: "Queue wakeups to start the company heartbeating" })
           ] }),
-          /* @__PURE__ */ jsx18("p", { className: "text-foreground/70 text-body font-normal", children: "This is reversible only by manual cleanup in Paperclip." }),
-          /* @__PURE__ */ jsxs18("p", { className: "text-label font-normal", children: [
+          /* @__PURE__ */ jsx20("p", { className: "text-foreground/70 text-body font-normal", children: "This is reversible only by manual cleanup in Paperclip." }),
+          /* @__PURE__ */ jsxs20("p", { className: "text-label font-normal", children: [
             "Write count: 1 document, ",
             agentCount,
             " agents, ",
@@ -1432,9 +1702,9 @@ function ConfirmationModal({
             " wakeups"
           ] })
         ] }),
-        /* @__PURE__ */ jsx18(ProvisioningSummary, { preset }),
-        /* @__PURE__ */ jsxs18("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
-          /* @__PURE__ */ jsx18(
+        /* @__PURE__ */ jsx20(ProvisioningSummary, { preset }),
+        /* @__PURE__ */ jsxs20("div", { className: "flex gap-md justify-end pt-lg border-t border-border", children: [
+          /* @__PURE__ */ jsx20(
             "button",
             {
               onClick: onCancel,
@@ -1442,7 +1712,7 @@ function ConfirmationModal({
               children: "Cancel"
             }
           ),
-          /* @__PURE__ */ jsx18(
+          /* @__PURE__ */ jsx20(
             "button",
             {
               ref: confirmButtonRef,
@@ -1458,7 +1728,7 @@ function ConfirmationModal({
 }
 
 // src/ui/found/ApplyProgress.tsx
-import { jsx as jsx19, jsxs as jsxs19 } from "react/jsx-runtime";
+import { jsx as jsx21, jsxs as jsxs21 } from "react/jsx-runtime";
 function ApplyProgress({
   step,
   progress
@@ -1470,20 +1740,20 @@ function ApplyProgress({
     { key: "issues", label: "Creating kickoff issues\u2026" },
     { key: "wakeups", label: "Queuing company heartbeat\u2026" }
   ];
-  return /* @__PURE__ */ jsxs19("div", { className: "space-y-md", children: [
-    steps.map((s) => /* @__PURE__ */ jsxs19("div", { className: "flex gap-md items-start", children: [
-      progress[s.key] ? /* @__PURE__ */ jsx19(CircleCheckBig, { className: "h-5 w-5 text-accent flex-shrink-0 mt-0.5" }) : step === s.key ? /* @__PURE__ */ jsx19(Loader, { className: "h-5 w-5 text-accent animate-spin flex-shrink-0 mt-0.5" }) : /* @__PURE__ */ jsx19("div", { className: "h-5 w-5 border-2 border-border rounded-full flex-shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsx19("div", { className: "text-body font-normal", children: s.label })
+  return /* @__PURE__ */ jsxs21("div", { className: "space-y-md", children: [
+    steps.map((s) => /* @__PURE__ */ jsxs21("div", { className: "flex gap-md items-start", children: [
+      progress[s.key] ? /* @__PURE__ */ jsx21(CircleCheckBig, { className: "h-5 w-5 text-accent flex-shrink-0 mt-0.5" }) : step === s.key ? /* @__PURE__ */ jsx21(Loader, { className: "h-5 w-5 text-accent animate-spin flex-shrink-0 mt-0.5" }) : /* @__PURE__ */ jsx21("div", { className: "h-5 w-5 border-2 border-border rounded-full flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsx21("div", { className: "text-body font-normal", children: s.label })
     ] }, s.key)),
-    step === "complete" && /* @__PURE__ */ jsxs19("div", { className: "bg-accent/10 border border-accent rounded p-lg mt-lg space-y-sm", children: [
-      /* @__PURE__ */ jsx19("p", { className: "text-body font-bold text-accent", children: "\u2713 Company founded!" }),
-      /* @__PURE__ */ jsx19("p", { className: "text-label font-normal text-foreground/70", children: "Your new company is now heartbeating. Check the inbox for kickoff issues." })
+    step === "complete" && /* @__PURE__ */ jsxs21("div", { className: "bg-accent/10 border border-accent rounded p-lg mt-lg space-y-sm", children: [
+      /* @__PURE__ */ jsx21("p", { className: "text-body font-bold text-accent", children: "\u2713 Company founded!" }),
+      /* @__PURE__ */ jsx21("p", { className: "text-label font-normal text-foreground/70", children: "Your new company is now heartbeating. Check the inbox for kickoff issues." })
     ] })
   ] });
 }
 
 // src/ui/found/ApplyErrorDisplay.tsx
-import { jsx as jsx20, jsxs as jsxs20 } from "react/jsx-runtime";
+import { jsx as jsx22, jsxs as jsxs22 } from "react/jsx-runtime";
 function ApplyErrorDisplay({
   step,
   errors,
@@ -1493,30 +1763,30 @@ function ApplyErrorDisplay({
   onClose
 }) {
   const primaryError = errors[0] || "An unexpected error occurred.";
-  return /* @__PURE__ */ jsxs20("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsx20("div", { className: "bg-destructive/10 border border-destructive rounded p-lg", children: /* @__PURE__ */ jsxs20("div", { className: "flex gap-md items-start", children: [
-      /* @__PURE__ */ jsx20(TriangleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsxs20("div", { className: "space-y-md flex-1", children: [
-        /* @__PURE__ */ jsxs20("h3", { className: "text-heading font-bold text-destructive", children: [
+  return /* @__PURE__ */ jsxs22("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsx22("div", { className: "bg-destructive/10 border border-destructive rounded p-lg", children: /* @__PURE__ */ jsxs22("div", { className: "flex gap-md items-start", children: [
+      /* @__PURE__ */ jsx22(TriangleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsxs22("div", { className: "space-y-md flex-1", children: [
+        /* @__PURE__ */ jsxs22("h3", { className: "text-heading font-bold text-destructive", children: [
           "Apply failed at ",
           step
         ] }),
-        primaryError && /* @__PURE__ */ jsxs20("div", { className: "space-y-sm", children: [
-          /* @__PURE__ */ jsx20("p", { className: "text-body font-normal", children: "Error:" }),
-          /* @__PURE__ */ jsx20("p", { className: "text-sm font-normal text-foreground/70 bg-background p-md rounded border border-border", children: primaryError })
+        primaryError && /* @__PURE__ */ jsxs22("div", { className: "space-y-sm", children: [
+          /* @__PURE__ */ jsx22("p", { className: "text-body font-normal", children: "Error:" }),
+          /* @__PURE__ */ jsx22("p", { className: "text-sm font-normal text-foreground/70 bg-background p-md rounded border border-border", children: primaryError })
         ] }),
-        rollbackApplied && /* @__PURE__ */ jsxs20("div", { className: "space-y-sm", children: [
-          /* @__PURE__ */ jsx20("p", { className: "text-body font-bold", children: "Rollback completed:" }),
-          rollbackErrors.length > 0 ? /* @__PURE__ */ jsx20("div", { className: "space-y-xs", children: rollbackErrors.map((err, idx) => /* @__PURE__ */ jsxs20("p", { className: "text-label font-normal text-foreground/70", children: [
+        rollbackApplied && /* @__PURE__ */ jsxs22("div", { className: "space-y-sm", children: [
+          /* @__PURE__ */ jsx22("p", { className: "text-body font-bold", children: "Rollback completed:" }),
+          rollbackErrors.length > 0 ? /* @__PURE__ */ jsx22("div", { className: "space-y-xs", children: rollbackErrors.map((err, idx) => /* @__PURE__ */ jsxs22("p", { className: "text-label font-normal text-foreground/70", children: [
             "\u2713 ",
             err
-          ] }, idx)) }) : /* @__PURE__ */ jsx20("p", { className: "text-label font-normal text-foreground/70", children: "\u2713 All partial writes have been cleaned up." })
+          ] }, idx)) }) : /* @__PURE__ */ jsx22("p", { className: "text-label font-normal text-foreground/70", children: "\u2713 All partial writes have been cleaned up." })
         ] }),
-        /* @__PURE__ */ jsx20("p", { className: "text-label font-normal text-foreground/70", children: "Next step: Check your company and retry if needed." })
+        /* @__PURE__ */ jsx22("p", { className: "text-label font-normal text-foreground/70", children: "Next step: Check your company and retry if needed." })
       ] })
     ] }) }),
-    /* @__PURE__ */ jsxs20("div", { className: "flex gap-md justify-end", children: [
-      /* @__PURE__ */ jsx20(
+    /* @__PURE__ */ jsxs22("div", { className: "flex gap-md justify-end", children: [
+      /* @__PURE__ */ jsx22(
         "button",
         {
           onClick: onClose,
@@ -1524,7 +1794,7 @@ function ApplyErrorDisplay({
           children: "Close"
         }
       ),
-      /* @__PURE__ */ jsx20(
+      /* @__PURE__ */ jsx22(
         "button",
         {
           onClick: onRetry,
@@ -1537,15 +1807,15 @@ function ApplyErrorDisplay({
 }
 
 // src/ui/assess/AssessRunState.ts
-import { useCallback as useCallback2, useEffect as useEffect4, useState as useState7 } from "react";
+import { useCallback as useCallback2, useEffect as useEffect5, useState as useState9 } from "react";
 import { usePluginAction } from "@paperclipai/plugin-sdk/ui";
 function useAssessRunState(companyId) {
   const loadRunStateAction = usePluginAction("loadAssessRunState");
   const updateStateAction = usePluginAction("updateAssessRunState");
-  const [run, setRun] = useState7(null);
-  const [isLoading, setIsLoading] = useState7(true);
-  const [error, setError] = useState7(null);
-  useEffect4(() => {
+  const [run, setRun] = useState9(null);
+  const [isLoading, setIsLoading] = useState9(true);
+  const [error, setError] = useState9(null);
+  useEffect5(() => {
     (async () => {
       try {
         setIsLoading(true);
@@ -1669,15 +1939,15 @@ function useAssessRunState(companyId) {
 }
 
 // src/ui/memory/HistoryPanel.tsx
-import { useMemo as useMemo3, useState as useState13 } from "react";
+import { useMemo as useMemo3, useState as useState15 } from "react";
 
 // src/ui/memory/MemoryState.ts
-import { useCallback as useCallback3, useEffect as useEffect5, useState as useState8 } from "react";
+import { useCallback as useCallback3, useEffect as useEffect6, useState as useState10 } from "react";
 import { usePluginAction as usePluginAction2 } from "@paperclipai/plugin-sdk/ui";
 function useMemory(companyId) {
-  const [history, setHistory] = useState8(null);
-  const [loading, setLoading] = useState8(false);
-  const [error, setError] = useState8(null);
+  const [history, setHistory] = useState10(null);
+  const [loading, setLoading] = useState10(false);
+  const [error, setError] = useState10(null);
   const loadMemory = usePluginAction2("memory.load");
   const postFindings = usePluginAction2("memory.recordFindings");
   const updateStatus = usePluginAction2("memory.transitionStatus");
@@ -1697,7 +1967,7 @@ function useMemory(companyId) {
       setLoading(false);
     }
   }, [companyId, loadMemory]);
-  useEffect5(() => {
+  useEffect6(() => {
     refetch();
   }, [companyId, refetch]);
   const recordFindings = useCallback3(
@@ -1774,10 +2044,10 @@ function useMemory(companyId) {
 }
 
 // src/ui/memory/FindingCard.tsx
-import { useState as useState9 } from "react";
+import { useState as useState11 } from "react";
 
 // src/ui/memory/FindingStatusBadge.tsx
-import { jsx as jsx21 } from "react/jsx-runtime";
+import { jsx as jsx23 } from "react/jsx-runtime";
 var FindingStatusBadge = ({ status }) => {
   const styleClass = {
     open: "bg-accent/20 text-accent",
@@ -1785,7 +2055,7 @@ var FindingStatusBadge = ({ status }) => {
     invalidated: "bg-foreground/10 text-foreground/50"
   }[status];
   const label = status.charAt(0).toUpperCase() + status.slice(1);
-  return /* @__PURE__ */ jsx21(
+  return /* @__PURE__ */ jsx23(
     "span",
     {
       className: `inline-block px-xs py-xs rounded-full text-label font-bold ${styleClass}`,
@@ -1797,15 +2067,15 @@ var FindingStatusBadge = ({ status }) => {
 };
 
 // src/ui/memory/ModeBadge.tsx
-import { jsx as jsx22, jsxs as jsxs21 } from "react/jsx-runtime";
+import { jsx as jsx24, jsxs as jsxs23 } from "react/jsx-runtime";
 var ModeBadge = ({ mode }) => {
   const icons = {
-    Found: /* @__PURE__ */ jsx22(Rocket, { className: "w-4 h-4" }),
-    Assess: /* @__PURE__ */ jsx22(Binoculars, { className: "w-4 h-4" }),
-    Revive: /* @__PURE__ */ jsx22(Zap, { className: "w-4 h-4" }),
-    Reposition: /* @__PURE__ */ jsx22(ArrowRight, { className: "w-4 h-4" })
+    Found: /* @__PURE__ */ jsx24(Rocket, { className: "w-4 h-4" }),
+    Assess: /* @__PURE__ */ jsx24(Binoculars, { className: "w-4 h-4" }),
+    Revive: /* @__PURE__ */ jsx24(Zap, { className: "w-4 h-4" }),
+    Reposition: /* @__PURE__ */ jsx24(ArrowRight, { className: "w-4 h-4" })
   };
-  return /* @__PURE__ */ jsxs21(
+  return /* @__PURE__ */ jsxs23(
     "span",
     {
       className: "inline-flex items-center gap-xs px-xs py-xs rounded-full bg-foreground/10 text-foreground text-label font-bold",
@@ -1878,7 +2148,7 @@ function formatFutureTime(ms, addSuffix) {
 }
 
 // src/ui/memory/FindingCard.tsx
-import { Fragment, jsx as jsx23, jsxs as jsxs22 } from "react/jsx-runtime";
+import { Fragment as Fragment2, jsx as jsx25, jsxs as jsxs24 } from "react/jsx-runtime";
 var StatusChangeConfirmationModal = ({
   open,
   finding,
@@ -1889,25 +2159,25 @@ var StatusChangeConfirmationModal = ({
 }) => {
   if (!open) return null;
   const actionLabel = newStatus === "addressed" ? "Mark as addressed" : "Mark as invalidated";
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx25(
     "div",
     {
       className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50",
       onClick: onCancel,
-      children: /* @__PURE__ */ jsxs22(
+      children: /* @__PURE__ */ jsxs24(
         "div",
         {
           className: "bg-background p-lg rounded border border-border w-full max-w-sm mx-auto",
           onClick: (e) => e.stopPropagation(),
           children: [
-            /* @__PURE__ */ jsx23("h3", { className: "text-heading font-bold mb-md", children: "Confirm status change" }),
-            /* @__PURE__ */ jsxs22("p", { className: "text-body text-foreground/70 mb-lg", children: [
+            /* @__PURE__ */ jsx25("h3", { className: "text-heading font-bold mb-md", children: "Confirm status change" }),
+            /* @__PURE__ */ jsxs24("p", { className: "text-body text-foreground/70 mb-lg", children: [
               "Are you sure you want to ",
               newStatus,
               " this finding?"
             ] }),
-            /* @__PURE__ */ jsxs22("div", { className: "flex gap-sm justify-end", children: [
-              /* @__PURE__ */ jsx23(
+            /* @__PURE__ */ jsxs24("div", { className: "flex gap-sm justify-end", children: [
+              /* @__PURE__ */ jsx25(
                 "button",
                 {
                   onClick: onCancel,
@@ -1916,7 +2186,7 @@ var StatusChangeConfirmationModal = ({
                   children: "Cancel"
                 }
               ),
-              /* @__PURE__ */ jsx23(
+              /* @__PURE__ */ jsx25(
                 "button",
                 {
                   onClick: onConfirm,
@@ -1937,8 +2207,8 @@ var FindingCard = ({
   onMarkAddressed,
   onMarkInvalidated
 }) => {
-  const [showStatusModal, setShowStatusModal] = useState9(null);
-  const [isLoading, setIsLoading] = useState9(false);
+  const [showStatusModal, setShowStatusModal] = useState11(null);
+  const [isLoading, setIsLoading] = useState11(false);
   const handleStatusChange = async (newStatus) => {
     setIsLoading(true);
     try {
@@ -1954,21 +2224,21 @@ var FindingCard = ({
   };
   const canMarkAddressed = finding.status === "open" || finding.status === "invalidated";
   const canMarkInvalidated = finding.status === "open" || finding.status === "addressed";
-  return /* @__PURE__ */ jsxs22(Fragment, { children: [
-    /* @__PURE__ */ jsxs22("div", { className: "p-md bg-card rounded border border-border", children: [
-      /* @__PURE__ */ jsxs22("div", { className: "flex items-start justify-between gap-md mb-md", children: [
-        /* @__PURE__ */ jsxs22("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx23("h4", { className: "text-body font-bold", children: finding.summary }),
-          /* @__PURE__ */ jsx23("p", { className: "text-label text-foreground/70 mt-xs", children: formatDistanceToNow(new Date(finding.created_at), { addSuffix: true }) })
+  return /* @__PURE__ */ jsxs24(Fragment2, { children: [
+    /* @__PURE__ */ jsxs24("div", { className: "p-md bg-card rounded border border-border", children: [
+      /* @__PURE__ */ jsxs24("div", { className: "flex items-start justify-between gap-md mb-md", children: [
+        /* @__PURE__ */ jsxs24("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx25("h4", { className: "text-body font-bold", children: finding.summary }),
+          /* @__PURE__ */ jsx25("p", { className: "text-label text-foreground/70 mt-xs", children: formatDistanceToNow(new Date(finding.created_at), { addSuffix: true }) })
         ] }),
-        /* @__PURE__ */ jsxs22("div", { className: "flex gap-xs flex-shrink-0", children: [
-          /* @__PURE__ */ jsx23(ModeBadge, { mode: finding.mode }),
-          /* @__PURE__ */ jsx23(FindingStatusBadge, { status: finding.status })
+        /* @__PURE__ */ jsxs24("div", { className: "flex gap-xs flex-shrink-0", children: [
+          /* @__PURE__ */ jsx25(ModeBadge, { mode: finding.mode }),
+          /* @__PURE__ */ jsx25(FindingStatusBadge, { status: finding.status })
         ] })
       ] }),
-      finding.evidence_refs.length > 0 && /* @__PURE__ */ jsxs22("div", { className: "mt-md", children: [
-        /* @__PURE__ */ jsx23("p", { className: "text-label font-bold mb-xs", children: "Evidence:" }),
-        /* @__PURE__ */ jsx23("div", { className: "flex flex-wrap gap-xs", children: finding.evidence_refs.map((ref, idx) => /* @__PURE__ */ jsx23(
+      finding.evidence_refs.length > 0 && /* @__PURE__ */ jsxs24("div", { className: "mt-md", children: [
+        /* @__PURE__ */ jsx25("p", { className: "text-label font-bold mb-xs", children: "Evidence:" }),
+        /* @__PURE__ */ jsx25("div", { className: "flex flex-wrap gap-xs", children: finding.evidence_refs.map((ref, idx) => /* @__PURE__ */ jsx25(
           "span",
           {
             className: "inline-block px-xs py-xs rounded-full bg-foreground/10 text-label text-foreground/70 whitespace-nowrap",
@@ -1978,13 +2248,13 @@ var FindingCard = ({
           idx
         )) })
       ] }),
-      finding.status_history.length > 0 && /* @__PURE__ */ jsxs22("details", { className: "mt-md", children: [
-        /* @__PURE__ */ jsxs22("summary", { className: "text-label font-bold cursor-pointer text-foreground/70", children: [
+      finding.status_history.length > 0 && /* @__PURE__ */ jsxs24("details", { className: "mt-md", children: [
+        /* @__PURE__ */ jsxs24("summary", { className: "text-label font-bold cursor-pointer text-foreground/70", children: [
           "Status history (",
           finding.status_history.length,
           " changes)"
         ] }),
-        /* @__PURE__ */ jsx23("div", { className: "mt-sm space-y-xs ml-md", children: finding.status_history.map((transition, idx) => /* @__PURE__ */ jsxs22("p", { className: "text-label text-foreground/50", children: [
+        /* @__PURE__ */ jsx25("div", { className: "mt-sm space-y-xs ml-md", children: finding.status_history.map((transition, idx) => /* @__PURE__ */ jsxs24("p", { className: "text-label text-foreground/50", children: [
           transition.from || "Created",
           " \u2192 ",
           transition.to,
@@ -1993,8 +2263,8 @@ var FindingCard = ({
           new Date(transition.at).toLocaleString()
         ] }, idx)) })
       ] }),
-      /* @__PURE__ */ jsxs22("div", { className: "flex gap-xs mt-md flex-wrap", children: [
-        canMarkAddressed && /* @__PURE__ */ jsx23(
+      /* @__PURE__ */ jsxs24("div", { className: "flex gap-xs mt-md flex-wrap", children: [
+        canMarkAddressed && /* @__PURE__ */ jsx25(
           "button",
           {
             onClick: () => setShowStatusModal("addressed"),
@@ -2004,7 +2274,7 @@ var FindingCard = ({
             children: "Mark addressed"
           }
         ),
-        canMarkInvalidated && /* @__PURE__ */ jsx23(
+        canMarkInvalidated && /* @__PURE__ */ jsx25(
           "button",
           {
             onClick: () => setShowStatusModal("invalidated"),
@@ -2016,7 +2286,7 @@ var FindingCard = ({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsx23(
+    /* @__PURE__ */ jsx25(
       StatusChangeConfirmationModal,
       {
         open: showStatusModal !== null,
@@ -2031,10 +2301,10 @@ var FindingCard = ({
 };
 
 // src/ui/memory/SchedulesSection.tsx
-import { useState as useState12 } from "react";
+import { useState as useState14 } from "react";
 
 // src/ui/memory/ScheduleRoutineRow.tsx
-import { useState as useState10 } from "react";
+import { useState as useState12 } from "react";
 
 // src/memory/routine.ts
 function validateCronExpression(cronString) {
@@ -2136,14 +2406,14 @@ function cronToReadable(cronString) {
 }
 
 // src/ui/memory/ScheduleRoutineRow.tsx
-import { jsx as jsx24, jsxs as jsxs23 } from "react/jsx-runtime";
+import { jsx as jsx26, jsxs as jsxs25 } from "react/jsx-runtime";
 var ScheduleRoutineRow = ({
   routine,
   onRunNow,
   onDisable
 }) => {
-  const [isRunning, setIsRunning] = useState10(false);
-  const [isDisabling, setIsDisabling] = useState10(false);
+  const [isRunning, setIsRunning] = useState12(false);
+  const [isDisabling, setIsDisabling] = useState12(false);
   const handleRunNow = async () => {
     setIsRunning(true);
     try {
@@ -2160,20 +2430,20 @@ var ScheduleRoutineRow = ({
       setIsDisabling(false);
     }
   };
-  return /* @__PURE__ */ jsx24("div", { className: "p-md bg-card rounded border border-border", children: /* @__PURE__ */ jsxs23("div", { className: "flex items-center justify-between gap-md flex-wrap", children: [
-    /* @__PURE__ */ jsxs23("div", { className: "flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsxs23("div", { className: "flex items-center gap-sm flex-wrap mb-xs", children: [
-        /* @__PURE__ */ jsx24("h4", { className: "text-body font-bold", children: routine.name }),
-        /* @__PURE__ */ jsx24(ModeBadge, { mode: routine.mode })
+  return /* @__PURE__ */ jsx26("div", { className: "p-md bg-card rounded border border-border", children: /* @__PURE__ */ jsxs25("div", { className: "flex items-center justify-between gap-md flex-wrap", children: [
+    /* @__PURE__ */ jsxs25("div", { className: "flex-1 min-w-0", children: [
+      /* @__PURE__ */ jsxs25("div", { className: "flex items-center gap-sm flex-wrap mb-xs", children: [
+        /* @__PURE__ */ jsx26("h4", { className: "text-body font-bold", children: routine.name }),
+        /* @__PURE__ */ jsx26(ModeBadge, { mode: routine.mode })
       ] }),
-      /* @__PURE__ */ jsx24("p", { className: "text-label text-foreground/70 mb-xs", children: cronToReadable(routine.cron) }),
-      routine.last_run_at ? /* @__PURE__ */ jsxs23("p", { className: "text-label text-foreground/70", children: [
+      /* @__PURE__ */ jsx26("p", { className: "text-label text-foreground/70 mb-xs", children: cronToReadable(routine.cron) }),
+      routine.last_run_at ? /* @__PURE__ */ jsxs25("p", { className: "text-label text-foreground/70", children: [
         "Last run: ",
         formatDistanceToNow(new Date(routine.last_run_at), { addSuffix: true })
-      ] }) : /* @__PURE__ */ jsx24("p", { className: "text-label text-foreground/70", children: "Never run" })
+      ] }) : /* @__PURE__ */ jsx26("p", { className: "text-label text-foreground/70", children: "Never run" })
     ] }),
-    /* @__PURE__ */ jsxs23("div", { className: "flex gap-xs flex-shrink-0", children: [
-      /* @__PURE__ */ jsx24(
+    /* @__PURE__ */ jsxs25("div", { className: "flex gap-xs flex-shrink-0", children: [
+      /* @__PURE__ */ jsx26(
         "button",
         {
           onClick: handleRunNow,
@@ -2183,7 +2453,7 @@ var ScheduleRoutineRow = ({
           children: isRunning ? "Running\u2026" : "Run check-in now"
         }
       ),
-      /* @__PURE__ */ jsx24(
+      /* @__PURE__ */ jsx26(
         "button",
         {
           onClick: handleDisable,
@@ -2198,21 +2468,21 @@ var ScheduleRoutineRow = ({
 };
 
 // src/ui/memory/ScheduleCreationForm.tsx
-import { useState as useState11 } from "react";
-import { jsx as jsx25, jsxs as jsxs24 } from "react/jsx-runtime";
+import { useState as useState13 } from "react";
+import { jsx as jsx27, jsxs as jsxs26 } from "react/jsx-runtime";
 var ScheduleCreationForm = ({
   companyId,
   onSubmit,
   onCancel
 }) => {
-  const [name, setName] = useState11("");
-  const [mode, setMode] = useState11("Assess");
-  const [frequencyPreset, setFrequencyPreset] = useState11(
+  const [name, setName] = useState13("");
+  const [mode, setMode] = useState13("Assess");
+  const [frequencyPreset, setFrequencyPreset] = useState13(
     "quarterly"
   );
-  const [customCron, setCustomCron] = useState11("");
-  const [cronError, setCronError] = useState11(null);
-  const [isSubmitting, setIsSubmitting] = useState11(false);
+  const [customCron, setCustomCron] = useState13("");
+  const [cronError, setCronError] = useState13(null);
+  const [isSubmitting, setIsSubmitting] = useState13(false);
   const getCron = () => {
     if (frequencyPreset === "quarterly") {
       return "0 9 1 1,4,7,10 *";
@@ -2245,19 +2515,19 @@ var ScheduleCreationForm = ({
       setIsSubmitting(false);
     }
   };
-  return /* @__PURE__ */ jsxs24(
+  return /* @__PURE__ */ jsxs26(
     "form",
     {
       onSubmit: handleSubmit,
       className: "p-lg bg-card rounded border border-border space-y-md",
       children: [
-        /* @__PURE__ */ jsx25("h3", { className: "text-heading font-bold", children: "Create schedule" }),
-        /* @__PURE__ */ jsxs24("div", { children: [
-          /* @__PURE__ */ jsxs24("label", { htmlFor: "routine-name", className: "text-label font-bold mb-xs block", children: [
+        /* @__PURE__ */ jsx27("h3", { className: "text-heading font-bold", children: "Create schedule" }),
+        /* @__PURE__ */ jsxs26("div", { children: [
+          /* @__PURE__ */ jsxs26("label", { htmlFor: "routine-name", className: "text-label font-bold mb-xs block", children: [
             "Routine name ",
-            /* @__PURE__ */ jsx25("span", { className: "text-destructive", children: "*" })
+            /* @__PURE__ */ jsx27("span", { className: "text-destructive", children: "*" })
           ] }),
-          /* @__PURE__ */ jsx25(
+          /* @__PURE__ */ jsx27(
             "input",
             {
               id: "routine-name",
@@ -2272,16 +2542,16 @@ var ScheduleCreationForm = ({
               "aria-label": "Routine name"
             }
           ),
-          /* @__PURE__ */ jsxs24("p", { className: "text-label text-foreground/70 mt-xs", children: [
+          /* @__PURE__ */ jsxs26("p", { className: "text-label text-foreground/70 mt-xs", children: [
             name.length,
             "/100 characters"
           ] })
         ] }),
-        /* @__PURE__ */ jsx25("div", { children: /* @__PURE__ */ jsxs24("fieldset", { children: [
-          /* @__PURE__ */ jsx25("legend", { className: "text-label font-bold mb-sm block", children: "Which mode?" }),
-          /* @__PURE__ */ jsxs24("div", { className: "space-y-xs", children: [
-            /* @__PURE__ */ jsxs24("label", { className: "flex items-center gap-sm cursor-pointer", children: [
-              /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsx27("div", { children: /* @__PURE__ */ jsxs26("fieldset", { children: [
+          /* @__PURE__ */ jsx27("legend", { className: "text-label font-bold mb-sm block", children: "Which mode?" }),
+          /* @__PURE__ */ jsxs26("div", { className: "space-y-xs", children: [
+            /* @__PURE__ */ jsxs26("label", { className: "flex items-center gap-sm cursor-pointer", children: [
+              /* @__PURE__ */ jsx27(
                 "input",
                 {
                   type: "radio",
@@ -2292,10 +2562,10 @@ var ScheduleCreationForm = ({
                   "aria-label": "Run Assess drift review"
                 }
               ),
-              /* @__PURE__ */ jsx25("span", { className: "text-body", children: "Assess drift review" })
+              /* @__PURE__ */ jsx27("span", { className: "text-body", children: "Assess drift review" })
             ] }),
-            /* @__PURE__ */ jsxs24("label", { className: "flex items-center gap-sm cursor-pointer", children: [
-              /* @__PURE__ */ jsx25(
+            /* @__PURE__ */ jsxs26("label", { className: "flex items-center gap-sm cursor-pointer", children: [
+              /* @__PURE__ */ jsx27(
                 "input",
                 {
                   type: "radio",
@@ -2306,15 +2576,15 @@ var ScheduleCreationForm = ({
                   "aria-label": "Run Revive stall diagnosis"
                 }
               ),
-              /* @__PURE__ */ jsx25("span", { className: "text-body", children: "Revive stall diagnosis" })
+              /* @__PURE__ */ jsx27("span", { className: "text-body", children: "Revive stall diagnosis" })
             ] })
           ] })
         ] }) }),
-        /* @__PURE__ */ jsx25("div", { children: /* @__PURE__ */ jsxs24("fieldset", { children: [
-          /* @__PURE__ */ jsx25("legend", { className: "text-label font-bold mb-sm block", children: "When?" }),
-          /* @__PURE__ */ jsxs24("div", { className: "space-y-xs", children: [
-            /* @__PURE__ */ jsxs24("label", { className: "flex items-center gap-sm cursor-pointer", children: [
-              /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsx27("div", { children: /* @__PURE__ */ jsxs26("fieldset", { children: [
+          /* @__PURE__ */ jsx27("legend", { className: "text-label font-bold mb-sm block", children: "When?" }),
+          /* @__PURE__ */ jsxs26("div", { className: "space-y-xs", children: [
+            /* @__PURE__ */ jsxs26("label", { className: "flex items-center gap-sm cursor-pointer", children: [
+              /* @__PURE__ */ jsx27(
                 "input",
                 {
                   type: "radio",
@@ -2328,11 +2598,11 @@ var ScheduleCreationForm = ({
                   "aria-label": "Quarterly drift review"
                 }
               ),
-              /* @__PURE__ */ jsx25("span", { className: "text-body", children: "Quarterly drift review" }),
-              /* @__PURE__ */ jsx25("span", { className: "text-label text-foreground/50", children: "(9am, 1st of Q months)" })
+              /* @__PURE__ */ jsx27("span", { className: "text-body", children: "Quarterly drift review" }),
+              /* @__PURE__ */ jsx27("span", { className: "text-label text-foreground/50", children: "(9am, 1st of Q months)" })
             ] }),
-            /* @__PURE__ */ jsxs24("label", { className: "flex items-center gap-sm cursor-pointer", children: [
-              /* @__PURE__ */ jsx25(
+            /* @__PURE__ */ jsxs26("label", { className: "flex items-center gap-sm cursor-pointer", children: [
+              /* @__PURE__ */ jsx27(
                 "input",
                 {
                   type: "radio",
@@ -2346,11 +2616,11 @@ var ScheduleCreationForm = ({
                   "aria-label": "Monthly trust-gate review"
                 }
               ),
-              /* @__PURE__ */ jsx25("span", { className: "text-body", children: "Monthly trust-gate review" }),
-              /* @__PURE__ */ jsx25("span", { className: "text-label text-foreground/50", children: "(9am, 1st of month)" })
+              /* @__PURE__ */ jsx27("span", { className: "text-body", children: "Monthly trust-gate review" }),
+              /* @__PURE__ */ jsx27("span", { className: "text-label text-foreground/50", children: "(9am, 1st of month)" })
             ] }),
-            /* @__PURE__ */ jsxs24("label", { className: "flex items-center gap-sm cursor-pointer", children: [
-              /* @__PURE__ */ jsx25(
+            /* @__PURE__ */ jsxs26("label", { className: "flex items-center gap-sm cursor-pointer", children: [
+              /* @__PURE__ */ jsx27(
                 "input",
                 {
                   type: "radio",
@@ -2361,16 +2631,16 @@ var ScheduleCreationForm = ({
                   "aria-label": "Custom cron expression"
                 }
               ),
-              /* @__PURE__ */ jsx25("span", { className: "text-body", children: "Custom cron expression" })
+              /* @__PURE__ */ jsx27("span", { className: "text-body", children: "Custom cron expression" })
             ] })
           ] })
         ] }) }),
-        frequencyPreset === "custom" && /* @__PURE__ */ jsxs24("div", { children: [
-          /* @__PURE__ */ jsxs24("label", { htmlFor: "custom-cron", className: "text-label font-bold mb-xs block", children: [
+        frequencyPreset === "custom" && /* @__PURE__ */ jsxs26("div", { children: [
+          /* @__PURE__ */ jsxs26("label", { htmlFor: "custom-cron", className: "text-label font-bold mb-xs block", children: [
             "Cron expression (5-field standard) ",
-            /* @__PURE__ */ jsx25("span", { className: "text-destructive", children: "*" })
+            /* @__PURE__ */ jsx27("span", { className: "text-destructive", children: "*" })
           ] }),
-          /* @__PURE__ */ jsx25(
+          /* @__PURE__ */ jsx27(
             "input",
             {
               id: "custom-cron",
@@ -2387,11 +2657,11 @@ var ScheduleCreationForm = ({
               "aria-describedby": cronError ? "cron-error" : void 0
             }
           ),
-          cronError && /* @__PURE__ */ jsx25("p", { id: "cron-error", className: "text-label text-destructive mt-xs", children: cronError }),
-          /* @__PURE__ */ jsx25("p", { className: "text-label text-foreground/70 mt-xs", children: "Format: minute hour day month weekday. E.g., '0 9 1 * *' = first of every month at 9am" })
+          cronError && /* @__PURE__ */ jsx27("p", { id: "cron-error", className: "text-label text-destructive mt-xs", children: cronError }),
+          /* @__PURE__ */ jsx27("p", { className: "text-label text-foreground/70 mt-xs", children: "Format: minute hour day month weekday. E.g., '0 9 1 * *' = first of every month at 9am" })
         ] }),
-        /* @__PURE__ */ jsxs24("div", { className: "flex gap-sm justify-end pt-md border-t border-border", children: [
-          /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsxs26("div", { className: "flex gap-sm justify-end pt-md border-t border-border", children: [
+          /* @__PURE__ */ jsx27(
             "button",
             {
               type: "button",
@@ -2401,7 +2671,7 @@ var ScheduleCreationForm = ({
               children: "Cancel"
             }
           ),
-          /* @__PURE__ */ jsx25(
+          /* @__PURE__ */ jsx27(
             "button",
             {
               type: "submit",
@@ -2417,10 +2687,10 @@ var ScheduleCreationForm = ({
 };
 
 // src/ui/memory/SchedulesSection.tsx
-import { jsx as jsx26, jsxs as jsxs25 } from "react/jsx-runtime";
+import { jsx as jsx28, jsxs as jsxs27 } from "react/jsx-runtime";
 var SchedulesSection = ({ companyId }) => {
   const { history, deleteRoutine, runRoutineNow, createRoutine } = useMemory(companyId);
-  const [showForm, setShowForm] = useState12(false);
+  const [showForm, setShowForm] = useState14(false);
   const routines = history?.routines || [];
   const handleDelete = async (routineId) => {
     const routine = routines.find((r) => r.id === routineId);
@@ -2435,12 +2705,12 @@ var SchedulesSection = ({ companyId }) => {
     await createRoutine(payload.name, payload.mode, payload.cron);
     setShowForm(false);
   };
-  return /* @__PURE__ */ jsxs25("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsxs25("div", { children: [
-      /* @__PURE__ */ jsx26("h3", { className: "text-heading font-bold mb-xs", children: "Scheduled check-ins" }),
-      /* @__PURE__ */ jsx26("p", { className: "text-label text-foreground/70", children: "These routines automatically trigger Compass modes on a schedule." })
+  return /* @__PURE__ */ jsxs27("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsxs27("div", { children: [
+      /* @__PURE__ */ jsx28("h3", { className: "text-heading font-bold mb-xs", children: "Scheduled check-ins" }),
+      /* @__PURE__ */ jsx28("p", { className: "text-label text-foreground/70", children: "These routines automatically trigger Compass modes on a schedule." })
     ] }),
-    routines.length === 0 && !showForm ? /* @__PURE__ */ jsx26("p", { className: "text-label text-foreground/70 py-md", children: "No scheduled check-ins yet. Create one to auto-trigger Assess or Revive on a schedule." }) : /* @__PURE__ */ jsx26("div", { className: "space-y-sm", children: routines.map((routine) => /* @__PURE__ */ jsx26(
+    routines.length === 0 && !showForm ? /* @__PURE__ */ jsx28("p", { className: "text-label text-foreground/70 py-md", children: "No scheduled check-ins yet. Create one to auto-trigger Assess or Revive on a schedule." }) : /* @__PURE__ */ jsx28("div", { className: "space-y-sm", children: routines.map((routine) => /* @__PURE__ */ jsx28(
       ScheduleRoutineRow,
       {
         routine,
@@ -2449,14 +2719,14 @@ var SchedulesSection = ({ companyId }) => {
       },
       routine.id
     )) }),
-    showForm ? /* @__PURE__ */ jsx26(
+    showForm ? /* @__PURE__ */ jsx28(
       ScheduleCreationForm,
       {
         companyId,
         onSubmit: handleCreateSubmit,
         onCancel: () => setShowForm(false)
       }
-    ) : /* @__PURE__ */ jsx26(
+    ) : /* @__PURE__ */ jsx28(
       "button",
       {
         onClick: () => setShowForm(true),
@@ -2468,12 +2738,12 @@ var SchedulesSection = ({ companyId }) => {
 };
 
 // src/ui/memory/HistoryPanel.tsx
-import { Fragment as Fragment2, jsx as jsx27, jsxs as jsxs26 } from "react/jsx-runtime";
+import { Fragment as Fragment3, jsx as jsx29, jsxs as jsxs28 } from "react/jsx-runtime";
 var HistoryPanel = ({ companyId }) => {
   const { history, loading, error, refetch, updateFindingStatus } = useMemory(companyId);
-  const [activeTab, setActiveTab] = useState13("findings");
-  const [statusFilter, setStatusFilter] = useState13("all");
-  const [modeFilter, setModeFilter] = useState13("all");
+  const [activeTab, setActiveTab] = useState15("findings");
+  const [statusFilter, setStatusFilter] = useState15("all");
+  const [modeFilter, setModeFilter] = useState15("all");
   const groupedFindings = useMemo3(() => {
     if (!history?.findings) return {};
     const filtered = history.findings.filter((f) => {
@@ -2500,13 +2770,13 @@ var HistoryPanel = ({ companyId }) => {
   };
   const getFinding = (id) => history?.findings.find((f) => f.id === id);
   if (loading && !history) {
-    return /* @__PURE__ */ jsx27("div", { className: "flex items-center justify-center p-lg", children: /* @__PURE__ */ jsx27("div", { className: "text-label text-foreground/70", children: "Loading engagement history\u2026" }) });
+    return /* @__PURE__ */ jsx29("div", { className: "flex items-center justify-center p-lg", children: /* @__PURE__ */ jsx29("div", { className: "text-label text-foreground/70", children: "Loading engagement history\u2026" }) });
   }
   if (error) {
-    return /* @__PURE__ */ jsx27("div", { className: "p-lg", children: /* @__PURE__ */ jsxs26("div", { className: "p-md bg-card rounded border border-destructive/50", children: [
-      /* @__PURE__ */ jsx27("h4", { className: "text-body font-bold text-destructive", children: "Error loading history" }),
-      /* @__PURE__ */ jsx27("p", { className: "text-label text-foreground/70 mt-sm", children: error }),
-      /* @__PURE__ */ jsx27(
+    return /* @__PURE__ */ jsx29("div", { className: "p-lg", children: /* @__PURE__ */ jsxs28("div", { className: "p-md bg-card rounded border border-destructive/50", children: [
+      /* @__PURE__ */ jsx29("h4", { className: "text-body font-bold text-destructive", children: "Error loading history" }),
+      /* @__PURE__ */ jsx29("p", { className: "text-label text-foreground/70 mt-sm", children: error }),
+      /* @__PURE__ */ jsx29(
         "button",
         {
           onClick: refetch,
@@ -2518,9 +2788,9 @@ var HistoryPanel = ({ companyId }) => {
   }
   const findingCount = history?.findings?.length || 0;
   const routineCount = history?.routines?.length || 0;
-  return /* @__PURE__ */ jsxs26("div", { className: "flex flex-col h-full", children: [
-    /* @__PURE__ */ jsxs26("div", { className: "sticky top-0 bg-background border-b border-border px-lg py-sm flex gap-md z-10", children: [
-      /* @__PURE__ */ jsxs26(
+  return /* @__PURE__ */ jsxs28("div", { className: "flex flex-col h-full", children: [
+    /* @__PURE__ */ jsxs28("div", { className: "sticky top-0 bg-background border-b border-border px-lg py-sm flex gap-md z-10", children: [
+      /* @__PURE__ */ jsxs28(
         "button",
         {
           onClick: () => setActiveTab("findings"),
@@ -2532,7 +2802,7 @@ var HistoryPanel = ({ companyId }) => {
           ]
         }
       ),
-      /* @__PURE__ */ jsxs26(
+      /* @__PURE__ */ jsxs28(
         "button",
         {
           onClick: () => setActiveTab("schedules"),
@@ -2545,11 +2815,11 @@ var HistoryPanel = ({ companyId }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx27("div", { className: "flex-1 overflow-y-auto", children: activeTab === "findings" ? /* @__PURE__ */ jsxs26(Fragment2, { children: [
-      /* @__PURE__ */ jsx27("div", { className: "sticky top-12 bg-background border-b border-border px-lg py-md z-10", children: /* @__PURE__ */ jsxs26("div", { className: "space-y-sm", children: [
-        /* @__PURE__ */ jsxs26("div", { children: [
-          /* @__PURE__ */ jsx27("label", { className: "text-label font-bold mb-xs block", children: "Status" }),
-          /* @__PURE__ */ jsx27("div", { className: "flex flex-wrap gap-xs", children: ["all", "open", "addressed", "invalidated"].map((s) => /* @__PURE__ */ jsx27(
+    /* @__PURE__ */ jsx29("div", { className: "flex-1 overflow-y-auto", children: activeTab === "findings" ? /* @__PURE__ */ jsxs28(Fragment3, { children: [
+      /* @__PURE__ */ jsx29("div", { className: "sticky top-12 bg-background border-b border-border px-lg py-md z-10", children: /* @__PURE__ */ jsxs28("div", { className: "space-y-sm", children: [
+        /* @__PURE__ */ jsxs28("div", { children: [
+          /* @__PURE__ */ jsx29("label", { className: "text-label font-bold mb-xs block", children: "Status" }),
+          /* @__PURE__ */ jsx29("div", { className: "flex flex-wrap gap-xs", children: ["all", "open", "addressed", "invalidated"].map((s) => /* @__PURE__ */ jsx29(
             "button",
             {
               onClick: () => setStatusFilter(s),
@@ -2559,10 +2829,10 @@ var HistoryPanel = ({ companyId }) => {
             s
           )) })
         ] }),
-        /* @__PURE__ */ jsxs26("div", { children: [
-          /* @__PURE__ */ jsx27("label", { className: "text-label font-bold mb-xs block", children: "Mode" }),
-          /* @__PURE__ */ jsx27("div", { className: "flex flex-wrap gap-xs", children: ["all", "Found", "Assess", "Revive", "Reposition"].map(
-            (m) => /* @__PURE__ */ jsx27(
+        /* @__PURE__ */ jsxs28("div", { children: [
+          /* @__PURE__ */ jsx29("label", { className: "text-label font-bold mb-xs block", children: "Mode" }),
+          /* @__PURE__ */ jsx29("div", { className: "flex flex-wrap gap-xs", children: ["all", "Found", "Assess", "Revive", "Reposition"].map(
+            (m) => /* @__PURE__ */ jsx29(
               "button",
               {
                 onClick: () => setModeFilter(m),
@@ -2574,17 +2844,17 @@ var HistoryPanel = ({ companyId }) => {
           ) })
         ] })
       ] }) }),
-      findingCount === 0 ? /* @__PURE__ */ jsxs26("div", { className: "p-lg text-center", children: [
-        /* @__PURE__ */ jsx27("h4", { className: "text-heading font-bold mb-sm", children: "No engagement history yet" }),
-        /* @__PURE__ */ jsx27("p", { className: "text-body text-foreground/70", children: "Findings appear here after you Found, Assess, Revive, or Reposition a company." })
-      ] }) : Object.keys(groupedFindings).length === 0 ? /* @__PURE__ */ jsx27("div", { className: "p-lg text-center", children: /* @__PURE__ */ jsx27("p", { className: "text-body text-foreground/70", children: "No findings match the selected filters." }) }) : /* @__PURE__ */ jsx27("div", { className: "p-lg space-y-lg", children: Object.entries(groupedFindings).map(([date, findings]) => /* @__PURE__ */ jsxs26("div", { children: [
-        /* @__PURE__ */ jsx27("p", { className: "text-label font-bold text-foreground/70 mb-sm", children: new Date(date).toLocaleDateString("en-US", {
+      findingCount === 0 ? /* @__PURE__ */ jsxs28("div", { className: "p-lg text-center", children: [
+        /* @__PURE__ */ jsx29("h4", { className: "text-heading font-bold mb-sm", children: "No engagement history yet" }),
+        /* @__PURE__ */ jsx29("p", { className: "text-body text-foreground/70", children: "Findings appear here after you Found, Assess, Revive, or Reposition a company." })
+      ] }) : Object.keys(groupedFindings).length === 0 ? /* @__PURE__ */ jsx29("div", { className: "p-lg text-center", children: /* @__PURE__ */ jsx29("p", { className: "text-body text-foreground/70", children: "No findings match the selected filters." }) }) : /* @__PURE__ */ jsx29("div", { className: "p-lg space-y-lg", children: Object.entries(groupedFindings).map(([date, findings]) => /* @__PURE__ */ jsxs28("div", { children: [
+        /* @__PURE__ */ jsx29("p", { className: "text-label font-bold text-foreground/70 mb-sm", children: new Date(date).toLocaleDateString("en-US", {
           weekday: "short",
           year: "numeric",
           month: "short",
           day: "numeric"
         }) }),
-        /* @__PURE__ */ jsx27("div", { className: "space-y-sm", children: findings.map((finding) => /* @__PURE__ */ jsx27(
+        /* @__PURE__ */ jsx29("div", { className: "space-y-sm", children: findings.map((finding) => /* @__PURE__ */ jsx29(
           FindingCard,
           {
             finding,
@@ -2600,20 +2870,20 @@ var HistoryPanel = ({ companyId }) => {
       ] }, date)) })
     ] }) : (
       /* Schedules Tab */
-      /* @__PURE__ */ jsx27("div", { className: "p-lg", children: /* @__PURE__ */ jsx27(SchedulesSection, { companyId }) })
+      /* @__PURE__ */ jsx29("div", { className: "p-lg", children: /* @__PURE__ */ jsx29(SchedulesSection, { companyId }) })
     ) })
   ] });
 };
 
 // src/ui/memory/HistoryTabBadge.tsx
-import { jsxs as jsxs27 } from "react/jsx-runtime";
+import { jsxs as jsxs29 } from "react/jsx-runtime";
 var HistoryTabBadge = ({
   count,
   hasOpenFindings = false
 }) => {
   if (count === 0) return null;
   const label = count === 1 ? "1 finding" : `${count} findings`;
-  return /* @__PURE__ */ jsxs27(
+  return /* @__PURE__ */ jsxs29(
     "span",
     {
       className: `inline-block ml-xs px-xs py-xs rounded-full text-label font-bold ${hasOpenFindings ? "bg-accent/20 text-accent" : "bg-foreground/10 text-foreground/70"}`,
@@ -2629,7 +2899,7 @@ var HistoryTabBadge = ({
 };
 
 // src/ui/memory/ContextRefreshBanner.tsx
-import { jsx as jsx28, jsxs as jsxs28 } from "react/jsx-runtime";
+import { jsx as jsx30, jsxs as jsxs30 } from "react/jsx-runtime";
 var ContextRefreshBanner = ({
   priorOpenFindingsCount,
   deduplicatedCount = 0,
@@ -2638,10 +2908,10 @@ var ContextRefreshBanner = ({
   if (priorOpenFindingsCount === 0) return null;
   const findingLabel = priorOpenFindingsCount === 1 ? "finding" : "findings";
   const deduplicationText = deduplicatedCount > 0 ? ` (${deduplicatedCount} ${deduplicatedCount === 1 ? "is" : "are"} ${deduplicatedCount === 1 ? "a" : ""} repeat${deduplicatedCount === 1 ? "" : "s"} of earlier issues)` : "";
-  return /* @__PURE__ */ jsx28("div", { className: "p-md bg-card border-l-4 border-accent rounded mb-md", children: /* @__PURE__ */ jsxs28("p", { className: "text-body text-foreground/90", children: [
+  return /* @__PURE__ */ jsx30("div", { className: "p-md bg-card border-l-4 border-accent rounded mb-md", children: /* @__PURE__ */ jsxs30("p", { className: "text-body text-foreground/90", children: [
     "Assessed against",
     " ",
-    onViewFindings ? /* @__PURE__ */ jsxs28(
+    onViewFindings ? /* @__PURE__ */ jsxs30(
       "button",
       {
         onClick: onViewFindings,
@@ -2654,7 +2924,7 @@ var ContextRefreshBanner = ({
           " from prior audits"
         ]
       }
-    ) : /* @__PURE__ */ jsxs28("span", { className: "font-bold", children: [
+    ) : /* @__PURE__ */ jsxs30("span", { className: "font-bold", children: [
       priorOpenFindingsCount,
       " ",
       findingLabel,
@@ -2668,10 +2938,10 @@ var ContextRefreshBanner = ({
 };
 
 // src/ui/memory/PriorFindingsLink.tsx
-import { jsx as jsx29 } from "react/jsx-runtime";
+import { jsx as jsx31 } from "react/jsx-runtime";
 
 // src/ui/assess/AssessPanel.tsx
-import { Fragment as Fragment3, jsx as jsx30, jsxs as jsxs29 } from "react/jsx-runtime";
+import { Fragment as Fragment4, jsx as jsx32, jsxs as jsxs31 } from "react/jsx-runtime";
 function AssessPanel({
   companyId,
   companyName,
@@ -2680,16 +2950,16 @@ function AssessPanel({
   const runDriftAuditAction = usePluginAction3("runDriftAudit");
   const applyAmendmentsAction = usePluginAction3("applyAmendments");
   const { run, isLoading: isLoadingState, saveDriftReport, setItemAccepted, setApprovalRouting: updateStateRouting, clearRun, getAcceptedItems } = useAssessRunState(companyId);
-  const [panelState, setPanelState] = useState14("empty");
-  const [runProgress, setRunProgress] = useState14(0);
-  const [applyStep, setApplyStep] = useState14("preflight");
-  const [applyProgress, setApplyProgress] = useState14({});
-  const [applyError, setApplyError] = useState14(null);
-  const [errorsList, setErrorsList] = useState14([]);
-  const [showRoutingModal, setShowRoutingModal] = useState14(false);
-  const [approvalRouting, setLocalApprovalRouting] = useState14("founder");
-  const [waitingApprovalTime, setWaitingApprovalTime] = useState14("");
-  useEffect6(() => {
+  const [panelState, setPanelState] = useState16("empty");
+  const [runProgress, setRunProgress] = useState16(0);
+  const [applyStep, setApplyStep] = useState16("preflight");
+  const [applyProgress, setApplyProgress] = useState16({});
+  const [applyError, setApplyError] = useState16(null);
+  const [errorsList, setErrorsList] = useState16([]);
+  const [showRoutingModal, setShowRoutingModal] = useState16(false);
+  const [approvalRouting, setLocalApprovalRouting] = useState16("founder");
+  const [waitingApprovalTime, setWaitingApprovalTime] = useState16("");
+  useEffect7(() => {
     if (isLoadingState) return;
     if (run && run.driftReport) {
       setPanelState("report");
@@ -2799,13 +3069,24 @@ function AssessPanel({
     [run, updateStateRouting]
   );
   const acceptedCount = run ? getAcceptedItems().length : 0;
-  return /* @__PURE__ */ jsxs29("div", { className: "h-full flex flex-col bg-background", children: [
-    /* @__PURE__ */ jsxs29("div", { className: "border-b border-border p-lg space-y-md flex-shrink-0", children: [
-      /* @__PURE__ */ jsx30("div", { className: "flex items-start justify-between gap-md", children: /* @__PURE__ */ jsxs29("div", { children: [
-        /* @__PURE__ */ jsx30("h2", { className: "text-display font-bold", children: companyName }),
-        /* @__PURE__ */ jsx30("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "Audit your company's recent work against your vision document. This helps you stay aligned as you grow." })
+  return /* @__PURE__ */ jsxs31("div", { className: "h-full flex flex-col bg-background", children: [
+    /* @__PURE__ */ jsxs31("div", { className: "border-b border-border p-lg space-y-md flex-shrink-0", children: [
+      /* @__PURE__ */ jsx32("div", { className: "flex items-start justify-between gap-md", children: /* @__PURE__ */ jsxs31("div", { children: [
+        /* @__PURE__ */ jsxs31("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx32("h2", { className: "text-display font-bold", children: companyName }),
+          /* @__PURE__ */ jsx32(
+            HelpTip,
+            {
+              title: "What does Assess mode do?",
+              body: "Assess compares your VISION.md against the last 30 days of agent activity, scores drift per section, and proposes amendments you can review and approve.",
+              details: "Drift scoring is deterministic (no LLM): activity counts per VISION section vs expected baseline. Amendments are suggested edits to VISION.md text \u2014 you approve, reject, or edit each one. Approved amendments cascade to agent briefings.",
+              size: "sm"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx32("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "Audit your company's recent work against your vision document. This helps you stay aligned as you grow." })
       ] }) }),
-      run && /* @__PURE__ */ jsxs29(
+      run && /* @__PURE__ */ jsxs31(
         "button",
         {
           onClick: () => setShowRoutingModal(true),
@@ -2813,26 +3094,26 @@ function AssessPanel({
           type: "button",
           children: [
             "Routing: ",
-            /* @__PURE__ */ jsx30("span", { className: "font-bold", children: run.approvalRouting })
+            /* @__PURE__ */ jsx32("span", { className: "font-bold", children: run.approvalRouting })
           ]
         }
       ),
-      /* @__PURE__ */ jsxs29("div", { className: "flex gap-md items-center", children: [
-        /* @__PURE__ */ jsxs29(
+      /* @__PURE__ */ jsxs31("div", { className: "flex gap-md items-center", children: [
+        /* @__PURE__ */ jsxs31(
           "button",
           {
             onClick: handleRunAudit,
             disabled: !visionExists || panelState === "running",
             className: "px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-xs",
-            title: !visionExists ? "Create a vision document first by running Found mode." : "",
+            title: !visionExists ? "Create a vision document first by running Found mode." : "Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments.",
             type: "button",
             children: [
-              panelState === "running" && /* @__PURE__ */ jsx30(Loader, { className: "h-4 w-4 animate-spin" }),
+              panelState === "running" && /* @__PURE__ */ jsx32(Loader, { className: "h-4 w-4 animate-spin" }),
               "Run a drift audit"
             ]
           }
         ),
-        run && panelState !== "running" && /* @__PURE__ */ jsx30(
+        run && panelState !== "running" && /* @__PURE__ */ jsx32(
           "button",
           {
             onClick: handleDiscardAudit,
@@ -2843,30 +3124,31 @@ function AssessPanel({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs29("div", { className: "flex-1 overflow-y-auto p-lg", children: [
-      panelState === "empty" && !isLoadingState && /* @__PURE__ */ jsxs29("div", { className: "text-center py-xl space-y-md", children: [
-        /* @__PURE__ */ jsx30("p", { className: "text-body font-normal text-foreground/70", children: "No drift audit in progress." }),
-        /* @__PURE__ */ jsx30(
+    /* @__PURE__ */ jsxs31("div", { className: "flex-1 overflow-y-auto p-lg", children: [
+      panelState === "empty" && !isLoadingState && /* @__PURE__ */ jsxs31("div", { className: "text-center py-xl space-y-md", children: [
+        /* @__PURE__ */ jsx32("p", { className: "text-body font-normal text-foreground/70", children: "No drift audit in progress." }),
+        /* @__PURE__ */ jsx32(
           "button",
           {
             onClick: handleRunAudit,
             disabled: !visionExists,
+            title: "Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments.",
             className: "px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body inline-block",
             type: "button",
             children: "Run a drift audit"
           }
         )
       ] }),
-      panelState === "running" && /* @__PURE__ */ jsx30("div", { className: "flex items-center justify-center py-xl", children: /* @__PURE__ */ jsxs29("div", { className: "text-center space-y-md", children: [
-        /* @__PURE__ */ jsx30(Loader, { className: "h-8 w-8 animate-spin text-accent mx-auto" }),
-        /* @__PURE__ */ jsxs29("p", { className: "text-body font-normal", children: [
+      panelState === "running" && /* @__PURE__ */ jsx32("div", { className: "flex items-center justify-center py-xl", children: /* @__PURE__ */ jsxs31("div", { className: "text-center space-y-md", children: [
+        /* @__PURE__ */ jsx32(Loader, { className: "h-8 w-8 animate-spin text-accent mx-auto" }),
+        /* @__PURE__ */ jsxs31("p", { className: "text-body font-normal", children: [
           "Detecting drift\u2026 ",
           runProgress,
           "%"
         ] })
       ] }) }),
-      panelState === "report" && run && /* @__PURE__ */ jsxs29(Fragment3, { children: [
-        run.driftReport && /* @__PURE__ */ jsx30(
+      panelState === "report" && run && /* @__PURE__ */ jsxs31(Fragment4, { children: [
+        run.driftReport && /* @__PURE__ */ jsx32(
           ContextRefreshBanner,
           {
             priorOpenFindingsCount: run.driftReport?.contextRefreshPreamble?.priorOpenFindingsCount || 0,
@@ -2876,7 +3158,7 @@ function AssessPanel({
             }
           }
         ),
-        /* @__PURE__ */ jsx30(
+        /* @__PURE__ */ jsx32(
           DriftReportPanel,
           {
             report: run.driftReport,
@@ -2886,12 +3168,12 @@ function AssessPanel({
           }
         )
       ] }),
-      panelState === "applying" && /* @__PURE__ */ jsx30(ApplyProgress, { step: applyStep, progress: applyProgress }),
-      panelState === "complete" && /* @__PURE__ */ jsxs29("div", { className: "bg-accent/10 border border-accent rounded p-lg space-y-md", children: [
-        /* @__PURE__ */ jsx30("p", { className: "text-body font-bold text-accent", children: "\u2713 Amendments applied!" }),
-        /* @__PURE__ */ jsx30("p", { className: "text-label font-normal text-foreground/70", children: "Your vision document has been updated and affected agents have been notified." })
+      panelState === "applying" && /* @__PURE__ */ jsx32(ApplyProgress, { step: applyStep, progress: applyProgress }),
+      panelState === "complete" && /* @__PURE__ */ jsxs31("div", { className: "bg-accent/10 border border-accent rounded p-lg space-y-md", children: [
+        /* @__PURE__ */ jsx32("p", { className: "text-body font-bold text-accent", children: "\u2713 Amendments applied!" }),
+        /* @__PURE__ */ jsx32("p", { className: "text-label font-normal text-foreground/70", children: "Your vision document has been updated and affected agents have been notified." })
       ] }),
-      panelState === "waiting-approval" && /* @__PURE__ */ jsx30(
+      panelState === "waiting-approval" && /* @__PURE__ */ jsx32(
         ApprovingWaitingState,
         {
           submittedAt: waitingApprovalTime,
@@ -2899,7 +3181,7 @@ function AssessPanel({
           }
         }
       ),
-      panelState === "error" && /* @__PURE__ */ jsx30(
+      panelState === "error" && /* @__PURE__ */ jsx32(
         ApplyErrorDisplay,
         {
           step: applyStep,
@@ -2909,11 +3191,12 @@ function AssessPanel({
         }
       )
     ] }),
-    (panelState === "report" || panelState === "preview") && run && /* @__PURE__ */ jsx30("div", { className: "border-t border-border p-lg flex-shrink-0 bg-background", children: /* @__PURE__ */ jsxs29(
+    (panelState === "report" || panelState === "preview") && run && /* @__PURE__ */ jsx32("div", { className: "border-t border-border p-lg flex-shrink-0 bg-background", children: /* @__PURE__ */ jsxs31(
       "button",
       {
         onClick: handleApplyAmendments,
         disabled: acceptedCount === 0,
+        title: "Write the accepted amendments to VISION.md and route any approval-gated changes to the configured approver.",
         className: "w-full px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed",
         type: "button",
         children: [
@@ -2924,7 +3207,7 @@ function AssessPanel({
         ]
       }
     ) }),
-    showRoutingModal && run && /* @__PURE__ */ jsx30(
+    showRoutingModal && run && /* @__PURE__ */ jsx32(
       ApprovalRoutingModal,
       {
         currentRouting: run.approvalRouting,
@@ -2932,7 +3215,7 @@ function AssessPanel({
         onCancel: () => setShowRoutingModal(false)
       }
     ),
-    panelState === "confirming" && run && /* @__PURE__ */ jsx30(
+    panelState === "confirming" && run && /* @__PURE__ */ jsx32(
       ConfirmationModal,
       {
         vision: {},
@@ -2945,7 +3228,7 @@ function AssessPanel({
 }
 
 // src/ui/found/FoundPanel.tsx
-import { useState as useState17, useCallback as useCallback11, useEffect as useEffect8, useMemo as useMemo5 } from "react";
+import { useState as useState19, useCallback as useCallback11, useEffect as useEffect9, useMemo as useMemo5 } from "react";
 import {
   usePluginData,
   usePluginAction as usePluginAction4
@@ -3568,7 +3851,7 @@ import { useCallback as useCallback6, useMemo as useMemo4 } from "react";
 
 // src/ui/found/QuestionRenderer.tsx
 import { useCallback as useCallback5 } from "react";
-import { jsx as jsx31, jsxs as jsxs30 } from "react/jsx-runtime";
+import { jsx as jsx33, jsxs as jsxs32 } from "react/jsx-runtime";
 function QuestionRenderer({
   question,
   value,
@@ -3601,13 +3884,13 @@ function QuestionRenderer({
   const inputId = `question-${question.id}`;
   const errorId = `error-${question.id}`;
   const descriptionId = `description-${question.id}`;
-  return /* @__PURE__ */ jsxs30("div", { className: "space-y-sm", children: [
-    /* @__PURE__ */ jsxs30("label", { htmlFor: inputId, className: "text-label font-normal", children: [
+  return /* @__PURE__ */ jsxs32("div", { className: "space-y-sm", children: [
+    /* @__PURE__ */ jsxs32("label", { htmlFor: inputId, className: "text-label font-normal", children: [
       question.prompt,
-      question.required && /* @__PURE__ */ jsx31("span", { className: "text-accent ml-xs", "aria-label": "required", children: "*" }),
-      !question.required && /* @__PURE__ */ jsx31("span", { className: "text-foreground/70 ml-xs", children: "(Optional)" })
+      question.required && /* @__PURE__ */ jsx33("span", { className: "text-accent ml-xs", "aria-label": "required", children: "*" }),
+      !question.required && /* @__PURE__ */ jsx33("span", { className: "text-foreground/70 ml-xs", children: "(Optional)" })
     ] }),
-    question.type === "free-text-short" && /* @__PURE__ */ jsx31(
+    question.type === "free-text-short" && /* @__PURE__ */ jsx33(
       "input",
       {
         id: inputId,
@@ -3621,7 +3904,7 @@ function QuestionRenderer({
         className: "w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent"
       }
     ),
-    question.type === "free-text-long" && /* @__PURE__ */ jsx31(
+    question.type === "free-text-long" && /* @__PURE__ */ jsx33(
       "textarea",
       {
         id: inputId,
@@ -3635,10 +3918,10 @@ function QuestionRenderer({
         className: "w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
       }
     ),
-    question.type === "single-choice" && /* @__PURE__ */ jsxs30("fieldset", { className: "space-y-sm", children: [
-      /* @__PURE__ */ jsx31("legend", { className: "sr-only", children: question.prompt }),
-      question.options?.map((opt) => /* @__PURE__ */ jsxs30("label", { className: "flex gap-sm items-center cursor-pointer", children: [
-        /* @__PURE__ */ jsx31(
+    question.type === "single-choice" && /* @__PURE__ */ jsxs32("fieldset", { className: "space-y-sm", children: [
+      /* @__PURE__ */ jsx33("legend", { className: "sr-only", children: question.prompt }),
+      question.options?.map((opt) => /* @__PURE__ */ jsxs32("label", { className: "flex gap-sm items-center cursor-pointer", children: [
+        /* @__PURE__ */ jsx33(
           "input",
           {
             type: "radio",
@@ -3650,13 +3933,13 @@ function QuestionRenderer({
             className: "cursor-pointer"
           }
         ),
-        /* @__PURE__ */ jsx31("span", { className: "text-body", children: opt })
+        /* @__PURE__ */ jsx33("span", { className: "text-body", children: opt })
       ] }, opt))
     ] }),
-    question.type === "multi-choice" && /* @__PURE__ */ jsxs30("fieldset", { className: "space-y-sm", children: [
-      /* @__PURE__ */ jsx31("legend", { className: "sr-only", children: question.prompt }),
-      question.options?.map((opt) => /* @__PURE__ */ jsxs30("label", { className: "flex gap-sm items-center cursor-pointer", children: [
-        /* @__PURE__ */ jsx31(
+    question.type === "multi-choice" && /* @__PURE__ */ jsxs32("fieldset", { className: "space-y-sm", children: [
+      /* @__PURE__ */ jsx33("legend", { className: "sr-only", children: question.prompt }),
+      question.options?.map((opt) => /* @__PURE__ */ jsxs32("label", { className: "flex gap-sm items-center cursor-pointer", children: [
+        /* @__PURE__ */ jsx33(
           "input",
           {
             type: "checkbox",
@@ -3667,10 +3950,10 @@ function QuestionRenderer({
             className: "cursor-pointer"
           }
         ),
-        /* @__PURE__ */ jsx31("span", { className: "text-body", children: opt })
+        /* @__PURE__ */ jsx33("span", { className: "text-body", children: opt })
       ] }, opt))
     ] }),
-    question.type === "conditional-follow-up" && /* @__PURE__ */ jsx31(
+    question.type === "conditional-follow-up" && /* @__PURE__ */ jsx33(
       "textarea",
       {
         id: inputId,
@@ -3684,12 +3967,12 @@ function QuestionRenderer({
         className: "w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
       }
     ),
-    question.hint && /* @__PURE__ */ jsx31("p", { id: descriptionId, className: "text-label text-foreground/70 mt-xs", children: question.hint })
+    question.hint && /* @__PURE__ */ jsx33("p", { id: descriptionId, className: "text-label text-foreground/70 mt-xs", children: question.hint })
   ] });
 }
 
 // src/ui/found/InterviewSection.tsx
-import { jsx as jsx32, jsxs as jsxs31 } from "react/jsx-runtime";
+import { jsx as jsx34, jsxs as jsxs33 } from "react/jsx-runtime";
 function InterviewSection({
   section,
   answers,
@@ -3718,12 +4001,12 @@ function InterviewSection({
     });
   }, [section.questions, answers]);
   const nextButtonLabel = isLastSection ? "Review & Apply" : `Next: ${nextSectionName}`;
-  return /* @__PURE__ */ jsxs31("div", { className: "flex flex-col gap-2xl h-full", children: [
-    /* @__PURE__ */ jsxs31("div", { children: [
-      /* @__PURE__ */ jsx32("h2", { className: "text-display font-bold", children: section.title }),
-      section.intro && /* @__PURE__ */ jsx32("p", { className: "text-body text-foreground/70 mt-md", children: section.intro })
+  return /* @__PURE__ */ jsxs33("div", { className: "flex flex-col gap-2xl h-full", children: [
+    /* @__PURE__ */ jsxs33("div", { children: [
+      /* @__PURE__ */ jsx34("h2", { className: "text-display font-bold", children: section.title }),
+      section.intro && /* @__PURE__ */ jsx34("p", { className: "text-body text-foreground/70 mt-md", children: section.intro })
     ] }),
-    /* @__PURE__ */ jsx32("div", { className: "space-y-lg flex-1", children: section.questions.map((question) => /* @__PURE__ */ jsx32(
+    /* @__PURE__ */ jsx34("div", { className: "space-y-lg flex-1", children: section.questions.map((question) => /* @__PURE__ */ jsx34(
       QuestionRenderer,
       {
         question,
@@ -3733,8 +4016,8 @@ function InterviewSection({
       },
       question.id
     )) }),
-    /* @__PURE__ */ jsxs31("div", { className: "flex gap-md justify-between pt-lg border-t border-border", children: [
-      /* @__PURE__ */ jsx32(
+    /* @__PURE__ */ jsxs33("div", { className: "flex gap-md justify-between pt-lg border-t border-border", children: [
+      /* @__PURE__ */ jsx34(
         "button",
         {
           onClick: () => onNavigate("back"),
@@ -3743,7 +4026,7 @@ function InterviewSection({
           children: "\u2190 Back"
         }
       ),
-      /* @__PURE__ */ jsx32(
+      /* @__PURE__ */ jsx34(
         "button",
         {
           onClick: () => onNavigate("next"),
@@ -3758,7 +4041,7 @@ function InterviewSection({
 
 // src/ui/found/SectionNavRail.tsx
 import { useCallback as useCallback7 } from "react";
-import { jsx as jsx33, jsxs as jsxs32 } from "react/jsx-runtime";
+import { jsx as jsx35, jsxs as jsxs34 } from "react/jsx-runtime";
 function SectionNavRail({
   sections,
   currentSectionIndex,
@@ -3773,8 +4056,8 @@ function SectionNavRail({
     },
     [currentSectionIndex, onJumpTo]
   );
-  return /* @__PURE__ */ jsx33("div", { className: "border-b bg-card px-lg py-sm", children: /* @__PURE__ */ jsxs32("div", { className: "flex gap-xs items-center overflow-x-auto pb-sm", children: [
-    /* @__PURE__ */ jsxs32("span", { className: "text-label text-foreground/70 mr-sm shrink-0 font-normal", children: [
+  return /* @__PURE__ */ jsx35("div", { className: "border-b bg-card px-lg py-sm", children: /* @__PURE__ */ jsxs34("div", { className: "flex gap-xs items-center overflow-x-auto pb-sm", children: [
+    /* @__PURE__ */ jsxs34("span", { className: "text-label text-foreground/70 mr-sm shrink-0 font-normal", children: [
       completedSections.length,
       " of ",
       sections.length,
@@ -3784,7 +4067,7 @@ function SectionNavRail({
       const isCurrentSection = idx === currentSectionIndex;
       const isCompletedSection = completedSections.includes(idx);
       const isNavigableSection = idx <= currentSectionIndex;
-      return /* @__PURE__ */ jsxs32(
+      return /* @__PURE__ */ jsxs34(
         "button",
         {
           onClick: () => handleJumpTo(idx),
@@ -3792,9 +4075,9 @@ function SectionNavRail({
           className: `shrink-0 flex items-center gap-xs px-md py-sm rounded text-sm font-medium transition-colors whitespace-nowrap ${isCurrentSection ? "bg-accent text-accent-foreground" : isNavigableSection ? "bg-card text-foreground hover:bg-card/80 cursor-pointer border border-border" : "bg-background text-foreground/50 cursor-not-allowed opacity-50 border border-border"}`,
           title: section.title,
           children: [
-            isCompletedSection && /* @__PURE__ */ jsx33(CircleCheckBig, { className: "h-4 w-4 shrink-0" }),
-            /* @__PURE__ */ jsx33("span", { className: "hidden sm:inline", children: section.title }),
-            /* @__PURE__ */ jsx33("span", { className: "sm:hidden text-xs", children: idx + 1 })
+            isCompletedSection && /* @__PURE__ */ jsx35(CircleCheckBig, { className: "h-4 w-4 shrink-0" }),
+            /* @__PURE__ */ jsx35("span", { className: "hidden sm:inline", children: section.title }),
+            /* @__PURE__ */ jsx35("span", { className: "sm:hidden text-xs", children: idx + 1 })
           ]
         },
         idx
@@ -3805,7 +4088,7 @@ function SectionNavRail({
 
 // src/ui/found/PresetSelector.tsx
 import { useCallback as useCallback8 } from "react";
-import { jsx as jsx34, jsxs as jsxs33 } from "react/jsx-runtime";
+import { jsx as jsx36, jsxs as jsxs35 } from "react/jsx-runtime";
 function PresetSelector({
   presets,
   selected,
@@ -3820,17 +4103,17 @@ function PresetSelector({
     },
     [disabled, onSelect]
   );
-  return /* @__PURE__ */ jsxs33("div", { className: "space-y-md", children: [
-    /* @__PURE__ */ jsxs33("label", { className: "text-label font-normal", children: [
+  return /* @__PURE__ */ jsxs35("div", { className: "space-y-md", children: [
+    /* @__PURE__ */ jsxs35("label", { className: "text-label font-normal", children: [
       "Choose a founding preset ",
-      /* @__PURE__ */ jsx34("span", { className: "text-accent", children: "*" })
+      /* @__PURE__ */ jsx36("span", { className: "text-accent", children: "*" })
     ] }),
-    /* @__PURE__ */ jsx34("div", { className: "space-y-sm", children: presets.map((preset) => /* @__PURE__ */ jsxs33(
+    /* @__PURE__ */ jsx36("div", { className: "space-y-sm", children: presets.map((preset) => /* @__PURE__ */ jsxs35(
       "label",
       {
         className: `flex gap-md p-md border border-border rounded transition-colors ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-card"}`,
         children: [
-          /* @__PURE__ */ jsx34(
+          /* @__PURE__ */ jsx36(
             "input",
             {
               type: "radio",
@@ -3842,9 +4125,9 @@ function PresetSelector({
               className: "cursor-pointer mt-0.5"
             }
           ),
-          /* @__PURE__ */ jsxs33("div", { className: "flex-1", children: [
-            /* @__PURE__ */ jsx34("div", { className: "text-body font-normal", children: preset.name }),
-            /* @__PURE__ */ jsx34("div", { className: "text-label font-normal text-foreground/70 mt-xs", children: preset.description })
+          /* @__PURE__ */ jsxs35("div", { className: "flex-1", children: [
+            /* @__PURE__ */ jsx36("div", { className: "text-body font-normal", children: preset.name }),
+            /* @__PURE__ */ jsx36("div", { className: "text-label font-normal text-foreground/70 mt-xs", children: preset.description })
           ] })
         ]
       },
@@ -3854,17 +4137,17 @@ function PresetSelector({
 }
 
 // src/ui/found/VisionPreview.tsx
-import { useState as useState15, useCallback as useCallback9 } from "react";
-import { jsx as jsx35, jsxs as jsxs34 } from "react/jsx-runtime";
+import { useState as useState17, useCallback as useCallback9 } from "react";
+import { jsx as jsx37, jsxs as jsxs36 } from "react/jsx-runtime";
 function VisionPreview({
   vision,
   preset,
   onBack,
   onConfirm
 }) {
-  const [editing, setEditing] = useState15(false);
-  const [editedBody, setEditedBody] = useState15(vision.body);
-  const [editError, setEditError] = useState15(null);
+  const [editing, setEditing] = useState17(false);
+  const [editedBody, setEditedBody] = useState17(vision.body);
+  const [editError, setEditError] = useState17(null);
   const handleSaveEdit = useCallback9(() => {
     const requiredSlots = ["{{mission}}", "{{mandate}}", "{{voice}}", "{{principles}}", "{{success_criteria}}"];
     const hasEmptySlots = requiredSlots.some((slot) => editedBody.includes(slot));
@@ -3883,36 +4166,36 @@ function VisionPreview({
       setEditError(null);
     }
   }, [editing, handleSaveEdit]);
-  return /* @__PURE__ */ jsxs34("div", { className: "flex flex-col gap-lg h-full", children: [
-    /* @__PURE__ */ jsxs34("div", { className: "flex items-start justify-between gap-md", children: [
-      /* @__PURE__ */ jsx35("div", { className: "flex-1", children: /* @__PURE__ */ jsx35("h2", { className: "text-heading font-bold", children: "Here's the company you're founding. Edit anything before you apply." }) }),
-      !editing && /* @__PURE__ */ jsxs34(
+  return /* @__PURE__ */ jsxs36("div", { className: "flex flex-col gap-lg h-full", children: [
+    /* @__PURE__ */ jsxs36("div", { className: "flex items-start justify-between gap-md", children: [
+      /* @__PURE__ */ jsx37("div", { className: "flex-1", children: /* @__PURE__ */ jsx37("h2", { className: "text-heading font-bold", children: "Here's the company you're founding. Edit anything before you apply." }) }),
+      !editing && /* @__PURE__ */ jsxs36(
         "button",
         {
           onClick: () => setEditing(true),
           className: "flex gap-xs items-center px-md py-sm rounded bg-accent/10 text-accent hover:bg-accent/20 transition-colors shrink-0 font-normal text-body",
           children: [
-            /* @__PURE__ */ jsx35(Pen, { className: "h-4 w-4" }),
+            /* @__PURE__ */ jsx37(Pen, { className: "h-4 w-4" }),
             "Edit"
           ]
         }
       )
     ] }),
-    /* @__PURE__ */ jsx35("div", { className: "flex-1 overflow-y-auto border border-border rounded p-lg bg-background", children: editing ? /* @__PURE__ */ jsx35(
+    /* @__PURE__ */ jsx37("div", { className: "flex-1 overflow-y-auto border border-border rounded p-lg bg-background", children: editing ? /* @__PURE__ */ jsx37(
       "textarea",
       {
         value: editedBody,
         onChange: (e) => setEditedBody(e.target.value),
         className: "w-full h-full font-normal text-body p-0 border-0 resize-none focus:outline-none focus:ring-0"
       }
-    ) : /* @__PURE__ */ jsx35("div", { className: "prose prose-sm max-w-none whitespace-pre-wrap text-body", children: vision.body }) }),
-    editing && editError && /* @__PURE__ */ jsxs34("div", { className: "bg-destructive/10 border border-destructive rounded p-md flex gap-md", children: [
-      /* @__PURE__ */ jsx35(CircleAlert, { className: "h-5 w-5 text-destructive shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsx35("p", { className: "text-body text-destructive", children: editError })
+    ) : /* @__PURE__ */ jsx37("div", { className: "prose prose-sm max-w-none whitespace-pre-wrap text-body", children: vision.body }) }),
+    editing && editError && /* @__PURE__ */ jsxs36("div", { className: "bg-destructive/10 border border-destructive rounded p-md flex gap-md", children: [
+      /* @__PURE__ */ jsx37(CircleAlert, { className: "h-5 w-5 text-destructive shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsx37("p", { className: "text-body text-destructive", children: editError })
     ] }),
-    /* @__PURE__ */ jsx35(ProvisioningSummary, { preset }),
-    /* @__PURE__ */ jsxs34("div", { className: "flex gap-md justify-between pt-lg border-t border-border", children: [
-      /* @__PURE__ */ jsx35(
+    /* @__PURE__ */ jsx37(ProvisioningSummary, { preset }),
+    /* @__PURE__ */ jsxs36("div", { className: "flex gap-md justify-between pt-lg border-t border-border", children: [
+      /* @__PURE__ */ jsx37(
         "button",
         {
           onClick: onBack,
@@ -3920,8 +4203,8 @@ function VisionPreview({
           children: "Back to interview"
         }
       ),
-      /* @__PURE__ */ jsxs34("div", { className: "flex gap-md", children: [
-        editing && /* @__PURE__ */ jsx35(
+      /* @__PURE__ */ jsxs36("div", { className: "flex gap-md", children: [
+        editing && /* @__PURE__ */ jsx37(
           "button",
           {
             onClick: handleToggleEdit,
@@ -3929,7 +4212,7 @@ function VisionPreview({
             children: "Done editing"
           }
         ),
-        !editing && /* @__PURE__ */ jsx35(
+        !editing && /* @__PURE__ */ jsx37(
           "button",
           {
             onClick: onConfirm,
@@ -3943,23 +4226,23 @@ function VisionPreview({
 }
 
 // src/ui/found/InterviewDraftState.ts
-import { useCallback as useCallback10, useEffect as useEffect7, useState as useState16 } from "react";
+import { useCallback as useCallback10, useEffect as useEffect8, useState as useState18 } from "react";
 
 // src/ui/found/FoundPanel.tsx
-import { jsx as jsx36, jsxs as jsxs35 } from "react/jsx-runtime";
+import { jsx as jsx38, jsxs as jsxs37 } from "react/jsx-runtime";
 function FoundPanel() {
-  const [currentSection, setCurrentSection] = useState17(0);
-  const [answers, setAnswers] = useState17({});
-  const [selectedPresetId, setSelectedPresetId] = useState17(
+  const [currentSection, setCurrentSection] = useState19(0);
+  const [answers, setAnswers] = useState19({});
+  const [selectedPresetId, setSelectedPresetId] = useState19(
     null
   );
-  const [step, setStep] = useState17("interview");
-  const [vision, setVision] = useState17(null);
-  const [qualityCheck, setQualityCheck] = useState17(
+  const [step, setStep] = useState19("interview");
+  const [vision, setVision] = useState19(null);
+  const [qualityCheck, setQualityCheck] = useState19(
     null
   );
-  const [applyResult, setApplyResult] = useState17(null);
-  const [currentApplyStep, setCurrentApplyStep] = useState17("preflight");
+  const [applyResult, setApplyResult] = useState19(null);
+  const [currentApplyStep, setCurrentApplyStep] = useState19("preflight");
   const companyId = globalThis.__COMPASS_COMPANY_ID || "unknown";
   const sections = useMemo5(() => loadInterviewSections(), []);
   const {
@@ -3975,7 +4258,7 @@ function FoundPanel() {
   );
   const presets = Array.isArray(presetsData) ? presetsData : [];
   const selectedPreset = presets.find((p) => p.id === selectedPresetId) || null;
-  useEffect8(() => {
+  useEffect9(() => {
     if (draftData) {
       if (draftData.draft) {
         setAnswers(draftData.draft);
@@ -4137,20 +4420,20 @@ function FoundPanel() {
     setCurrentSection(0);
   }, []);
   if (draftLoading) {
-    return /* @__PURE__ */ jsx36("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx36("p", { className: "text-body text-foreground/70", children: "Loading interview..." }) });
+    return /* @__PURE__ */ jsx38("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsx38("p", { className: "text-body text-foreground/70", children: "Loading interview..." }) });
   }
   if (draftError) {
-    return /* @__PURE__ */ jsx36("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsxs35("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx36("p", { className: "text-body text-error", children: "Failed to load interview draft" }),
-      draftError instanceof Error && /* @__PURE__ */ jsx36("p", { className: "text-sm text-foreground/70", children: draftError.message })
+    return /* @__PURE__ */ jsx38("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsxs37("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx38("p", { className: "text-body text-error", children: "Failed to load interview draft" }),
+      draftError instanceof Error && /* @__PURE__ */ jsx38("p", { className: "text-sm text-foreground/70", children: draftError.message })
     ] }) });
   }
   if (step === "interview") {
     const section = sections[currentSection];
     const nextSectionName = currentSection < sections.length - 1 ? sections[currentSection + 1].title : "Review & Apply";
-    return /* @__PURE__ */ jsxs35("div", { className: "flex h-full flex-col gap-0", children: [
-      /* @__PURE__ */ jsxs35("div", { className: "flex flex-1 gap-lg", children: [
-        /* @__PURE__ */ jsx36(
+    return /* @__PURE__ */ jsxs37("div", { className: "flex h-full flex-col gap-0", children: [
+      /* @__PURE__ */ jsxs37("div", { className: "flex flex-1 gap-lg", children: [
+        /* @__PURE__ */ jsx38(
           SectionNavRail,
           {
             sections,
@@ -4159,7 +4442,7 @@ function FoundPanel() {
             onJumpTo: setCurrentSection
           }
         ),
-        /* @__PURE__ */ jsx36("div", { className: "flex-1 overflow-y-auto px-lg py-md", children: section && /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx38("div", { className: "flex-1 overflow-y-auto px-lg py-md", children: section && /* @__PURE__ */ jsx38(
           InterviewSection,
           {
             section,
@@ -4172,29 +4455,40 @@ function FoundPanel() {
           }
         ) })
       ] }),
-      currentSection === sections.length - 1 && /* @__PURE__ */ jsxs35("div", { className: "border-t px-lg py-md", children: [
-        /* @__PURE__ */ jsxs35("div", { className: "mb-md", children: [
-          /* @__PURE__ */ jsx36("h3", { className: "text-body font-semibold", children: "Choose Your Setup" }),
-          /* @__PURE__ */ jsx36("p", { className: "text-sm text-foreground/70", children: "Select which agents to provision when you apply." })
+      currentSection === sections.length - 1 && /* @__PURE__ */ jsxs37("div", { className: "border-t px-lg py-md", children: [
+        /* @__PURE__ */ jsxs37("div", { className: "mb-md", children: [
+          /* @__PURE__ */ jsx38("h3", { className: "text-body font-semibold", children: "Choose Your Setup" }),
+          /* @__PURE__ */ jsx38("p", { className: "text-sm text-foreground/70", children: "Select which agents to provision when you apply." })
         ] }),
-        presets.length > 0 ? /* @__PURE__ */ jsx36(
+        presets.length > 0 ? /* @__PURE__ */ jsx38(
           PresetSelector,
           {
             presets,
             selected: selectedPresetId,
             onSelect: handlePresetSelect
           }
-        ) : /* @__PURE__ */ jsx36("p", { className: "text-sm text-foreground/70", children: "Loading presets..." })
+        ) : /* @__PURE__ */ jsx38("p", { className: "text-sm text-foreground/70", children: "Loading presets..." })
       ] })
     ] });
   }
   if (step === "preview" && vision) {
-    return /* @__PURE__ */ jsxs35("div", { className: "flex h-full flex-col gap-lg p-lg", children: [
-      /* @__PURE__ */ jsxs35("div", { children: [
-        /* @__PURE__ */ jsx36("h2", { className: "text-display font-bold", children: "Here's the company you're founding." }),
-        /* @__PURE__ */ jsx36("p", { className: "text-body text-foreground/70 mt-md", children: "Edit anything before you apply." })
+    return /* @__PURE__ */ jsxs37("div", { className: "flex h-full flex-col gap-lg p-lg", children: [
+      /* @__PURE__ */ jsxs37("div", { children: [
+        /* @__PURE__ */ jsxs37("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx38("h2", { className: "text-display font-bold", children: "Here's the company you're founding." }),
+          /* @__PURE__ */ jsx38(
+            HelpTip,
+            {
+              title: "What happens when I apply?",
+              body: "Compass writes VISION.md, provisions agents per the preset you chose, files kickoff issues, and queues the first wakeups. You can review every change here before applying.",
+              details: "Apply step is gated by an explicit confirmation. Nothing is written to your Paperclip instance until you confirm. After apply, all four sections of VISION.md are amendable later via Reposition or Assess.",
+              size: "sm"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx38("p", { className: "text-body text-foreground/70 mt-md", children: "Edit anything before you apply." })
       ] }),
-      /* @__PURE__ */ jsx36("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx36(
+      /* @__PURE__ */ jsx38("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx38(
         VisionPreview,
         {
           vision,
@@ -4205,9 +4499,9 @@ function FoundPanel() {
           }
         }
       ) }),
-      selectedPreset && /* @__PURE__ */ jsx36(ProvisioningSummary, { preset: selectedPreset }),
-      /* @__PURE__ */ jsxs35("div", { className: "flex gap-md border-t pt-md", children: [
-        /* @__PURE__ */ jsx36(
+      selectedPreset && /* @__PURE__ */ jsx38(ProvisioningSummary, { preset: selectedPreset }),
+      /* @__PURE__ */ jsxs37("div", { className: "flex gap-md border-t pt-md", children: [
+        /* @__PURE__ */ jsx38(
           "button",
           {
             onClick: handleBackFromPreview,
@@ -4215,19 +4509,20 @@ function FoundPanel() {
             children: "Back to Interview"
           }
         ),
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx38(
           "button",
           {
             onClick: handlePreviewConfirm,
+            title: "Write VISION.md, provision agents, file kickoff issues, queue first wakeups. You'll get one final confirmation modal.",
             className: "flex-1 rounded px-md py-sm text-sm font-medium bg-accent text-background hover:bg-accent/90 disabled:opacity-50",
             disabled: !qualityCheck?.isValid,
             children: "Confirm & Apply"
           }
         )
       ] }),
-      qualityCheck && !qualityCheck.isValid && /* @__PURE__ */ jsxs35("div", { className: "rounded border border-error/30 bg-error/5 p-md", children: [
-        /* @__PURE__ */ jsx36("p", { className: "text-sm font-medium text-error", children: "Missing required sections:" }),
-        /* @__PURE__ */ jsx36("ul", { className: "mt-sm space-y-xs text-sm text-foreground/70", children: qualityCheck.missingRequiredSlots.map((slot) => /* @__PURE__ */ jsxs35("li", { children: [
+      qualityCheck && !qualityCheck.isValid && /* @__PURE__ */ jsxs37("div", { className: "rounded border border-error/30 bg-error/5 p-md", children: [
+        /* @__PURE__ */ jsx38("p", { className: "text-sm font-medium text-error", children: "Missing required sections:" }),
+        /* @__PURE__ */ jsx38("ul", { className: "mt-sm space-y-xs text-sm text-foreground/70", children: qualityCheck.missingRequiredSlots.map((slot) => /* @__PURE__ */ jsxs37("li", { children: [
           "\u2022 ",
           slot
         ] }, slot)) })
@@ -4235,7 +4530,7 @@ function FoundPanel() {
     ] });
   }
   if (step === "confirming" && vision) {
-    return /* @__PURE__ */ jsx36(
+    return /* @__PURE__ */ jsx38(
       ConfirmationModal,
       {
         vision,
@@ -4246,12 +4541,12 @@ function FoundPanel() {
     );
   }
   if (step === "applying") {
-    return /* @__PURE__ */ jsxs35("div", { className: "flex h-full flex-col gap-lg p-lg", children: [
-      /* @__PURE__ */ jsxs35("div", { children: [
-        /* @__PURE__ */ jsx36("h2", { className: "text-display font-bold", children: "Creating your company..." }),
-        /* @__PURE__ */ jsx36("p", { className: "text-body text-foreground/70 mt-md", children: "This may take a moment." })
+    return /* @__PURE__ */ jsxs37("div", { className: "flex h-full flex-col gap-lg p-lg", children: [
+      /* @__PURE__ */ jsxs37("div", { children: [
+        /* @__PURE__ */ jsx38("h2", { className: "text-display font-bold", children: "Creating your company..." }),
+        /* @__PURE__ */ jsx38("p", { className: "text-body text-foreground/70 mt-md", children: "This may take a moment." })
       ] }),
-      /* @__PURE__ */ jsx36("div", { className: "flex-1 flex items-center justify-center", children: /* @__PURE__ */ jsx36(
+      /* @__PURE__ */ jsx38("div", { className: "flex-1 flex items-center justify-center", children: /* @__PURE__ */ jsx38(
         ApplyProgress,
         {
           step: currentApplyStep,
@@ -4261,21 +4556,21 @@ function FoundPanel() {
     ] });
   }
   if (step === "complete" && applyResult) {
-    return /* @__PURE__ */ jsxs35("div", { className: "flex h-full flex-col gap-lg p-lg items-center justify-center", children: [
-      /* @__PURE__ */ jsxs35("div", { className: "text-center", children: [
-        /* @__PURE__ */ jsx36("div", { className: "mb-md text-4xl", children: "\u2713" }),
-        /* @__PURE__ */ jsx36("h2", { className: "text-display font-bold", children: "Company founded!" }),
-        /* @__PURE__ */ jsxs35("p", { className: "text-body text-foreground/70 mt-md", children: [
+    return /* @__PURE__ */ jsxs37("div", { className: "flex h-full flex-col gap-lg p-lg items-center justify-center", children: [
+      /* @__PURE__ */ jsxs37("div", { className: "text-center", children: [
+        /* @__PURE__ */ jsx38("div", { className: "mb-md text-4xl", children: "\u2713" }),
+        /* @__PURE__ */ jsx38("h2", { className: "text-display font-bold", children: "Company founded!" }),
+        /* @__PURE__ */ jsxs37("p", { className: "text-body text-foreground/70 mt-md", children: [
           applyResult.agentIds?.length || 0,
           " agents provisioned"
         ] }),
-        applyResult.issueIds && /* @__PURE__ */ jsxs35("p", { className: "text-body text-foreground/70", children: [
+        applyResult.issueIds && /* @__PURE__ */ jsxs37("p", { className: "text-body text-foreground/70", children: [
           applyResult.issueIds.length,
           " kickoff issues created"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs35("div", { className: "flex gap-md w-full", children: [
-        /* @__PURE__ */ jsx36(
+      /* @__PURE__ */ jsxs37("div", { className: "flex gap-md w-full", children: [
+        /* @__PURE__ */ jsx38(
           "button",
           {
             onClick: handleCloseComplete,
@@ -4283,7 +4578,7 @@ function FoundPanel() {
             children: "Close"
           }
         ),
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx38(
           "button",
           {
             onClick: () => {
@@ -4297,7 +4592,7 @@ function FoundPanel() {
     ] });
   }
   if (step === "error" && applyResult) {
-    return /* @__PURE__ */ jsx36("div", { className: "flex h-full flex-col gap-lg p-lg", children: /* @__PURE__ */ jsx36(
+    return /* @__PURE__ */ jsx38("div", { className: "flex h-full flex-col gap-lg p-lg", children: /* @__PURE__ */ jsx38(
       ApplyErrorDisplay,
       {
         step: currentApplyStep,
@@ -4309,21 +4604,21 @@ function FoundPanel() {
       }
     ) });
   }
-  return /* @__PURE__ */ jsx36("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsxs35("p", { className: "text-body text-error", children: [
+  return /* @__PURE__ */ jsx38("div", { className: "flex items-center justify-center p-lg min-h-[400px]", children: /* @__PURE__ */ jsxs37("p", { className: "text-body text-error", children: [
     "Unknown state: ",
     step
   ] }) });
 }
 
 // src/ui/revive/RevivePanel.tsx
-import { useState as useState20, useCallback as useCallback13, useEffect as useEffect10 } from "react";
+import { useState as useState22, useCallback as useCallback13, useEffect as useEffect11 } from "react";
 import { usePluginAction as usePluginAction6, usePluginData as usePluginData2 } from "@paperclipai/plugin-sdk/ui";
 
 // src/ui/revive/ActionItemCard.tsx
-import { useState as useState18 } from "react";
+import { useState as useState20 } from "react";
 
 // src/ui/revive/PriorityBadge.tsx
-import { jsx as jsx37 } from "react/jsx-runtime";
+import { jsx as jsx39 } from "react/jsx-runtime";
 var PriorityBadge = ({ priority }) => {
   let label;
   let bgClass;
@@ -4341,7 +4636,7 @@ var PriorityBadge = ({ priority }) => {
     bgClass = "bg-card";
     textClass = "text-foreground";
   }
-  return /* @__PURE__ */ jsx37(
+  return /* @__PURE__ */ jsx39(
     "span",
     {
       className: `px-xs py-xs rounded text-label ${bgClass} ${textClass}`,
@@ -4352,14 +4647,14 @@ var PriorityBadge = ({ priority }) => {
 };
 
 // src/ui/revive/SamplePivotModal.tsx
-import React21 from "react";
-import { jsx as jsx38, jsxs as jsxs36 } from "react/jsx-runtime";
+import React23 from "react";
+import { jsx as jsx40, jsxs as jsxs38 } from "react/jsx-runtime";
 var SamplePivotModal = ({
   actionId,
   onConfirm,
   onCancel
 }) => {
-  const [isLoading, setIsLoading] = React21.useState(false);
+  const [isLoading, setIsLoading] = React23.useState(false);
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
@@ -4368,11 +4663,11 @@ var SamplePivotModal = ({
       setIsLoading(false);
     }
   };
-  return /* @__PURE__ */ jsx38("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs36("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg", children: [
-    /* @__PURE__ */ jsx38("h2", { className: "text-display font-bold mb-md", children: "Switch to sample mode for this issue" }),
-    /* @__PURE__ */ jsx38("p", { className: "text-body mb-lg", children: "We'll keep your current draft as a sample to critique, and open a fresh production issue for the improved version. This is a known pattern from how vision-quest companies unstick themselves." }),
-    /* @__PURE__ */ jsxs36("div", { className: "flex gap-md", children: [
-      /* @__PURE__ */ jsx38(
+  return /* @__PURE__ */ jsx40("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs38("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg", children: [
+    /* @__PURE__ */ jsx40("h2", { className: "text-display font-bold mb-md", children: "Switch to sample mode for this issue" }),
+    /* @__PURE__ */ jsx40("p", { className: "text-body mb-lg", children: "We'll keep your current draft as a sample to critique, and open a fresh production issue for the improved version. This is a known pattern from how vision-quest companies unstick themselves." }),
+    /* @__PURE__ */ jsxs38("div", { className: "flex gap-md", children: [
+      /* @__PURE__ */ jsx40(
         "button",
         {
           onClick: onCancel,
@@ -4381,7 +4676,7 @@ var SamplePivotModal = ({
           children: "Cancel"
         }
       ),
-      /* @__PURE__ */ jsx38(
+      /* @__PURE__ */ jsx40(
         "button",
         {
           onClick: handleConfirm,
@@ -4395,14 +4690,14 @@ var SamplePivotModal = ({
 };
 
 // src/ui/revive/ActionConfirmationModal.tsx
-import React22 from "react";
-import { jsx as jsx39, jsxs as jsxs37 } from "react/jsx-runtime";
+import React24 from "react";
+import { jsx as jsx41, jsxs as jsxs39 } from "react/jsx-runtime";
 var ActionConfirmationModal = ({
   action,
   onConfirm,
   onCancel
 }) => {
-  const [isLoading, setIsLoading] = React22.useState(false);
+  const [isLoading, setIsLoading] = React24.useState(false);
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
@@ -4411,26 +4706,26 @@ var ActionConfirmationModal = ({
       setIsLoading(false);
     }
   };
-  return /* @__PURE__ */ jsx39("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs37("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg max-h-[80vh] overflow-y-auto", children: [
-    /* @__PURE__ */ jsx39("h2", { className: "text-display font-bold mb-md", children: "Apply this action?" }),
-    /* @__PURE__ */ jsxs37("div", { className: "mb-lg text-body", children: [
-      /* @__PURE__ */ jsx39("p", { className: "font-semibold mb-sm", children: action.title }),
-      /* @__PURE__ */ jsxs37("p", { className: "text-foreground/70 mb-md", children: [
+  return /* @__PURE__ */ jsx41("div", { className: "fixed inset-0 bg-black/30 flex items-center justify-center z-50", children: /* @__PURE__ */ jsxs39("div", { className: "bg-card rounded-lg p-lg max-w-md shadow-lg max-h-[80vh] overflow-y-auto", children: [
+    /* @__PURE__ */ jsx41("h2", { className: "text-display font-bold mb-md", children: "Apply this action?" }),
+    /* @__PURE__ */ jsxs39("div", { className: "mb-lg text-body", children: [
+      /* @__PURE__ */ jsx41("p", { className: "font-semibold mb-sm", children: action.title }),
+      /* @__PURE__ */ jsxs39("p", { className: "text-foreground/70 mb-md", children: [
         "Unlocks ",
         action.unblocks_count || 1,
         " downstream issue(s)"
       ] }),
-      /* @__PURE__ */ jsxs37("div", { className: "text-label text-foreground/70 bg-background rounded p-md", children: [
-        /* @__PURE__ */ jsx39("p", { className: "font-semibold mb-sm", children: "This will:" }),
-        /* @__PURE__ */ jsxs37("ul", { className: "list-disc list-inside space-y-xs", children: [
-          /* @__PURE__ */ jsx39("li", { children: "Update issue" }),
-          /* @__PURE__ */ jsx39("li", { children: action.recommended_action.type === "pivot-to-sample" ? "Create dual issues (sample + production)" : "Create downstream issue(s)" }),
-          /* @__PURE__ */ jsx39("li", { children: "Queue agent wakeup" })
+      /* @__PURE__ */ jsxs39("div", { className: "text-label text-foreground/70 bg-background rounded p-md", children: [
+        /* @__PURE__ */ jsx41("p", { className: "font-semibold mb-sm", children: "This will:" }),
+        /* @__PURE__ */ jsxs39("ul", { className: "list-disc list-inside space-y-xs", children: [
+          /* @__PURE__ */ jsx41("li", { children: "Update issue" }),
+          /* @__PURE__ */ jsx41("li", { children: action.recommended_action.type === "pivot-to-sample" ? "Create dual issues (sample + production)" : "Create downstream issue(s)" }),
+          /* @__PURE__ */ jsx41("li", { children: "Queue agent wakeup" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs37("div", { className: "flex gap-md", children: [
-      /* @__PURE__ */ jsx39(
+    /* @__PURE__ */ jsxs39("div", { className: "flex gap-md", children: [
+      /* @__PURE__ */ jsx41(
         "button",
         {
           onClick: onCancel,
@@ -4439,7 +4734,7 @@ var ActionConfirmationModal = ({
           children: "Cancel"
         }
       ),
-      /* @__PURE__ */ jsx39(
+      /* @__PURE__ */ jsx41(
         "button",
         {
           onClick: handleConfirm,
@@ -4453,15 +4748,15 @@ var ActionConfirmationModal = ({
 };
 
 // src/ui/revive/ActionItemCard.tsx
-import { Fragment as Fragment4, jsx as jsx40, jsxs as jsxs38 } from "react/jsx-runtime";
+import { Fragment as Fragment5, jsx as jsx42, jsxs as jsxs40 } from "react/jsx-runtime";
 var ActionItemCard = ({
   item,
   onApply,
   onDismiss
 }) => {
-  const [showExplain, setShowExplain] = useState18(false);
-  const [showConfirm, setShowConfirm] = useState18(false);
-  const [isApplying, setIsApplying] = useState18(false);
+  const [showExplain, setShowExplain] = useState20(false);
+  const [showConfirm, setShowConfirm] = useState20(false);
+  const [isApplying, setIsApplying] = useState20(false);
   const handleApply = async () => {
     setShowConfirm(true);
   };
@@ -4474,23 +4769,23 @@ var ActionItemCard = ({
       setIsApplying(false);
     }
   };
-  return /* @__PURE__ */ jsxs38(Fragment4, { children: [
-    /* @__PURE__ */ jsxs38("div", { className: "p-md bg-card rounded border border-border", children: [
-      /* @__PURE__ */ jsxs38("div", { className: "flex items-start gap-md mb-md", children: [
-        /* @__PURE__ */ jsx40(PriorityBadge, { priority: item.priority }),
-        /* @__PURE__ */ jsxs38("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx40("h4", { className: "text-body font-bold", children: item.title }),
-          /* @__PURE__ */ jsxs38("p", { className: "text-label text-foreground/70 mt-xs", children: [
+  return /* @__PURE__ */ jsxs40(Fragment5, { children: [
+    /* @__PURE__ */ jsxs40("div", { className: "p-md bg-card rounded border border-border", children: [
+      /* @__PURE__ */ jsxs40("div", { className: "flex items-start gap-md mb-md", children: [
+        /* @__PURE__ */ jsx42(PriorityBadge, { priority: item.priority }),
+        /* @__PURE__ */ jsxs40("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx42("h4", { className: "text-body font-bold", children: item.title }),
+          /* @__PURE__ */ jsxs40("p", { className: "text-label text-foreground/70 mt-xs", children: [
             "Unlocks ",
             item.unblocks_count || 1,
             " downstream issue(s)"
           ] })
         ] }),
-        /* @__PURE__ */ jsx40("span", { className: "text-label text-foreground/70 whitespace-nowrap", children: item.status === "pending" ? "Pending" : item.status === "addressed" ? "\u2713 Addressed" : "\xD7 Dismissed" })
+        /* @__PURE__ */ jsx42("span", { className: "text-label text-foreground/70 whitespace-nowrap", children: item.status === "pending" ? "Pending" : item.status === "addressed" ? "\u2713 Addressed" : "\xD7 Dismissed" })
       ] }),
-      /* @__PURE__ */ jsx40("p", { className: "text-body mb-md", children: item.why_blocking }),
-      /* @__PURE__ */ jsxs38("div", { className: "flex gap-md", children: [
-        /* @__PURE__ */ jsx40(
+      /* @__PURE__ */ jsx42("p", { className: "text-body mb-md", children: item.why_blocking }),
+      /* @__PURE__ */ jsxs40("div", { className: "flex gap-md", children: [
+        /* @__PURE__ */ jsx42(
           "button",
           {
             onClick: handleApply,
@@ -4499,7 +4794,7 @@ var ActionItemCard = ({
             children: isApplying ? "Applying\u2026" : getActionButtonLabel(item.recommended_action.type)
           }
         ),
-        /* @__PURE__ */ jsx40(
+        /* @__PURE__ */ jsx42(
           "button",
           {
             onClick: () => setShowExplain(!showExplain),
@@ -4507,7 +4802,7 @@ var ActionItemCard = ({
             children: "Explain"
           }
         ),
-        /* @__PURE__ */ jsx40(
+        /* @__PURE__ */ jsx42(
           "button",
           {
             onClick: () => onDismiss?.(),
@@ -4517,27 +4812,27 @@ var ActionItemCard = ({
           }
         )
       ] }),
-      showExplain && /* @__PURE__ */ jsxs38(
+      showExplain && /* @__PURE__ */ jsxs40(
         "div",
         {
           className: "mt-md p-md bg-background rounded text-body",
           role: "region",
           "aria-expanded": "true",
           children: [
-            /* @__PURE__ */ jsx40("p", { className: "font-semibold mb-sm", children: item.title }),
-            /* @__PURE__ */ jsx40("p", { children: item.why_blocking })
+            /* @__PURE__ */ jsx42("p", { className: "font-semibold mb-sm", children: item.title }),
+            /* @__PURE__ */ jsx42("p", { children: item.why_blocking })
           ]
         }
       )
     ] }),
-    showConfirm && item.recommended_action.type === "pivot-to-sample" ? /* @__PURE__ */ jsx40(
+    showConfirm && item.recommended_action.type === "pivot-to-sample" ? /* @__PURE__ */ jsx42(
       SamplePivotModal,
       {
         actionId: item.id,
         onConfirm: handleConfirm,
         onCancel: () => setShowConfirm(false)
       }
-    ) : /* @__PURE__ */ jsx40(
+    ) : /* @__PURE__ */ jsx42(
       ActionConfirmationModal,
       {
         action: item,
@@ -4561,7 +4856,7 @@ function getActionButtonLabel(type) {
 }
 
 // src/ui/revive/ActionQueuePanel.tsx
-import { jsx as jsx41, jsxs as jsxs39 } from "react/jsx-runtime";
+import { jsx as jsx43, jsxs as jsxs41 } from "react/jsx-runtime";
 var CAUSE_HEADERS = {
   "single-blocker": "Stuck on a blocker",
   "strategic-drift": "Drifted from vision",
@@ -4574,11 +4869,11 @@ var ActionQueuePanel = ({
   onActionApply,
   onActionDismiss
 }) => {
-  return /* @__PURE__ */ jsx41("div", { className: "space-y-lg", children: Object.entries(queue.items_by_cause).map(([cause, items]) => {
+  return /* @__PURE__ */ jsx43("div", { className: "space-y-lg", children: Object.entries(queue.items_by_cause).map(([cause, items]) => {
     if (!items || items.length === 0) return null;
-    return /* @__PURE__ */ jsxs39("section", { children: [
-      /* @__PURE__ */ jsx41("h3", { className: "text-heading font-bold mb-md", children: CAUSE_HEADERS[cause] }),
-      /* @__PURE__ */ jsx41("div", { className: "space-y-sm", children: items.sort((a, b) => b.priority - a.priority).map((item) => /* @__PURE__ */ jsx41(
+    return /* @__PURE__ */ jsxs41("section", { children: [
+      /* @__PURE__ */ jsx43("h3", { className: "text-heading font-bold mb-md", children: CAUSE_HEADERS[cause] }),
+      /* @__PURE__ */ jsx43("div", { className: "space-y-sm", children: items.sort((a, b) => b.priority - a.priority).map((item) => /* @__PURE__ */ jsx43(
         ActionItemCard,
         {
           item,
@@ -4592,11 +4887,11 @@ var ActionQueuePanel = ({
 };
 
 // src/ui/revive/StallSummaryBadge.tsx
-import { jsx as jsx42, jsxs as jsxs40 } from "react/jsx-runtime";
+import { jsx as jsx44, jsxs as jsxs42 } from "react/jsx-runtime";
 var StallSummaryBadge = ({ inventory }) => {
   const daysSinceHeartbeat = inventory.latestHeartbeat ? Math.floor((Date.now() - new Date(inventory.latestHeartbeat).getTime()) / (1e3 * 60 * 60 * 24)) : 999;
   const blockerCount = inventory.blockerCount || 0;
-  return /* @__PURE__ */ jsx42("div", { className: "my-md px-md py-sm bg-card rounded border border-destructive", children: /* @__PURE__ */ jsxs40("span", { className: "text-label font-medium", children: [
+  return /* @__PURE__ */ jsx44("div", { className: "my-md px-md py-sm bg-card rounded border border-destructive", children: /* @__PURE__ */ jsxs42("span", { className: "text-label font-medium", children: [
     "Stalled \u2014 ",
     daysSinceHeartbeat,
     " days no activity, ",
@@ -4606,15 +4901,15 @@ var StallSummaryBadge = ({ inventory }) => {
 };
 
 // src/ui/revive/ReviveRunState.ts
-import { useCallback as useCallback12, useEffect as useEffect9, useState as useState19 } from "react";
+import { useCallback as useCallback12, useEffect as useEffect10, useState as useState21 } from "react";
 import { usePluginAction as usePluginAction5 } from "@paperclipai/plugin-sdk/ui";
 function useReviveRunState(companyId) {
   const loadRunStateAction = usePluginAction5("loadReviveRunState");
   const updateStateAction = usePluginAction5("updateReviveRunState");
-  const [queue, setQueue] = useState19(null);
-  const [isLoading, setIsLoading] = useState19(true);
-  const [error, setError] = useState19(null);
-  useEffect9(() => {
+  const [queue, setQueue] = useState21(null);
+  const [isLoading, setIsLoading] = useState21(true);
+  const [error, setError] = useState21(null);
+  useEffect10(() => {
     (async () => {
       try {
         setIsLoading(true);
@@ -4672,15 +4967,15 @@ function useReviveRunState(companyId) {
 }
 
 // src/ui/revive/RevivePanel.tsx
-import { Fragment as Fragment5, jsx as jsx43, jsxs as jsxs41 } from "react/jsx-runtime";
+import { Fragment as Fragment6, jsx as jsx45, jsxs as jsxs43 } from "react/jsx-runtime";
 function RevivePanel({ companyId, companyName }) {
   const classifyStallAction = usePluginAction6("classifyStall");
   const { data: inventory } = usePluginData2("getInventory", { companyId });
   const { queue, saveQueue } = useReviveRunState(companyId);
-  const [panelState, setPanelState] = useState20("empty");
-  const [isLoading, setIsLoading] = useState20(false);
-  const [errorMessage, setErrorMessage] = useState20(null);
-  useEffect10(() => {
+  const [panelState, setPanelState] = useState22("empty");
+  const [isLoading, setIsLoading] = useState22(false);
+  const [errorMessage, setErrorMessage] = useState22(null);
+  useEffect11(() => {
     if (queue && queue.items_by_cause) {
       setPanelState("queue");
     } else {
@@ -4731,45 +5026,57 @@ function RevivePanel({ companyId, companyName }) {
       console.error("Failed to dismiss action:", error);
     }
   };
-  return /* @__PURE__ */ jsxs41("div", { className: "flex flex-col h-full bg-background", children: [
-    /* @__PURE__ */ jsxs41("header", { className: "p-lg border-b border-border", children: [
-      /* @__PURE__ */ jsx43("h1", { className: "text-display font-bold mb-sm", children: companyName }),
-      /* @__PURE__ */ jsx43("p", { className: "text-body text-foreground/70 mb-md", children: "Fix what's blocking this company" }),
-      inventory && /* @__PURE__ */ jsx43(StallSummaryBadge, { inventory }),
-      /* @__PURE__ */ jsx43(
+  return /* @__PURE__ */ jsxs43("div", { className: "flex flex-col h-full bg-background", children: [
+    /* @__PURE__ */ jsxs43("header", { className: "p-lg border-b border-border", children: [
+      /* @__PURE__ */ jsxs43("div", { className: "flex items-center gap-2 mb-sm", children: [
+        /* @__PURE__ */ jsx45("h1", { className: "text-display font-bold", children: companyName }),
+        /* @__PURE__ */ jsx45(
+          HelpTip,
+          {
+            title: "What does Revive mode do?",
+            body: "Revive runs a stall classifier over this company's recent activity, identifies the most likely root cause, and queues unblocking actions for you to approve.",
+            details: "Inputs: heartbeat history, blocker counts, agent error states, governance approval queue. The classifier groups detected stalls by cause (single-agent failure / governance loop / dead agent / drift) and emits an ActionQueue. Each action is dismissible; only those you approve are applied.",
+            size: "sm"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx45("p", { className: "text-body text-foreground/70 mb-md", children: "Fix what's blocking this company" }),
+      inventory && /* @__PURE__ */ jsx45(StallSummaryBadge, { inventory }),
+      /* @__PURE__ */ jsx45(
         "button",
         {
           onClick: handleDiagnose,
           disabled: isLoading || panelState === "diagnosing",
+          title: "Run the stall classifier and queue unblocking actions for review",
           className: "mt-md w-full px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-md",
-          children: isLoading || panelState === "diagnosing" ? /* @__PURE__ */ jsxs41(Fragment5, { children: [
-            /* @__PURE__ */ jsx43(Loader, { className: "w-4 h-4 animate-spin" }),
+          children: isLoading || panelState === "diagnosing" ? /* @__PURE__ */ jsxs43(Fragment6, { children: [
+            /* @__PURE__ */ jsx45(Loader, { className: "w-4 h-4 animate-spin" }),
             "Diagnosing\u2026"
           ] }) : "Find what's blocking this company"
         }
       )
     ] }),
-    /* @__PURE__ */ jsx43("main", { className: "flex-1 overflow-y-auto p-lg", children: panelState === "diagnosing" ? /* @__PURE__ */ jsxs41("div", { className: "text-center py-3xl", children: [
-      /* @__PURE__ */ jsx43(Loader, { className: "w-8 h-8 animate-spin mx-auto mb-md text-accent" }),
-      /* @__PURE__ */ jsx43("p", { className: "text-body text-foreground/70", children: "Analyzing blockers\u2026" })
-    ] }) : panelState === "error" ? /* @__PURE__ */ jsxs41("div", { className: "text-center py-3xl", children: [
-      /* @__PURE__ */ jsx43("p", { className: "text-heading font-bold mb-md text-destructive", children: "Diagnosis failed" }),
-      /* @__PURE__ */ jsx43("p", { className: "text-body text-foreground/70", children: errorMessage || "Something went wrong" })
-    ] }) : !queue || queue.total_items === 0 ? /* @__PURE__ */ jsx43(EmptyReviveState, {}) : /* @__PURE__ */ jsx43(
+    /* @__PURE__ */ jsx45("main", { className: "flex-1 overflow-y-auto p-lg", children: panelState === "diagnosing" ? /* @__PURE__ */ jsxs43("div", { className: "text-center py-3xl", children: [
+      /* @__PURE__ */ jsx45(Loader, { className: "w-8 h-8 animate-spin mx-auto mb-md text-accent" }),
+      /* @__PURE__ */ jsx45("p", { className: "text-body text-foreground/70", children: "Analyzing blockers\u2026" })
+    ] }) : panelState === "error" ? /* @__PURE__ */ jsxs43("div", { className: "text-center py-3xl", children: [
+      /* @__PURE__ */ jsx45("p", { className: "text-heading font-bold mb-md text-destructive", children: "Diagnosis failed" }),
+      /* @__PURE__ */ jsx45("p", { className: "text-body text-foreground/70", children: errorMessage || "Something went wrong" })
+    ] }) : !queue || queue.total_items === 0 ? /* @__PURE__ */ jsx45(EmptyReviveState, {}) : /* @__PURE__ */ jsx45(
       ActionQueuePanel,
       {
         queue,
         onActionDismiss: handleDismissAction
       }
     ) }),
-    queue && queue.total_items > 0 && panelState === "queue" && /* @__PURE__ */ jsxs41("footer", { className: "sticky bottom-0 border-t border-border bg-card p-lg flex justify-between items-center gap-md", children: [
-      /* @__PURE__ */ jsxs41("span", { className: "text-label text-foreground/70", children: [
+    queue && queue.total_items > 0 && panelState === "queue" && /* @__PURE__ */ jsxs43("footer", { className: "sticky bottom-0 border-t border-border bg-card p-lg flex justify-between items-center gap-md", children: [
+      /* @__PURE__ */ jsxs43("span", { className: "text-label text-foreground/70", children: [
         queue.addressed_count,
         " of ",
         queue.total_items,
         " addressed"
       ] }),
-      /* @__PURE__ */ jsx43(
+      /* @__PURE__ */ jsx45(
         "button",
         {
           disabled: queue.addressed_count === 0,
@@ -4780,17 +5087,17 @@ function RevivePanel({ companyId, companyName }) {
     ] })
   ] });
 }
-var EmptyReviveState = () => /* @__PURE__ */ jsxs41("div", { className: "text-center py-3xl", children: [
-  /* @__PURE__ */ jsx43("h2", { className: "text-heading font-bold mb-md", children: "This company isn't stalled" }),
-  /* @__PURE__ */ jsx43("p", { className: "text-body mb-lg text-foreground/70", children: "No blocking issues detected. Try Assess for a strategic audit instead." })
+var EmptyReviveState = () => /* @__PURE__ */ jsxs43("div", { className: "text-center py-3xl", children: [
+  /* @__PURE__ */ jsx45("h2", { className: "text-heading font-bold mb-md", children: "This company isn't stalled" }),
+  /* @__PURE__ */ jsx45("p", { className: "text-body mb-lg text-foreground/70", children: "No blocking issues detected. Try Assess for a strategic audit instead." })
 ] });
 
 // src/ui/reposition/RepositionPanel.tsx
-import { useState as useState28, useCallback as useCallback20, useEffect as useEffect12 } from "react";
+import { useState as useState30, useCallback as useCallback20, useEffect as useEffect13 } from "react";
 import { usePluginAction as usePluginAction8 } from "@paperclipai/plugin-sdk/ui";
 
 // src/ui/reposition/IntentEntry.tsx
-import { useState as useState21, useCallback as useCallback14 } from "react";
+import { useState as useState23, useCallback as useCallback14 } from "react";
 
 // src/reposition/shift-classify.ts
 function isValidShiftIntent(intent) {
@@ -4798,14 +5105,14 @@ function isValidShiftIntent(intent) {
 }
 
 // src/ui/reposition/IntentEntry.tsx
-import { jsx as jsx44, jsxs as jsxs42 } from "react/jsx-runtime";
+import { jsx as jsx46, jsxs as jsxs44 } from "react/jsx-runtime";
 function IntentEntry({
   onContinue,
   initialValue = ""
 }) {
-  const [intent, setIntent] = useState21(initialValue);
-  const [isLoading, setIsLoading] = useState21(false);
-  const [error, setError] = useState21(null);
+  const [intent, setIntent] = useState23(initialValue);
+  const [isLoading, setIsLoading] = useState23(false);
+  const [error, setError] = useState23(null);
   const isValid = isValidShiftIntent(intent);
   const handleContinue = useCallback14(async () => {
     if (!isValid) return;
@@ -4820,9 +5127,9 @@ function IntentEntry({
       setIsLoading(false);
     }
   }, [intent, isValid, onContinue]);
-  return /* @__PURE__ */ jsxs42("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsx44("div", { children: /* @__PURE__ */ jsx44("h2", { className: "text-heading font-bold text-foreground", children: "Describe the shift" }) }),
-    /* @__PURE__ */ jsx44(
+  return /* @__PURE__ */ jsxs44("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsx46("div", { children: /* @__PURE__ */ jsx46("h2", { className: "text-heading font-bold text-foreground", children: "Describe the shift" }) }),
+    /* @__PURE__ */ jsx46(
       "textarea",
       {
         value: intent,
@@ -4831,14 +5138,14 @@ function IntentEntry({
         className: "w-full p-lg min-h-24 bg-card border border-border rounded text-body font-normal text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
       }
     ),
-    /* @__PURE__ */ jsx44("p", { className: "text-body font-normal text-foreground/70", children: "Be specific about the direction change, not just internal improvements." }),
-    error && /* @__PURE__ */ jsx44("p", { className: "text-body font-normal text-destructive", children: error }),
-    /* @__PURE__ */ jsx44("div", { className: "flex items-baseline justify-between", children: /* @__PURE__ */ jsxs42("p", { className: `text-label font-normal ${intent.length >= 20 ? "text-foreground/70" : "text-destructive"}`, children: [
+    /* @__PURE__ */ jsx46("p", { className: "text-body font-normal text-foreground/70", children: "Be specific about the direction change, not just internal improvements." }),
+    error && /* @__PURE__ */ jsx46("p", { className: "text-body font-normal text-destructive", children: error }),
+    /* @__PURE__ */ jsx46("div", { className: "flex items-baseline justify-between", children: /* @__PURE__ */ jsxs44("p", { className: `text-label font-normal ${intent.length >= 20 ? "text-foreground/70" : "text-destructive"}`, children: [
       intent.length,
       " characters",
       intent.length < 20 && ` (minimum 20 required)`
     ] }) }),
-    /* @__PURE__ */ jsx44(
+    /* @__PURE__ */ jsx46(
       "button",
       {
         onClick: handleContinue,
@@ -4851,8 +5158,8 @@ function IntentEntry({
 }
 
 // src/ui/reposition/ScopeConfirmation.tsx
-import { useState as useState22, useCallback as useCallback15, useMemo as useMemo6 } from "react";
-import { jsx as jsx45, jsxs as jsxs43 } from "react/jsx-runtime";
+import { useState as useState24, useCallback as useCallback15, useMemo as useMemo6 } from "react";
+import { jsx as jsx47, jsxs as jsxs45 } from "react/jsx-runtime";
 var VISION_SECTIONS = [
   { id: "mission", label: "Mission" },
   { id: "mandate", label: "Mandate" },
@@ -4879,11 +5186,11 @@ function ScopeConfirmation({
   onConfirm,
   onBack
 }) {
-  const [selectedSections, setSelectedSections] = useState22(
+  const [selectedSections, setSelectedSections] = useState24(
     new Set(classifiedScope.affectedSections)
   );
-  const [isLoading, setIsLoading] = useState22(false);
-  const [error, setError] = useState22(null);
+  const [isLoading, setIsLoading] = useState24(false);
+  const [error, setError] = useState24(null);
   const isValid = selectedSections.size >= 1;
   const handleToggleSection = useCallback15((sectionId) => {
     setSelectedSections((prev) => {
@@ -4913,21 +5220,21 @@ function ScopeConfirmation({
     () => new Set(classifiedScope.affectedSections),
     [classifiedScope]
   );
-  return /* @__PURE__ */ jsxs43("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsxs43("div", { children: [
-      /* @__PURE__ */ jsx45("h2", { className: "text-heading font-bold text-foreground", children: "Which sections change?" }),
-      /* @__PURE__ */ jsx45("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "These sections will be re-interviewed. Add or remove any." })
+  return /* @__PURE__ */ jsxs45("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsxs45("div", { children: [
+      /* @__PURE__ */ jsx47("h2", { className: "text-heading font-bold text-foreground", children: "Which sections change?" }),
+      /* @__PURE__ */ jsx47("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "These sections will be re-interviewed. Add or remove any." })
     ] }),
-    /* @__PURE__ */ jsx45("div", { className: "p-md bg-card rounded border border-border", children: /* @__PURE__ */ jsx45("p", { className: "text-label font-normal text-foreground/70", children: classifiedScope.rationale }) }),
-    /* @__PURE__ */ jsx45("div", { className: "space-y-sm", children: VISION_SECTIONS.map(({ id, label }) => {
+    /* @__PURE__ */ jsx47("div", { className: "p-md bg-card rounded border border-border", children: /* @__PURE__ */ jsx47("p", { className: "text-label font-normal text-foreground/70", children: classifiedScope.rationale }) }),
+    /* @__PURE__ */ jsx47("div", { className: "space-y-sm", children: VISION_SECTIONS.map(({ id, label }) => {
       const isChecked = selectedSections.has(id);
       const wasClassified = classifiedSet.has(id);
-      return /* @__PURE__ */ jsxs43(
+      return /* @__PURE__ */ jsxs45(
         "label",
         {
           className: "flex items-center gap-md cursor-pointer group p-sm hover:bg-card rounded transition-colors",
           children: [
-            /* @__PURE__ */ jsx45(
+            /* @__PURE__ */ jsx47(
               "input",
               {
                 type: "checkbox",
@@ -4936,17 +5243,17 @@ function ScopeConfirmation({
                 className: "w-4 h-4 rounded border border-border checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
               }
             ),
-            /* @__PURE__ */ jsx45("span", { className: "text-body font-normal text-foreground flex-1", children: label }),
-            !wasClassified && /* @__PURE__ */ jsx45("span", { className: "text-label font-normal text-foreground/70", children: "(optional)" })
+            /* @__PURE__ */ jsx47("span", { className: "text-body font-normal text-foreground flex-1", children: label }),
+            !wasClassified && /* @__PURE__ */ jsx47("span", { className: "text-label font-normal text-foreground/70", children: "(optional)" })
           ]
         },
         id
       );
     }) }),
-    error && /* @__PURE__ */ jsx45("p", { className: "text-body font-normal text-destructive", children: error }),
-    !isValid && selectedSections.size === 0 && /* @__PURE__ */ jsx45("p", { className: "text-body font-normal text-destructive", children: "Select at least 1 section to continue." }),
-    /* @__PURE__ */ jsxs43("div", { className: "flex gap-md pt-md", children: [
-      /* @__PURE__ */ jsx45(
+    error && /* @__PURE__ */ jsx47("p", { className: "text-body font-normal text-destructive", children: error }),
+    !isValid && selectedSections.size === 0 && /* @__PURE__ */ jsx47("p", { className: "text-body font-normal text-destructive", children: "Select at least 1 section to continue." }),
+    /* @__PURE__ */ jsxs45("div", { className: "flex gap-md pt-md", children: [
+      /* @__PURE__ */ jsx47(
         "button",
         {
           onClick: onBack,
@@ -4954,7 +5261,7 @@ function ScopeConfirmation({
           children: "\u2190 Back to shift description"
         }
       ),
-      /* @__PURE__ */ jsx45(
+      /* @__PURE__ */ jsx47(
         "button",
         {
           onClick: handleConfirm,
@@ -4968,7 +5275,7 @@ function ScopeConfirmation({
 }
 
 // src/ui/reposition/RepositionInterviewFlow.tsx
-import { useState as useState23, useCallback as useCallback16, useMemo as useMemo7 } from "react";
+import { useState as useState25, useCallback as useCallback16, useMemo as useMemo7 } from "react";
 
 // src/reposition/scope-filter.ts
 function filterInterviewToScope(allSections, affectedSectionIds) {
@@ -5065,17 +5372,17 @@ function getSectionAnswerSeed(vision, sectionId) {
 }
 
 // src/ui/reposition/RepositionInterviewFlow.tsx
-import { jsx as jsx46, jsxs as jsxs44 } from "react/jsx-runtime";
+import { jsx as jsx48, jsxs as jsxs46 } from "react/jsx-runtime";
 function RepositionInterviewFlow({
   affectedSectionIds,
   currentVision,
   onComplete,
   onBack
 }) {
-  const [currentSectionIndex, setCurrentSectionIndex] = useState23(0);
-  const [answers, setAnswers] = useState23({});
-  const [isLoading, setIsLoading] = useState23(false);
-  const [error, setError] = useState23(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState25(0);
+  const [answers, setAnswers] = useState25({});
+  const [isLoading, setIsLoading] = useState25(false);
+  const [error, setError] = useState25(null);
   const scopedSections = useMemo7(() => {
     const allSections = loadInterviewSections();
     const filtered = filterInterviewToScope(
@@ -5126,14 +5433,14 @@ function RepositionInterviewFlow({
     setCurrentSectionIndex(sectionIndex);
   }, []);
   if (!currentSection) {
-    return /* @__PURE__ */ jsx46("div", { className: "flex items-center justify-center p-lg min-h-96", children: /* @__PURE__ */ jsx46("p", { className: "text-body text-foreground/70", children: "No sections to interview." }) });
+    return /* @__PURE__ */ jsx48("div", { className: "flex items-center justify-center p-lg min-h-96", children: /* @__PURE__ */ jsx48("p", { className: "text-body text-foreground/70", children: "No sections to interview." }) });
   }
   const completedSections = useMemo7(() => {
     return scopedSections.slice(0, currentSectionIndex).map((_, i) => i);
   }, [scopedSections, currentSectionIndex]);
   const nextSectionName = !isLastSection && currentSectionIndex + 1 < scopedSections.length ? scopedSections[currentSectionIndex + 1].title : "";
-  return /* @__PURE__ */ jsxs44("div", { className: "flex gap-lg h-full", children: [
-    /* @__PURE__ */ jsx46("nav", { className: "w-60 flex-shrink-0 border-r border-border p-lg overflow-y-auto", children: /* @__PURE__ */ jsx46(
+  return /* @__PURE__ */ jsxs46("div", { className: "flex gap-lg h-full", children: [
+    /* @__PURE__ */ jsx48("nav", { className: "w-60 flex-shrink-0 border-r border-border p-lg overflow-y-auto", children: /* @__PURE__ */ jsx48(
       SectionNavRail,
       {
         sections: scopedSections,
@@ -5142,19 +5449,19 @@ function RepositionInterviewFlow({
         onJumpTo: handleSectionNavigate
       }
     ) }),
-    /* @__PURE__ */ jsxs44("main", { className: "flex-1 overflow-y-auto p-lg space-y-lg", children: [
-      /* @__PURE__ */ jsxs44(
+    /* @__PURE__ */ jsxs46("main", { className: "flex-1 overflow-y-auto p-lg space-y-lg", children: [
+      /* @__PURE__ */ jsxs46(
         "button",
         {
           onClick: handleBack,
           className: "flex items-center gap-sm text-accent font-normal hover:text-accent/80 transition-colors",
           children: [
-            /* @__PURE__ */ jsx46(ChevronLeft, { className: "h-4 w-4" }),
+            /* @__PURE__ */ jsx48(ChevronLeft, { className: "h-4 w-4" }),
             "Back to scope confirmation"
           ]
         }
       ),
-      /* @__PURE__ */ jsx46(
+      /* @__PURE__ */ jsx48(
         InterviewSection,
         {
           section: currentSection,
@@ -5169,9 +5476,9 @@ function RepositionInterviewFlow({
           isLastSection
         }
       ),
-      error && /* @__PURE__ */ jsx46("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
-      /* @__PURE__ */ jsxs44("div", { className: "flex gap-md pt-md", children: [
-        /* @__PURE__ */ jsx46(
+      error && /* @__PURE__ */ jsx48("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
+      /* @__PURE__ */ jsxs46("div", { className: "flex gap-md pt-md", children: [
+        /* @__PURE__ */ jsx48(
           "button",
           {
             onClick: handleBack,
@@ -5180,7 +5487,7 @@ function RepositionInterviewFlow({
             children: "\u2190 Back"
           }
         ),
-        /* @__PURE__ */ jsx46(
+        /* @__PURE__ */ jsx48(
           "button",
           {
             onClick: handleNext,
@@ -5195,8 +5502,8 @@ function RepositionInterviewFlow({
 }
 
 // src/ui/reposition/AmendmentPreview.tsx
-import { useCallback as useCallback17, useState as useState24 } from "react";
-import { jsx as jsx47, jsxs as jsxs45 } from "react/jsx-runtime";
+import { useCallback as useCallback17, useState as useState26 } from "react";
+import { jsx as jsx49, jsxs as jsxs47 } from "react/jsx-runtime";
 var SECTION_LABELS = {
   mission: "Mission",
   mandate: "Mandate",
@@ -5223,8 +5530,8 @@ function AmendmentPreview({
   onBack,
   onContinue
 }) {
-  const [isLoading, setIsLoading] = useState24(false);
-  const [error, setError] = useState24(null);
+  const [isLoading, setIsLoading] = useState26(false);
+  const [error, setError] = useState26(null);
   const handleContinue = useCallback17(async () => {
     try {
       setError(null);
@@ -5237,33 +5544,33 @@ function AmendmentPreview({
       setIsLoading(false);
     }
   }, [onContinue]);
-  return /* @__PURE__ */ jsxs45("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsx47("div", { children: /* @__PURE__ */ jsx47("h2", { className: "text-display font-bold text-foreground", children: "Review the proposed changes" }) }),
-    /* @__PURE__ */ jsx47("div", { className: "space-y-lg", children: amendments.map((amendment) => {
+  return /* @__PURE__ */ jsxs47("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsx49("div", { children: /* @__PURE__ */ jsx49("h2", { className: "text-display font-bold text-foreground", children: "Review the proposed changes" }) }),
+    /* @__PURE__ */ jsx49("div", { className: "space-y-lg", children: amendments.map((amendment) => {
       const sectionLabel = SECTION_LABELS[amendment.section] || amendment.section;
       const diff = `- ${amendment.currentContent}
 + ${amendment.proposedContent}`;
-      return /* @__PURE__ */ jsxs45("div", { className: "border border-border rounded p-lg space-y-md", children: [
-        /* @__PURE__ */ jsx47("h3", { className: "text-heading font-bold text-foreground", children: sectionLabel }),
-        /* @__PURE__ */ jsx47("div", { className: "text-label font-normal text-foreground/70", children: amendment.reason }),
-        /* @__PURE__ */ jsx47(AmendmentDiff, { amendment: diff })
+      return /* @__PURE__ */ jsxs47("div", { className: "border border-border rounded p-lg space-y-md", children: [
+        /* @__PURE__ */ jsx49("h3", { className: "text-heading font-bold text-foreground", children: sectionLabel }),
+        /* @__PURE__ */ jsx49("div", { className: "text-label font-normal text-foreground/70", children: amendment.reason }),
+        /* @__PURE__ */ jsx49(AmendmentDiff, { amendment: diff })
       ] }, amendment.section);
     }) }),
-    error && /* @__PURE__ */ jsx47("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
-    /* @__PURE__ */ jsxs45("div", { className: "flex gap-md pt-md", children: [
-      /* @__PURE__ */ jsxs45(
+    error && /* @__PURE__ */ jsx49("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
+    /* @__PURE__ */ jsxs47("div", { className: "flex gap-md pt-md", children: [
+      /* @__PURE__ */ jsxs47(
         "button",
         {
           onClick: onBack,
           disabled: isLoading,
           className: "flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors",
           children: [
-            /* @__PURE__ */ jsx47(ChevronLeft, { className: "h-4 w-4 inline mr-sm" }),
+            /* @__PURE__ */ jsx49(ChevronLeft, { className: "h-4 w-4 inline mr-sm" }),
             "Back to interview"
           ]
         }
       ),
-      /* @__PURE__ */ jsx47(
+      /* @__PURE__ */ jsx49(
         "button",
         {
           onClick: handleContinue,
@@ -5277,64 +5584,64 @@ function AmendmentPreview({
 }
 
 // src/ui/reposition/CascadeReviewPanel.tsx
-import { useState as useState26, useCallback as useCallback18 } from "react";
+import { useState as useState28, useCallback as useCallback18 } from "react";
 
 // src/ui/assess/CustomOverrideWarning.tsx
-import { useState as useState25 } from "react";
-import { jsx as jsx48, jsxs as jsxs46 } from "react/jsx-runtime";
+import { useState as useState27 } from "react";
+import { jsx as jsx50, jsxs as jsxs48 } from "react/jsx-runtime";
 function CustomOverrideWarning({
   override,
   requiresConfirmation = false,
   onConfirmed
 }) {
-  const [isExpanded, setIsExpanded] = useState25(false);
-  const [isConfirmed, setIsConfirmed] = useState25(false);
+  const [isExpanded, setIsExpanded] = useState27(false);
+  const [isConfirmed, setIsConfirmed] = useState27(false);
   const handleConfirmChange = (checked) => {
     setIsConfirmed(checked);
     onConfirmed?.(checked);
   };
-  return /* @__PURE__ */ jsxs46("div", { className: "bg-destructive/10 border border-l-4 border-l-destructive border-destructive rounded p-lg space-y-md", children: [
-    /* @__PURE__ */ jsxs46("div", { className: "flex gap-md items-start", children: [
-      /* @__PURE__ */ jsx48(TriangleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-0.5" }),
-      /* @__PURE__ */ jsxs46("div", { className: "flex-1", children: [
-        /* @__PURE__ */ jsxs46("h3", { className: "text-heading font-bold text-destructive", children: [
+  return /* @__PURE__ */ jsxs48("div", { className: "bg-destructive/10 border border-l-4 border-l-destructive border-destructive rounded p-lg space-y-md", children: [
+    /* @__PURE__ */ jsxs48("div", { className: "flex gap-md items-start", children: [
+      /* @__PURE__ */ jsx50(TriangleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsxs48("div", { className: "flex-1", children: [
+        /* @__PURE__ */ jsxs48("h3", { className: "text-heading font-bold text-destructive", children: [
           "Agent ",
           override.agentName,
           " has custom instructions"
         ] }),
-        /* @__PURE__ */ jsxs46("p", { className: "text-body font-normal text-foreground mt-sm", children: [
+        /* @__PURE__ */ jsxs48("p", { className: "text-body font-normal text-foreground mt-sm", children: [
           "This agent's instructions have been customized beyond the preset baseline. The ",
           override.sectionName,
           " amendment will cascade as a new work item, but the agent's custom overrides will not be automatically merged."
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs46(
+    /* @__PURE__ */ jsxs48(
       "details",
       {
         open: isExpanded,
         onToggle: (e) => setIsExpanded(e.currentTarget.open),
         className: "group",
         children: [
-          /* @__PURE__ */ jsxs46("summary", { className: "cursor-pointer flex items-center gap-sm text-label font-normal text-foreground hover:text-foreground/80 transition-colors p-sm hover:bg-background rounded select-none", children: [
-            /* @__PURE__ */ jsx48(ChevronDown, { className: "h-4 w-4 transition-transform group-open:rotate-180" }),
-            /* @__PURE__ */ jsx48("span", { children: "Review override conflict" })
+          /* @__PURE__ */ jsxs48("summary", { className: "cursor-pointer flex items-center gap-sm text-label font-normal text-foreground hover:text-foreground/80 transition-colors p-sm hover:bg-background rounded select-none", children: [
+            /* @__PURE__ */ jsx50(ChevronDown, { className: "h-4 w-4 transition-transform group-open:rotate-180" }),
+            /* @__PURE__ */ jsx50("span", { children: "Review override conflict" })
           ] }),
-          /* @__PURE__ */ jsxs46("div", { className: "mt-md p-md bg-background rounded border border-border space-y-md", children: [
-            /* @__PURE__ */ jsxs46("div", { children: [
-              /* @__PURE__ */ jsx48("p", { className: "text-label font-bold text-foreground mb-sm", children: "Custom override:" }),
-              /* @__PURE__ */ jsx48("pre", { className: "text-label font-normal text-foreground/70 bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap", children: override.customOverride })
+          /* @__PURE__ */ jsxs48("div", { className: "mt-md p-md bg-background rounded border border-border space-y-md", children: [
+            /* @__PURE__ */ jsxs48("div", { children: [
+              /* @__PURE__ */ jsx50("p", { className: "text-label font-bold text-foreground mb-sm", children: "Custom override:" }),
+              /* @__PURE__ */ jsx50("pre", { className: "text-label font-normal text-foreground/70 bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap", children: override.customOverride })
             ] }),
-            /* @__PURE__ */ jsxs46("div", { children: [
-              /* @__PURE__ */ jsx48("p", { className: "text-label font-bold text-foreground mb-sm", children: "Proposed change:" }),
-              /* @__PURE__ */ jsx48("pre", { className: "text-label font-normal text-accent bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap", children: override.proposedChange })
+            /* @__PURE__ */ jsxs48("div", { children: [
+              /* @__PURE__ */ jsx50("p", { className: "text-label font-bold text-foreground mb-sm", children: "Proposed change:" }),
+              /* @__PURE__ */ jsx50("pre", { className: "text-label font-normal text-accent bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap", children: override.proposedChange })
             ] })
           ] })
         ]
       }
     ),
-    requiresConfirmation && /* @__PURE__ */ jsxs46("label", { className: "flex items-start gap-md cursor-pointer group", children: [
-      /* @__PURE__ */ jsx48(
+    requiresConfirmation && /* @__PURE__ */ jsxs48("label", { className: "flex items-start gap-md cursor-pointer group", children: [
+      /* @__PURE__ */ jsx50(
         "input",
         {
           type: "checkbox",
@@ -5343,13 +5650,13 @@ function CustomOverrideWarning({
           className: "mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
         }
       ),
-      /* @__PURE__ */ jsx48("span", { className: "text-body font-normal text-foreground group-hover:text-foreground/80", children: "I've reviewed the override conflict and approve cascading anyway" })
+      /* @__PURE__ */ jsx50("span", { className: "text-body font-normal text-foreground group-hover:text-foreground/80", children: "I've reviewed the override conflict and approve cascading anyway" })
     ] })
   ] });
 }
 
 // src/ui/reposition/AgentDecisionCard.tsx
-import { jsx as jsx49, jsxs as jsxs47 } from "react/jsx-runtime";
+import { jsx as jsx51, jsxs as jsxs49 } from "react/jsx-runtime";
 function AgentDecisionCard({
   agent,
   affectedSection,
@@ -5360,20 +5667,20 @@ function AgentDecisionCard({
   onOverrideConfirm
 }) {
   const canApply = !hasOverride || isOverrideConfirmed;
-  return /* @__PURE__ */ jsxs47("div", { className: "bg-card rounded border border-border overflow-hidden", children: [
-    /* @__PURE__ */ jsx49("div", { className: "p-md bg-background border-b border-border", children: /* @__PURE__ */ jsx49("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ jsxs47("div", { children: [
-      /* @__PURE__ */ jsxs47("h3", { className: "text-body font-bold text-foreground", children: [
+  return /* @__PURE__ */ jsxs49("div", { className: "bg-card rounded border border-border overflow-hidden", children: [
+    /* @__PURE__ */ jsx51("div", { className: "p-md bg-background border-b border-border", children: /* @__PURE__ */ jsx51("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ jsxs49("div", { children: [
+      /* @__PURE__ */ jsxs49("h3", { className: "text-body font-bold text-foreground", children: [
         agent.name,
         " \u2014 ",
         agent.role || "Agent"
       ] }),
-      affectedSection && /* @__PURE__ */ jsxs47("p", { className: "text-label font-normal text-foreground/70 mt-xs", children: [
+      affectedSection && /* @__PURE__ */ jsxs49("p", { className: "text-label font-normal text-foreground/70 mt-xs", children: [
         "Current: ",
         affectedSection
       ] })
     ] }) }) }),
-    /* @__PURE__ */ jsxs47("div", { className: "p-md space-y-md", children: [
-      hasOverride && /* @__PURE__ */ jsx49(
+    /* @__PURE__ */ jsxs49("div", { className: "p-md space-y-md", children: [
+      hasOverride && /* @__PURE__ */ jsx51(
         CustomOverrideWarning,
         {
           override: {
@@ -5386,8 +5693,8 @@ function AgentDecisionCard({
           onConfirmed: onOverrideConfirm
         }
       ),
-      /* @__PURE__ */ jsxs47("div", { className: "flex gap-md", children: [
-        /* @__PURE__ */ jsx49(
+      /* @__PURE__ */ jsxs49("div", { className: "flex gap-md", children: [
+        /* @__PURE__ */ jsx51(
           "button",
           {
             onClick: () => onDecisionChange("keep"),
@@ -5395,7 +5702,7 @@ function AgentDecisionCard({
             children: "Keep custom"
           }
         ),
-        /* @__PURE__ */ jsx49(
+        /* @__PURE__ */ jsx51(
           "button",
           {
             onClick: () => onDecisionChange("apply"),
@@ -5410,7 +5717,7 @@ function AgentDecisionCard({
 }
 
 // src/ui/reposition/CascadeReviewPanel.tsx
-import { jsx as jsx50, jsxs as jsxs48 } from "react/jsx-runtime";
+import { jsx as jsx52, jsxs as jsxs50 } from "react/jsx-runtime";
 function CascadeReviewPanel({
   cascadePlan,
   onBack,
@@ -5426,10 +5733,10 @@ function CascadeReviewPanel({
     },
     {}
   );
-  const [decisions, setDecisions] = useState26(initialDecisions);
-  const [overrideConfirmations, setOverrideConfirmations] = useState26({});
-  const [isLoading, setIsLoading] = useState26(false);
-  const [error, setError] = useState26(null);
+  const [decisions, setDecisions] = useState28(initialDecisions);
+  const [overrideConfirmations, setOverrideConfirmations] = useState28({});
+  const [isLoading, setIsLoading] = useState28(false);
+  const [error, setError] = useState28(null);
   const allOverridesConfirmed = cascadePlan.customOverrideWarnings?.every(
     (w) => overrideConfirmations[w.agentId] === true
   ) ?? true;
@@ -5462,12 +5769,12 @@ function CascadeReviewPanel({
       setIsLoading(false);
     }
   }, [decisions, canConfirm, onConfirm]);
-  return /* @__PURE__ */ jsxs48("div", { className: "space-y-lg", children: [
-    /* @__PURE__ */ jsxs48("div", { children: [
-      /* @__PURE__ */ jsx50("h2", { className: "text-heading font-bold text-foreground", children: "Which agents get updated?" }),
-      /* @__PURE__ */ jsx50("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "These agents will receive new instructions from the repositioning. Skip any with custom overrides if you want to keep them." })
+  return /* @__PURE__ */ jsxs50("div", { className: "space-y-lg", children: [
+    /* @__PURE__ */ jsxs50("div", { children: [
+      /* @__PURE__ */ jsx52("h2", { className: "text-heading font-bold text-foreground", children: "Which agents get updated?" }),
+      /* @__PURE__ */ jsx52("p", { className: "text-body font-normal text-foreground/70 mt-sm", children: "These agents will receive new instructions from the repositioning. Skip any with custom overrides if you want to keep them." })
     ] }),
-    /* @__PURE__ */ jsx50("div", { className: "space-y-md", children: cascadePlan.affectedAgents.map((agent) => {
+    /* @__PURE__ */ jsx52("div", { className: "space-y-md", children: cascadePlan.affectedAgents.map((agent) => {
       const hasOverride = cascadePlan.customOverrideWarnings?.some(
         (w) => w.agentId === agent.id
       );
@@ -5475,7 +5782,7 @@ function CascadeReviewPanel({
       const isConfirmed = overrideConfirmations[agent.id] ?? false;
       const agentIssues = cascadePlan.issuesByAgent?.[agent.id];
       const affectedSection = agentIssues && Array.isArray(agentIssues) && agentIssues.length > 0 ? agentIssues[0]?.section || "" : "";
-      return /* @__PURE__ */ jsx50(
+      return /* @__PURE__ */ jsx52(
         AgentDecisionCard,
         {
           agent,
@@ -5489,22 +5796,22 @@ function CascadeReviewPanel({
         agent.id
       );
     }) }),
-    error && /* @__PURE__ */ jsx50("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
-    !canConfirm && cascadePlan.customOverrideWarnings && cascadePlan.customOverrideWarnings.length > 0 && /* @__PURE__ */ jsx50("p", { className: "text-body font-normal text-destructive", children: "Review custom override conflicts above before continuing." }),
-    /* @__PURE__ */ jsxs48("div", { className: "flex gap-md pt-md", children: [
-      /* @__PURE__ */ jsxs48(
+    error && /* @__PURE__ */ jsx52("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
+    !canConfirm && cascadePlan.customOverrideWarnings && cascadePlan.customOverrideWarnings.length > 0 && /* @__PURE__ */ jsx52("p", { className: "text-body font-normal text-destructive", children: "Review custom override conflicts above before continuing." }),
+    /* @__PURE__ */ jsxs50("div", { className: "flex gap-md pt-md", children: [
+      /* @__PURE__ */ jsxs50(
         "button",
         {
           onClick: onBack,
           disabled: isLoading,
           className: "flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors",
           children: [
-            /* @__PURE__ */ jsx50(ChevronLeft, { className: "h-4 w-4 inline mr-sm" }),
+            /* @__PURE__ */ jsx52(ChevronLeft, { className: "h-4 w-4 inline mr-sm" }),
             "Back to preview"
           ]
         }
       ),
-      /* @__PURE__ */ jsx50(
+      /* @__PURE__ */ jsx52(
         "button",
         {
           onClick: handleConfirm,
@@ -5518,15 +5825,15 @@ function CascadeReviewPanel({
 }
 
 // src/ui/reposition/RepositionRunState.ts
-import { useCallback as useCallback19, useEffect as useEffect11, useState as useState27 } from "react";
+import { useCallback as useCallback19, useEffect as useEffect12, useState as useState29 } from "react";
 import { usePluginAction as usePluginAction7 } from "@paperclipai/plugin-sdk/ui";
 function useRepositionRunState(companyId) {
   const loadRunStateAction = usePluginAction7("loadRepositionRunState");
   const updateStateAction = usePluginAction7("updateRepositionRunState");
-  const [run, setRun] = useState27(null);
-  const [isLoading, setIsLoading] = useState27(true);
-  const [error, setError] = useState27(null);
-  useEffect11(() => {
+  const [run, setRun] = useState29(null);
+  const [isLoading, setIsLoading] = useState29(true);
+  const [error, setError] = useState29(null);
+  useEffect12(() => {
     (async () => {
       try {
         setIsLoading(true);
@@ -5598,22 +5905,22 @@ function useRepositionRunState(companyId) {
 }
 
 // src/ui/reposition/RepositionPanel.tsx
-import { jsx as jsx51, jsxs as jsxs49 } from "react/jsx-runtime";
+import { jsx as jsx53, jsxs as jsxs51 } from "react/jsx-runtime";
 function RepositionPanel({
   companyId,
   companyName,
   visionExists
 }) {
-  const [step, setStep] = useState28("empty");
-  const [intent, setIntent] = useState28("");
-  const [shiftScope, setShiftScope] = useState28(null);
-  const [userScope, setUserScope] = useState28([]);
-  const [interviewAnswers, setInterviewAnswers] = useState28({});
-  const [amendments, setAmendments] = useState28([]);
-  const [cascadePlan, setCascadePlan] = useState28(null);
-  const [applyError, setApplyError] = useState28(null);
-  const [applyStep, setApplyStep] = useState28("preflight");
-  const [waitingApprovalTime, setWaitingApprovalTime] = useState28("");
+  const [step, setStep] = useState30("empty");
+  const [intent, setIntent] = useState30("");
+  const [shiftScope, setShiftScope] = useState30(null);
+  const [userScope, setUserScope] = useState30([]);
+  const [interviewAnswers, setInterviewAnswers] = useState30({});
+  const [amendments, setAmendments] = useState30([]);
+  const [cascadePlan, setCascadePlan] = useState30(null);
+  const [applyError, setApplyError] = useState30(null);
+  const [applyStep, setApplyStep] = useState30("preflight");
+  const [waitingApprovalTime, setWaitingApprovalTime] = useState30("");
   const getCurrentVisionAction = usePluginAction8("getCurrentVision");
   const getApprovalRoutingAction = usePluginAction8("getApprovalRouting");
   const classifyShiftAction = usePluginAction8("classifyShift");
@@ -5626,7 +5933,7 @@ function RepositionPanel({
     saveRepositionRun,
     clearRun
   } = useRepositionRunState(companyId);
-  useEffect12(() => {
+  useEffect13(() => {
     if (isLoadingRun) return;
     if (cachedRun && cachedRun.intent) {
       setIntent(cachedRun.intent);
@@ -5835,8 +6142,8 @@ function RepositionPanel({
       console.error("Failed to discard:", error);
     }
   }, [clearRun]);
-  const [currentVision, setCurrentVision] = useState28(null);
-  useEffect12(() => {
+  const [currentVision, setCurrentVision] = useState30(null);
+  useEffect13(() => {
     (async () => {
       try {
         const result = await getCurrentVisionAction({
@@ -5851,18 +6158,29 @@ function RepositionPanel({
     })();
   }, [companyId, getCurrentVisionAction]);
   if (isLoadingRun) {
-    return /* @__PURE__ */ jsx51("div", { className: "flex items-center justify-center p-lg min-h-96", children: /* @__PURE__ */ jsxs49("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsx51("div", { className: "animate-spin h-8 w-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-md" }),
-      /* @__PURE__ */ jsx51("p", { className: "text-body text-foreground/70", children: "Loading reposition state..." })
+    return /* @__PURE__ */ jsx53("div", { className: "flex items-center justify-center p-lg min-h-96", children: /* @__PURE__ */ jsxs51("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx53("div", { className: "animate-spin h-8 w-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-md" }),
+      /* @__PURE__ */ jsx53("p", { className: "text-body text-foreground/70", children: "Loading reposition state..." })
     ] }) });
   }
-  return /* @__PURE__ */ jsxs49("div", { className: "flex flex-col h-full", children: [
-    /* @__PURE__ */ jsx51("header", { className: "sticky top-0 bg-background border-b border-border p-lg z-10", children: /* @__PURE__ */ jsxs49("div", { className: "flex items-start justify-between gap-lg", children: [
-      /* @__PURE__ */ jsxs49("div", { children: [
-        /* @__PURE__ */ jsx51("h1", { className: "text-display font-bold text-foreground", children: companyName }),
-        /* @__PURE__ */ jsx51("p", { className: "text-body font-normal text-foreground/70 mt-xs", children: "Describe the strategic shift and we'll guide you through updating your company." })
+  return /* @__PURE__ */ jsxs51("div", { className: "flex flex-col h-full", children: [
+    /* @__PURE__ */ jsx53("header", { className: "sticky top-0 bg-background border-b border-border p-lg z-10", children: /* @__PURE__ */ jsxs51("div", { className: "flex items-start justify-between gap-lg", children: [
+      /* @__PURE__ */ jsxs51("div", { children: [
+        /* @__PURE__ */ jsxs51("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx53("h1", { className: "text-display font-bold text-foreground", children: companyName }),
+          /* @__PURE__ */ jsx53(
+            HelpTip,
+            {
+              title: "What does Reposition mode do?",
+              body: "Reposition lets you pivot a healthy company. Describe the strategic shift in plain English; Compass infers which VISION sections are affected, re-asks only those questions, and produces an amendment diff plus a cascade plan.",
+              details: "Cascade plan covers: which agents need rebriefing, which content needs rewriting, which projects/issues need scope adjustments. Each amendment is reviewed and approved before any write happens. Original VISION.md is preserved with a dated changelog entry per amendment.",
+              size: "sm"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx53("p", { className: "text-body font-normal text-foreground/70 mt-xs", children: "Describe the strategic shift and we'll guide you through updating your company." })
       ] }),
-      step !== "empty" && /* @__PURE__ */ jsx51(
+      step !== "empty" && /* @__PURE__ */ jsx53(
         "button",
         {
           onClick: handleDiscard,
@@ -5871,17 +6189,17 @@ function RepositionPanel({
         }
       )
     ] }) }),
-    /* @__PURE__ */ jsxs49("main", { className: "flex-1 overflow-y-auto p-lg", children: [
-      !visionExists && /* @__PURE__ */ jsxs49("div", { className: "mb-lg p-lg bg-destructive/10 border border-destructive rounded flex items-start gap-md", children: [
-        /* @__PURE__ */ jsx51(CircleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-1" }),
-        /* @__PURE__ */ jsxs49("div", { children: [
-          /* @__PURE__ */ jsx51("h3", { className: "text-heading font-bold text-destructive", children: "No VISION.md found" }),
-          /* @__PURE__ */ jsx51("p", { className: "text-body font-normal text-foreground mt-sm", children: "Run Found mode first to create a VISION.md document." })
+    /* @__PURE__ */ jsxs51("main", { className: "flex-1 overflow-y-auto p-lg", children: [
+      !visionExists && /* @__PURE__ */ jsxs51("div", { className: "mb-lg p-lg bg-destructive/10 border border-destructive rounded flex items-start gap-md", children: [
+        /* @__PURE__ */ jsx53(CircleAlert, { className: "h-5 w-5 text-destructive flex-shrink-0 mt-1" }),
+        /* @__PURE__ */ jsxs51("div", { children: [
+          /* @__PURE__ */ jsx53("h3", { className: "text-heading font-bold text-destructive", children: "No VISION.md found" }),
+          /* @__PURE__ */ jsx53("p", { className: "text-body font-normal text-foreground mt-sm", children: "Run Found mode first to create a VISION.md document." })
         ] })
       ] }),
-      step === "empty" && /* @__PURE__ */ jsxs49("div", { className: "text-center py-3xl", children: [
-        /* @__PURE__ */ jsx51("p", { className: "text-body font-normal text-foreground/70 mb-lg", children: "Run a drift audit or make a strategic shift" }),
-        /* @__PURE__ */ jsx51(
+      step === "empty" && /* @__PURE__ */ jsxs51("div", { className: "text-center py-3xl", children: [
+        /* @__PURE__ */ jsx53("p", { className: "text-body font-normal text-foreground/70 mb-lg", children: "Run a drift audit or make a strategic shift" }),
+        /* @__PURE__ */ jsx53(
           "button",
           {
             onClick: () => setStep("intent"),
@@ -5891,8 +6209,8 @@ function RepositionPanel({
           }
         )
       ] }),
-      step === "intent" && /* @__PURE__ */ jsx51(IntentEntry, { onContinue: handleIntentSubmit }),
-      step === "scope-confirm" && shiftScope && /* @__PURE__ */ jsx51(
+      step === "intent" && /* @__PURE__ */ jsx53(IntentEntry, { onContinue: handleIntentSubmit }),
+      step === "scope-confirm" && shiftScope && /* @__PURE__ */ jsx53(
         ScopeConfirmation,
         {
           classifiedScope: shiftScope,
@@ -5900,7 +6218,7 @@ function RepositionPanel({
           onBack: handleBackFromScope
         }
       ),
-      step === "interview" && /* @__PURE__ */ jsx51(
+      step === "interview" && /* @__PURE__ */ jsx53(
         RepositionInterviewFlow,
         {
           affectedSectionIds: userScope,
@@ -5909,7 +6227,7 @@ function RepositionPanel({
           onBack: handleBackFromInterview
         }
       ),
-      step === "preview" && amendments.length > 0 && /* @__PURE__ */ jsx51(
+      step === "preview" && amendments.length > 0 && /* @__PURE__ */ jsx53(
         AmendmentPreview,
         {
           amendments,
@@ -5917,7 +6235,7 @@ function RepositionPanel({
           onBack: handleBackFromPreview
         }
       ),
-      step === "cascade-review" && cascadePlan && /* @__PURE__ */ jsx51(
+      step === "cascade-review" && cascadePlan && /* @__PURE__ */ jsx53(
         CascadeReviewPanel,
         {
           cascadePlan,
@@ -5925,7 +6243,7 @@ function RepositionPanel({
           onBack: handleBackFromCascade
         }
       ),
-      step === "confirming" && /* @__PURE__ */ jsx51(
+      step === "confirming" && /* @__PURE__ */ jsx53(
         ConfirmationModal,
         {
           vision: {
@@ -5943,17 +6261,17 @@ Amendment history preserved in VISION changelog.`,
           onCancel: handleCancelConfirm
         }
       ),
-      step === "applying" && /* @__PURE__ */ jsx51(
+      step === "applying" && /* @__PURE__ */ jsx53(
         ApplyProgress,
         {
           step: applyStep,
           progress: {}
         }
       ),
-      step === "complete" && /* @__PURE__ */ jsxs49("div", { className: "text-center py-3xl", children: [
-        /* @__PURE__ */ jsx51("h2", { className: "text-display font-bold text-foreground mb-md", children: "\u2713 Company repositioned!" }),
-        /* @__PURE__ */ jsx51("p", { className: "text-body font-normal text-foreground/70 mb-lg", children: "Your VISION document has been updated and agents have been notified. Check your company's issue list for cascading work items." }),
-        /* @__PURE__ */ jsx51(
+      step === "complete" && /* @__PURE__ */ jsxs51("div", { className: "text-center py-3xl", children: [
+        /* @__PURE__ */ jsx53("h2", { className: "text-display font-bold text-foreground mb-md", children: "\u2713 Company repositioned!" }),
+        /* @__PURE__ */ jsx53("p", { className: "text-body font-normal text-foreground/70 mb-lg", children: "Your VISION document has been updated and agents have been notified. Check your company's issue list for cascading work items." }),
+        /* @__PURE__ */ jsx53(
           "button",
           {
             onClick: () => {
@@ -5964,7 +6282,7 @@ Amendment history preserved in VISION changelog.`,
           }
         )
       ] }),
-      step === "waiting-approval" && /* @__PURE__ */ jsx51(
+      step === "waiting-approval" && /* @__PURE__ */ jsx53(
         ApprovingWaitingState,
         {
           submittedAt: waitingApprovalTime,
@@ -5973,7 +6291,7 @@ Amendment history preserved in VISION changelog.`,
           onCancel: handleErrorClose
         }
       ),
-      step === "error" && /* @__PURE__ */ jsx51(
+      step === "error" && /* @__PURE__ */ jsx53(
         ApplyErrorDisplay,
         {
           step: "apply",
@@ -5987,7 +6305,7 @@ Amendment history preserved in VISION changelog.`,
 }
 
 // src/ui/MainPanel.tsx
-import { jsx as jsx52, jsxs as jsxs50 } from "react/jsx-runtime";
+import { jsx as jsx54, jsxs as jsxs52 } from "react/jsx-runtime";
 function HistoryTabBar({
   selectedTab,
   onSelectTab,
@@ -6001,8 +6319,8 @@ function HistoryTabBar({
   const hasOpenFindings = (historyData?.history?.findings || []).some(
     (f) => f.status === "open"
   );
-  return /* @__PURE__ */ jsxs50("div", { className: "border-b px-4 py-2 flex gap-2", children: [
-    /* @__PURE__ */ jsx52(
+  return /* @__PURE__ */ jsxs52("div", { className: "border-b px-4 py-2 flex gap-2", children: [
+    /* @__PURE__ */ jsx54(
       "button",
       {
         onClick: () => onSelectTab("mode"),
@@ -6010,22 +6328,22 @@ function HistoryTabBar({
         children: currentMode
       }
     ),
-    /* @__PURE__ */ jsxs50(
+    /* @__PURE__ */ jsxs52(
       "button",
       {
         onClick: () => onSelectTab("history"),
         className: `text-xs font-medium px-4 py-2 rounded transition-colors flex items-center gap-2 ${selectedTab === "history" ? "bg-accent text-accent-foreground" : "text-foreground/60 hover:text-foreground"}`,
         children: [
           "History",
-          findingCount > 0 && /* @__PURE__ */ jsx52(HistoryTabBadge, { count: findingCount, hasOpenFindings })
+          findingCount > 0 && /* @__PURE__ */ jsx54(HistoryTabBadge, { count: findingCount, hasOpenFindings })
         ]
       }
     )
   ] });
 }
 function MainPanel() {
-  const [refreshing, setRefreshing] = useState29(false);
-  const [selectedTab, setSelectedTab] = useState29("mode");
+  const [refreshing, setRefreshing] = useState31(false);
+  const [selectedTab, setSelectedTab] = useState31("mode");
   const hostContext = useHostContext();
   const companyId = hostContext?.companyId ?? "";
   const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData3("getInventory", { companyId });
@@ -6057,20 +6375,20 @@ function MainPanel() {
   if (inventoryError || modeError) {
     const errorToDisplay = inventoryError || modeError;
     const errorMessage = errorToDisplay instanceof Error ? errorToDisplay.message : String(errorToDisplay);
-    return /* @__PURE__ */ jsx52(ErrorBoundary, { error: new Error(errorMessage) });
+    return /* @__PURE__ */ jsx54(ErrorBoundary, { error: new Error(errorMessage) });
   }
   if (!inventory || !modeData || storedOverride === void 0) {
-    return /* @__PURE__ */ jsx52("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx52("div", { className: "text-center", children: /* @__PURE__ */ jsx52("p", { className: "text-sm text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
+    return /* @__PURE__ */ jsx54("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx54("div", { className: "text-center", children: /* @__PURE__ */ jsx54("p", { className: "text-sm text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
   }
   if (!inventory || !modeData) {
-    return /* @__PURE__ */ jsx52(ErrorBoundary, { error: new Error("Failed to load company inventory") });
+    return /* @__PURE__ */ jsx54(ErrorBoundary, { error: new Error("Failed to load company inventory") });
   }
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
   const visionExists = inventory?.visionExists ?? false;
   const renderContent = () => {
     if (selectedTab === "history") {
-      return /* @__PURE__ */ jsx52(
+      return /* @__PURE__ */ jsx54(
         HistoryPanel,
         {
           companyId
@@ -6078,7 +6396,7 @@ function MainPanel() {
       );
     }
     if (currentMode === "Assess") {
-      return /* @__PURE__ */ jsx52(
+      return /* @__PURE__ */ jsx54(
         AssessPanel,
         {
           companyId,
@@ -6088,10 +6406,10 @@ function MainPanel() {
       );
     }
     if (currentMode === "Found") {
-      return /* @__PURE__ */ jsx52(FoundPanel, {});
+      return /* @__PURE__ */ jsx54(FoundPanel, {});
     }
     if (currentMode === "Revive") {
-      return /* @__PURE__ */ jsx52(
+      return /* @__PURE__ */ jsx54(
         RevivePanel,
         {
           companyId,
@@ -6100,7 +6418,7 @@ function MainPanel() {
       );
     }
     if (currentMode === "Reposition") {
-      return /* @__PURE__ */ jsx52(
+      return /* @__PURE__ */ jsx54(
         RepositionPanel,
         {
           companyId,
@@ -6109,10 +6427,10 @@ function MainPanel() {
         }
       );
     }
-    return /* @__PURE__ */ jsx52("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx52(InventoryDisplay, { inventory }) });
+    return /* @__PURE__ */ jsx54("div", { className: "flex-1 overflow-y-auto", children: /* @__PURE__ */ jsx54(InventoryDisplay, { inventory }) });
   };
-  return /* @__PURE__ */ jsxs50("div", { className: "flex h-full flex-col bg-background", children: [
-    /* @__PURE__ */ jsx52(
+  return /* @__PURE__ */ jsxs52("div", { className: "flex h-full flex-col bg-background", children: [
+    /* @__PURE__ */ jsx54(
       ModeBanner,
       {
         inventory,
@@ -6121,7 +6439,8 @@ function MainPanel() {
         onOverrideChange: handleModeOverride
       }
     ),
-    /* @__PURE__ */ jsx52(
+    /* @__PURE__ */ jsx54(WelcomeCard, { companyId, detectedMode: currentMode }),
+    /* @__PURE__ */ jsx54(
       HistoryTabBar,
       {
         selectedTab,
@@ -6130,8 +6449,8 @@ function MainPanel() {
         companyId
       }
     ),
-    /* @__PURE__ */ jsx52("div", { className: "flex-1 overflow-y-auto", children: renderContent() }),
-    selectedTab === "mode" && /* @__PURE__ */ jsx52("div", { className: "border-t px-4 py-4", children: /* @__PURE__ */ jsx52(
+    /* @__PURE__ */ jsx54("div", { className: "flex-1 overflow-y-auto", children: renderContent() }),
+    selectedTab === "mode" && /* @__PURE__ */ jsx54("div", { className: "border-t px-4 py-4", children: /* @__PURE__ */ jsx54(
       "button",
       {
         onClick: handleRefresh,
@@ -6140,23 +6459,23 @@ function MainPanel() {
         children: refreshing ? "Refreshing..." : "Refresh"
       }
     ) }),
-    selectedTab === "mode" && /* @__PURE__ */ jsx52(ChatPanel, { detectedMode: currentMode })
+    selectedTab === "mode" && /* @__PURE__ */ jsx54(ChatPanel, { detectedMode: currentMode })
   ] });
 }
 
 // src/ui/SidebarLink.tsx
-import { jsx as jsx53, jsxs as jsxs51 } from "react/jsx-runtime";
+import { jsx as jsx55, jsxs as jsxs53 } from "react/jsx-runtime";
 function SidebarLink({ context }) {
   const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
   const isActive = typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
-  return /* @__PURE__ */ jsxs51(
+  return /* @__PURE__ */ jsxs53(
     "a",
     {
       href,
       className: `flex items-center gap-2 px-3 py-2 rounded-none text-sm ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "bg-sidebar text-sidebar-foreground hover:opacity-80"}`,
       children: [
-        /* @__PURE__ */ jsx53(Compass, { size: 16 }),
-        /* @__PURE__ */ jsx53("span", { children: "Compass" })
+        /* @__PURE__ */ jsx55(Compass, { size: 16 }),
+        /* @__PURE__ */ jsx55("span", { children: "Compass" })
       ]
     }
   );
@@ -6176,6 +6495,7 @@ lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs:
 lucide-react/dist/esm/context.mjs:
 lucide-react/dist/esm/Icon.mjs:
 lucide-react/dist/esm/createLucideIcon.mjs:
+lucide-react/dist/esm/icons/activity.mjs:
 lucide-react/dist/esm/icons/arrow-right.mjs:
 lucide-react/dist/esm/icons/binoculars.mjs:
 lucide-react/dist/esm/icons/check.mjs:
@@ -6183,6 +6503,7 @@ lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevron-left.mjs:
 lucide-react/dist/esm/icons/circle-alert.mjs:
 lucide-react/dist/esm/icons/circle-check-big.mjs:
+lucide-react/dist/esm/icons/circle-question-mark.mjs:
 lucide-react/dist/esm/icons/clock.mjs:
 lucide-react/dist/esm/icons/compass.mjs:
 lucide-react/dist/esm/icons/file-text.mjs:
@@ -6192,6 +6513,7 @@ lucide-react/dist/esm/icons/pen.mjs:
 lucide-react/dist/esm/icons/refresh-cw.mjs:
 lucide-react/dist/esm/icons/rocket.mjs:
 lucide-react/dist/esm/icons/send.mjs:
+lucide-react/dist/esm/icons/sparkles.mjs:
 lucide-react/dist/esm/icons/triangle-alert.mjs:
 lucide-react/dist/esm/icons/x.mjs:
 lucide-react/dist/esm/icons/zap.mjs:

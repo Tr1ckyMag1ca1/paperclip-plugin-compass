@@ -28,6 +28,7 @@ import type {
 import { fillVisionTemplate } from "../../found/template-fill.js";
 import { checkVisionQuality } from "../../found/quality-check.js";
 import { loadInterviewSections } from "../../primitives/interview-loader.js";
+import { HelpTip } from "../primitives/HelpTip.js";
 import {
   InterviewSection as InterviewSectionComponent,
   SectionNavRail,
@@ -427,9 +428,17 @@ export function FoundPanel(): React.ReactElement {
     return (
       <div className="flex h-full flex-col gap-lg p-lg">
         <div>
-          <h2 className="text-display font-bold">
-            Here's the company you're founding.
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-display font-bold">
+              Here's the company you're founding.
+            </h2>
+            <HelpTip
+              title="What happens when I apply?"
+              body="Compass writes VISION.md, provisions agents per the preset you chose, files kickoff issues, and queues the first wakeups. You can review every change here before applying."
+              details="Apply step is gated by an explicit confirmation. Nothing is written to your Paperclip instance until you confirm. After apply, all four sections of VISION.md are amendable later via Reposition or Assess."
+              size="sm"
+            />
+          </div>
           <p className="text-body text-foreground/70 mt-md">
             Edit anything before you apply.
           </p>
@@ -460,6 +469,7 @@ export function FoundPanel(): React.ReactElement {
           </button>
           <button
             onClick={handlePreviewConfirm}
+            title="Write VISION.md, provision agents, file kickoff issues, queue first wakeups. You'll get one final confirmation modal."
             className="flex-1 rounded px-md py-sm text-sm font-medium bg-accent text-background hover:bg-accent/90 disabled:opacity-50"
             disabled={!qualityCheck?.isValid}
           >

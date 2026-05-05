@@ -20,6 +20,7 @@ import { AmendmentPreview } from "./AmendmentPreview.js";
 import { CascadeReviewPanel } from "./CascadeReviewPanel.js";
 import { useRepositionRunState } from "./RepositionRunState.js";
 import { ConfirmationModal, ApplyProgress, ApplyErrorDisplay } from "../found/index.js";
+import { HelpTip } from "../primitives/HelpTip.js";
 import { ApprovingWaitingState } from "../assess/ApprovingWaitingState.js";
 import type {
   RepositionRunState,
@@ -397,7 +398,15 @@ export function RepositionPanel({
       <header className="sticky top-0 bg-background border-b border-border p-lg z-10">
         <div className="flex items-start justify-between gap-lg">
           <div>
-            <h1 className="text-display font-bold text-foreground">{companyName}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-display font-bold text-foreground">{companyName}</h1>
+              <HelpTip
+                title="What does Reposition mode do?"
+                body="Reposition lets you pivot a healthy company. Describe the strategic shift in plain English; Compass infers which VISION sections are affected, re-asks only those questions, and produces an amendment diff plus a cascade plan."
+                details="Cascade plan covers: which agents need rebriefing, which content needs rewriting, which projects/issues need scope adjustments. Each amendment is reviewed and approved before any write happens. Original VISION.md is preserved with a dated changelog entry per amendment."
+                size="sm"
+              />
+            </div>
             <p className="text-body font-normal text-foreground/70 mt-xs">
               Describe the strategic shift and we'll guide you through updating your company.
             </p>
