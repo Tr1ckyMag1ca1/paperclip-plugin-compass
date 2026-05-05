@@ -6059,7 +6059,7 @@ function MainPanel() {
     const errorMessage = errorToDisplay instanceof Error ? errorToDisplay.message : String(errorToDisplay);
     return /* @__PURE__ */ jsx52(ErrorBoundary, { error: new Error(errorMessage) });
   }
-  if (inventoryLoading || modeLoading || overrideLoading || storedOverride === void 0) {
+  if (!inventory || !modeData || storedOverride === void 0) {
     return /* @__PURE__ */ jsx52("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx52("div", { className: "text-center", children: /* @__PURE__ */ jsx52("p", { className: "text-sm text-foreground/70", children: "Loading diagnostic dashboard..." }) }) });
   }
   if (!inventory || !modeData) {

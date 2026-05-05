@@ -156,8 +156,9 @@ export function MainPanel(): React.ReactElement {
     );
   }
 
-  // Loading state
-  if (inventoryLoading || modeLoading || overrideLoading || storedOverride === undefined) {
+  // Initial load only — gate on data presence, not on hook loading flag,
+  // so dropdown-triggered refreshes keep the panel mounted.
+  if (!inventory || !modeData || storedOverride === undefined) {
     return (
       <div className="flex items-center justify-center p-4 min-h-[400px]">
         <div className="text-center">
