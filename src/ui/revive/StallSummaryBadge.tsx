@@ -20,7 +20,7 @@ interface StallSummaryBadgeProps {
 export const StallSummaryBadge: React.FC<StallSummaryBadgeProps> = ({ inventory }) => {
   // Calculate days since last heartbeat
   const daysSinceHeartbeat = inventory.latestHeartbeat
-    ? Math.floor((Date.now() - inventory.latestHeartbeat.getTime()) / (1000 * 60 * 60 * 24))
+    ? Math.floor((Date.now() - new Date(inventory.latestHeartbeat).getTime()) / (1000 * 60 * 60 * 24))
     : 999;
 
   const blockerCount = inventory.blockerCount || 0;

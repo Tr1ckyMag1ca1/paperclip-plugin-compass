@@ -500,7 +500,7 @@ function ActivityTimeline({
 }
 function formatDate(date) {
   const now = /* @__PURE__ */ new Date();
-  const diffMs = now.getTime() - date.getTime();
+  const diffMs = now.getTime() - new Date(date).getTime();
   const diffDays = Math.floor(diffMs / (1e3 * 60 * 60 * 24));
   if (diffDays === 0) {
     return "Today";
@@ -515,7 +515,7 @@ function formatDate(date) {
     const weeks = Math.floor(diffDays / 7);
     return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
   }
-  return date.toLocaleDateString();
+  return new Date(date).toLocaleDateString();
 }
 
 // src/ui/components/VisionStatusDisplay.tsx
@@ -1822,7 +1822,7 @@ var ModeBadge = ({ mode }) => {
 // src/ui/memory/format-relative-time.ts
 function formatDistanceToNow(date, options) {
   const now = /* @__PURE__ */ new Date();
-  const ms = now.getTime() - date.getTime();
+  const ms = now.getTime() - new Date(date).getTime();
   if (ms < 0) {
     return formatFutureTime(-ms, options?.addSuffix);
   }
@@ -4594,7 +4594,7 @@ var ActionQueuePanel = ({
 // src/ui/revive/StallSummaryBadge.tsx
 import { jsx as jsx42, jsxs as jsxs40 } from "react/jsx-runtime";
 var StallSummaryBadge = ({ inventory }) => {
-  const daysSinceHeartbeat = inventory.latestHeartbeat ? Math.floor((Date.now() - inventory.latestHeartbeat.getTime()) / (1e3 * 60 * 60 * 24)) : 999;
+  const daysSinceHeartbeat = inventory.latestHeartbeat ? Math.floor((Date.now() - new Date(inventory.latestHeartbeat).getTime()) / (1e3 * 60 * 60 * 24)) : 999;
   const blockerCount = inventory.blockerCount || 0;
   return /* @__PURE__ */ jsx42("div", { className: "my-md px-md py-sm bg-card rounded border border-destructive", children: /* @__PURE__ */ jsxs40("span", { className: "text-label font-medium", children: [
     "Stalled \u2014 ",

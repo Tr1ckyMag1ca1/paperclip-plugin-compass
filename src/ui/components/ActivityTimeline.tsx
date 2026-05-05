@@ -63,9 +63,9 @@ export function ActivityTimeline({
  * @param date Date to format
  * @returns Human-readable label
  */
-function formatDate(date: Date): string {
+function formatDate(date: Date | string | number): string {
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  const diffMs = now.getTime() - new Date(date).getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) {
@@ -82,5 +82,5 @@ function formatDate(date: Date): string {
     return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
   }
 
-  return date.toLocaleDateString();
+  return new Date(date).toLocaleDateString();
 }

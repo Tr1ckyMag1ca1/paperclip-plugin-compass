@@ -11,9 +11,9 @@
  * @param addSuffix If true, appends "ago" or "in" (default: false for manual control)
  * @returns Human-readable relative time string
  */
-export function formatDistanceToNow(date: Date, options?: { addSuffix?: boolean }): string {
+export function formatDistanceToNow(date: Date | string | number, options?: { addSuffix?: boolean }): string {
   const now = new Date();
-  const ms = now.getTime() - date.getTime();
+  const ms = now.getTime() - new Date(date).getTime();
 
   if (ms < 0) {
     // Future date
