@@ -4629,7 +4629,7 @@ function useReviveRunState(companyId) {
         setIsLoading(false);
       }
     })();
-  }, [companyId, loadRunStateAction]);
+  }, [companyId]);
   const saveQueue = useCallback12(
     async (newQueue) => {
       try {
