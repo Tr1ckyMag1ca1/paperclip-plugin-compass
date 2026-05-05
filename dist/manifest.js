@@ -1,7 +1,7 @@
 const manifest = {
   id: "paperclip-plugin-compass",
   apiVersion: 1,
-  version: "0.2.3",
+  version: "0.2.5",
   displayName: "Compass",
   description: "Strategic consultant for AI company lifecycle \u2014 diagnose, found, revive, reposition",
   author: "Paperclip AI",
