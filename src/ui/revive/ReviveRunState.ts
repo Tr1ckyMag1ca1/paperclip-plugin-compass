@@ -42,7 +42,7 @@ export function useReviveRunState(companyId: string) {
         setIsLoading(false);
       }
     })();
-  }, [companyId, loadRunStateAction]);
+  }, [companyId]);
 
   /**
    * Save action queue to worker-state.
