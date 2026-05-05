@@ -5,16 +5,9 @@ export function SidebarLink({ context }: { context: { companyPrefix?: string } }
   const isActive =
     typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (href !== "#") window.history.pushState({}, "", href);
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  };
-
   return (
     <a
       href={href}
-      onClick={handleClick}
       className={`flex items-center gap-2 px-3 py-2 rounded-none text-sm ${
         isActive
           ? "bg-sidebar-accent text-sidebar-accent-foreground"

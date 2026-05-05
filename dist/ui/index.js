@@ -6148,16 +6148,10 @@ import { jsx as jsx53, jsxs as jsxs51 } from "react/jsx-runtime";
 function SidebarLink({ context }) {
   const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
   const isActive = typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
-  const handleClick = (e) => {
-    e.preventDefault();
-    if (href !== "#") window.history.pushState({}, "", href);
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  };
   return /* @__PURE__ */ jsxs51(
     "a",
     {
       href,
-      onClick: handleClick,
       className: `flex items-center gap-2 px-3 py-2 rounded-none text-sm ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "bg-sidebar text-sidebar-foreground hover:opacity-80"}`,
       children: [
         /* @__PURE__ */ jsx53(Compass, { size: 16 }),
