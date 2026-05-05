@@ -6030,17 +6030,18 @@ function MainPanel() {
   const companyId = hostContext?.companyId ?? "";
   const { data: inventory, loading: inventoryLoading, error: inventoryError } = usePluginData3("getInventory", { companyId });
   const { data: modeData, loading: modeLoading, error: modeError } = usePluginData3("getDetectedMode", { companyId });
-  const { data: storedOverride, loading: overrideLoading } = usePluginData3("getModeOverride", { companyId });
+  const { data: storedOverride, loading: overrideLoading, refresh: refreshOverride } = usePluginData3("getModeOverride", { companyId });
   const setModeOverrideAction = usePluginAction9("setModeOverride");
   const handleModeOverride = useCallback21(
     async (newMode) => {
       try {
         await setModeOverrideAction({ companyId, mode: newMode });
+        refreshOverride();
       } catch (error) {
         console.error("Failed to set mode override:", error);
       }
     },
-    [setModeOverrideAction, companyId]
+    [setModeOverrideAction, companyId, refreshOverride]
   );
   const handleRefresh = useCallback21(async () => {
     setRefreshing(true);

@@ -108,7 +108,7 @@ export function MainPanel(): React.ReactElement {
     usePluginData<{ mode: Mode; inventory: InventorySnapshot }>("getDetectedMode", { companyId });
 
   // Fetch stored mode override (D-09, MODE-03)
-  const { data: storedOverride, loading: overrideLoading } =
+  const { data: storedOverride, loading: overrideLoading, refresh: refreshOverride } =
     usePluginData<Mode | null>("getModeOverride", { companyId });
 
   // Set mode override action handler (D-09, MODE-03)
@@ -118,13 +118,13 @@ export function MainPanel(): React.ReactElement {
   const handleModeOverride = useCallback(
     async (newMode: Mode) => {
       try {
-        // Call the action with mode parameter
         await setModeOverrideAction({ companyId, mode: newMode });
+        refreshOverride();
       } catch (error) {
         console.error("Failed to set mode override:", error);
       }
     },
-    [setModeOverrideAction, companyId]
+    [setModeOverrideAction, companyId, refreshOverride]
   );
 
   // Handle refresh button click (D-04)
