@@ -1,9 +1,9 @@
 import { Compass } from "lucide-react";
 
 export function SidebarLink({ context }: { context: { companyPrefix?: string } }) {
-  const href = context.companyPrefix ? `/${context.companyPrefix}/plugins/paperclip-plugin-compass` : "#";
+  const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
   const isActive =
-    typeof window !== "undefined" && window.location.pathname.endsWith("/plugins/paperclip-plugin-compass");
+    typeof window !== "undefined" && window.location.pathname.endsWith("/compass");
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();

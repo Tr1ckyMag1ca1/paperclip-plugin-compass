@@ -14,6 +14,9 @@ importers:
       lucide-react:
         specifier: ^1.14.0
         version: 1.14.0(react@19.2.5)
+      paperclip-plugin-compass:
+        specifier: 0.2.0
+        version: 0.2.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react:
         specifier: '>=18'
         version: 19.2.5
@@ -461,6 +464,12 @@ packages:
     resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  paperclip-plugin-compass@0.2.0:
+    resolution: {integrity: sha512-JkB5Ec1xyjJ6fwVRPG9F80s37a0aK6y70stuuu1jZ00n4wbU6TN8tJ5Bjzz/muhUnCnuW3ECWxUx1+qndiUe6w==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
@@ -932,6 +941,13 @@ snapshots:
   ms@2.1.3: {}
 
   nanoid@3.3.12: {}
+
+  paperclip-plugin-compass@0.2.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      '@paperclipai/plugin-sdk': 2026.428.0(react@19.2.5)
+      lucide-react: 1.14.0(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   pathe@2.0.3: {}
 
