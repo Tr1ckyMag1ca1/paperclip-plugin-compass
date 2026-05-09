@@ -55,17 +55,17 @@ export function InterviewSection({
   const nextButtonLabel = isLastSection ? "Review & Apply" : `Next: ${nextSectionName}`;
 
   return (
-    <div className="flex flex-col gap-2xl h-full">
+    <div className="bg-card border border-border rounded-none p-4 flex flex-col gap-6 h-full">
       {/* Section header */}
       <div>
-        <h2 className="text-display font-bold">{section.title}</h2>
+        <h2 className="text-xl font-bold">{section.title}</h2>
         {section.intro && (
-          <p className="text-body text-foreground/70 mt-md">{section.intro}</p>
+          <p className="text-sm text-muted-foreground mt-4">{section.intro}</p>
         )}
       </div>
 
       {/* Questions */}
-      <div className="space-y-lg flex-1">
+      <div className="space-y-4 flex-1">
         {section.questions.map(question => (
           <QuestionRenderer
             key={question.id}
@@ -78,18 +78,18 @@ export function InterviewSection({
       </div>
 
       {/* Navigation buttons */}
-      <div className="flex gap-md justify-between pt-lg border-t border-border">
+      <div className="flex gap-3 justify-between pt-4 border-t border-border">
         <button
           onClick={() => onNavigate("back")}
           disabled={isFirstSection}
-          className="px-md py-sm rounded border border-border text-foreground hover:bg-card disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-2 rounded-none border border-border text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           ← Back
         </button>
         <button
           onClick={() => onNavigate("next")}
           disabled={!canAdvance}
-          className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+          className="px-3 py-2 rounded-none bg-emerald-500 text-white hover:bg-emerald-500/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
         >
           {nextButtonLabel}
         </button>
