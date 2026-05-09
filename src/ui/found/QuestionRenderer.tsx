@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { Card } from "../primitives/Card.js";
 import type { Question } from "../../types/found.js";
 
 interface QuestionRendererProps {
@@ -53,97 +54,99 @@ export function QuestionRenderer({
   const descriptionId = `description-${question.id}`;
 
   return (
-    <div className="space-y-sm">
-      <label htmlFor={inputId} className="text-label font-normal">
-        {question.prompt}
-        {question.required && <span className="text-accent ml-xs" aria-label="required">*</span>}
-        {!question.required && <span className="text-foreground/70 ml-xs">(Optional)</span>}
-      </label>
+    <Card variant="default" padding="md">
+      <div className="space-y-2">
+        <label htmlFor={inputId} className="text-xs font-medium">
+          {question.prompt}
+          {question.required && <span className="text-emerald-600 ml-1" aria-label="required">*</span>}
+          {!question.required && <span className="text-muted-foreground ml-1">(Optional)</span>}
+        </label>
 
-      {question.type === "free-text-short" && (
-        <input
-          id={inputId}
-          type="text"
-          value={value}
-          onChange={handleChange}
-          maxLength={200}
-          placeholder={question.hint || ""}
-          aria-required={question.required}
-          aria-describedby={question.hint ? descriptionId : undefined}
-          className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-      )}
+        {question.type === "free-text-short" && (
+          <input
+            id={inputId}
+            type="text"
+            value={value}
+            onChange={handleChange}
+            maxLength={200}
+            placeholder={question.hint || ""}
+            aria-required={question.required}
+            aria-describedby={question.hint ? descriptionId : undefined}
+            className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+        )}
 
-      {question.type === "free-text-long" && (
-        <textarea
-          id={inputId}
-          value={value}
-          onChange={handleChange}
-          maxLength={2000}
-          rows={4}
-          placeholder={question.hint || ""}
-          aria-required={question.required}
-          aria-describedby={question.hint ? descriptionId : undefined}
-          className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-        />
-      )}
+        {question.type === "free-text-long" && (
+          <textarea
+            id={inputId}
+            value={value}
+            onChange={handleChange}
+            maxLength={2000}
+            rows={4}
+            placeholder={question.hint || ""}
+            aria-required={question.required}
+            aria-describedby={question.hint ? descriptionId : undefined}
+            className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
+          />
+        )}
 
-      {question.type === "single-choice" && (
-        <fieldset className="space-y-sm">
-          <legend className="sr-only">{question.prompt}</legend>
-          {question.options?.map(opt => (
-            <label key={opt} className="flex gap-sm items-center cursor-pointer">
-              <input
-                type="radio"
-                name={question.id}
-                value={opt}
-                checked={value === opt}
-                onChange={handleChange}
-                aria-required={question.required}
-                className="cursor-pointer"
-              />
-              <span className="text-body">{opt}</span>
-            </label>
-          ))}
-        </fieldset>
-      )}
+        {question.type === "single-choice" && (
+          <fieldset className="space-y-2">
+            <legend className="sr-only">{question.prompt}</legend>
+            {question.options?.map(opt => (
+              <label key={opt} className="flex gap-2 items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name={question.id}
+                  value={opt}
+                  checked={value === opt}
+                  onChange={handleChange}
+                  aria-required={question.required}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">{opt}</span>
+              </label>
+            ))}
+          </fieldset>
+        )}
 
-      {question.type === "multi-choice" && (
-        <fieldset className="space-y-sm">
-          <legend className="sr-only">{question.prompt}</legend>
-          {question.options?.map(opt => (
-            <label key={opt} className="flex gap-sm items-center cursor-pointer">
-              <input
-                type="checkbox"
-                value={opt}
-                checked={value.split(",").filter(Boolean).includes(opt)}
-                onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
-                aria-required={question.required}
-                className="cursor-pointer"
-              />
-              <span className="text-body">{opt}</span>
-            </label>
-          ))}
-        </fieldset>
-      )}
+        {question.type === "multi-choice" && (
+          <fieldset className="space-y-2">
+            <legend className="sr-only">{question.prompt}</legend>
+            {question.options?.map(opt => (
+              <label key={opt} className="flex gap-2 items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  value={opt}
+                  checked={value.split(",").filter(Boolean).includes(opt)}
+                  onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
+                  aria-required={question.required}
+                  className="cursor-pointer"
+                />
+                <span className="text-sm">{opt}</span>
+              </label>
+            ))}
+          </fieldset>
+        )}
 
-      {question.type === "conditional-follow-up" && (
-        <textarea
-          id={inputId}
-          value={value}
-          onChange={handleChange}
-          maxLength={2000}
-          rows={3}
-          placeholder={question.hint || ""}
-          aria-required={question.required}
-          aria-describedby={question.hint ? descriptionId : undefined}
-          className="w-full px-md py-sm rounded border border-border bg-background text-body placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-        />
-      )}
+        {question.type === "conditional-follow-up" && (
+          <textarea
+            id={inputId}
+            value={value}
+            onChange={handleChange}
+            maxLength={2000}
+            rows={3}
+            placeholder={question.hint || ""}
+            aria-required={question.required}
+            aria-describedby={question.hint ? descriptionId : undefined}
+            className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
+          />
+        )}
 
-      {question.hint && (
-        <p id={descriptionId} className="text-label text-foreground/70 mt-xs">{question.hint}</p>
-      )}
-    </div>
+        {question.hint && (
+          <p id={descriptionId} className="text-xs text-muted-foreground mt-1">{question.hint}</p>
+        )}
+      </div>
+    </Card>
   );
 }
