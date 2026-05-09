@@ -1,105 +1,49 @@
 /**
- * EvidenceChip Component — Source reference for drift evidence
+ * EvidenceChip Component — Evidence strength indicator
  *
- * Per 03-UI-SPEC.md: Displays individual evidence source (Issue / Comment / Document)
- * with icon, source label, and optional click-to-navigate. Includes "See all" expand
- * when more than 5 items.
+ * Per Phase 8 D-07: Reuses StatusBadge component from Phase 7.
+ * Maps evidence strength to StatusBadge status for semantic color consistency.
+ *
+ * Displays:
+ * - "Strong" with emerald checkmark for strong evidence
+ * - "Stalled" with red X for weak evidence
+ * - "Unknown" with neutral indicator for unknown strength
  */
 
 import React from "react";
-import { FileText, MessageCircle, AlertCircle } from "lucide-react";
-import type { ActivityItem } from "../../types/assess.js";
+import { StatusBadge } from "../components/StatusBadge.js";
 
 interface EvidenceChipProps {
-  /** Evidence item to display */
-  evidence: ActivityItem;
-  /** Optional callback when chip is clicked (e.g., navigate to source) */
-  onClick?: () => void;
-  /** Accessibility label for the chip */
-  ariaLabel?: string;
+  /** Evidence strength: strong | weak | unknown */
+  strength: "strong" | "weak" | "unknown";
 }
 
 /**
- * Small badge-style chip showing evidence source with icon and label.
+ * Maps evidence strength to StatusBadge status.
+ * Part of Phase 7 semantic palette lock (emerald=success, red=error, muted=unknown).
  */
-export function EvidenceChip({
-  evidence,
-  onClick,
-  ariaLabel,
-}: EvidenceChipProps): React.ReactElement {
-  // Determine icon and label based on type
-  let icon: React.ReactNode;
-  let label: string;
-
-  if (evidence.type === "issue") {
-    icon = <AlertCircle className="h-3.5 w-3.5" />;
-    label = `Issue #${evidence.id}`;
-  } else if (evidence.type === "comment") {
-    icon = <MessageCircle className="h-3.5 w-3.5" />;
-    label = `Comment in #${evidence.id}`;
-  } else {
-    icon = <FileText className="h-3.5 w-3.5" />;
-    label = `Document: ${evidence.id}`;
+function mapEvidenceStrengthToStatus(
+  strength: "strong" | "weak" | "unknown"
+): "healthy" | "stalled" | "unknown" {
+  switch (strength) {
+    case "strong":
+      return "healthy";
+    case "weak":
+      return "stalled";
+    case "unknown":
+      return "unknown";
   }
-
-  return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-xs px-sm py-xs rounded-full bg-card border border-border text-label font-normal text-foreground transition-colors ${
-        onClick ? "hover:bg-card/80 cursor-pointer" : ""
-      }`}
-      aria-label={ariaLabel || label}
-      disabled={!onClick}
-      type="button"
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
-}
-
-interface EvidenceListProps {
-  /** Array of evidence items */
-  evidence: ActivityItem[];
-  /** Max items to show before "See all" button (default 5) */
-  maxVisible?: number;
-  /** Callback when evidence chip is clicked */
-  onEvidenceClick?: (item: ActivityItem) => void;
-  /** Show "See all" expand button */
-  onExpandAll?: () => void;
 }
 
 /**
- * Renders a list of evidence chips with "See all" expand option.
+ * EvidenceChip — Thin wrapper around StatusBadge for evidence strength display.
+ *
+ * Reuses Phase 7 StatusBadge component to ensure semantic color consistency
+ * with drift severity and confidence threshold indicators.
+ *
+ * @param strength Evidence strength level (strong/weak/unknown)
  */
-export function EvidenceList({
-  evidence,
-  maxVisible = 5,
-  onEvidenceClick,
-  onExpandAll,
-}: EvidenceListProps): React.ReactElement {
-  const visible = evidence.slice(0, maxVisible);
-  const hidden = evidence.length - visible.length;
-
-  return (
-    <div className="flex flex-wrap gap-xs">
-      {visible.map((item, idx) => (
-        <EvidenceChip
-          key={`${item.id}-${idx}`}
-          evidence={item}
-          onClick={onEvidenceClick ? () => onEvidenceClick(item) : undefined}
-        />
-      ))}
-
-      {hidden > 0 && onExpandAll && (
-        <button
-          onClick={onExpandAll}
-          className="inline-flex items-center gap-xs px-sm py-xs rounded-full border border-border text-label font-normal text-foreground hover:bg-card transition-colors"
-          type="button"
-        >
-          See all {hidden} items
-        </button>
-      )}
-    </div>
-  );
+export function EvidenceChip({ strength }: EvidenceChipProps): React.ReactElement {
+  const status = mapEvidenceStrengthToStatus(strength);
+  return <StatusBadge status={status} />;
 }
