@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Edit2, AlertCircle } from "lucide-react";
+import { Card } from "../primitives/Card.js";
+import { SectionHeader } from "../primitives/SectionHeader.js";
 import { ProvisioningSummary } from "./ProvisioningSummary.js";
 import type { FilledVision, PresetDefinition } from "../../types/found.js";
 
@@ -14,6 +16,7 @@ interface VisionPreviewProps {
  * Display rendered VISION.md with inline edit toggle.
  * Stage 1 of two-stage approval gate (FOUND-11).
  * Read-only by default; "Edit" toggle enables textarea for inline markdown editing.
+ * Per D-14: Uses Card variant=muted + SectionHeader primitive.
  */
 export function VisionPreview({
   vision,
@@ -49,45 +52,47 @@ export function VisionPreview({
   }, [editing, handleSaveEdit]);
 
   return (
-    <div className="flex flex-col gap-lg h-full">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-md">
-        <div className="flex-1">
-          <h2 className="text-heading font-bold">
-            Here's the company you're founding. Edit anything before you apply.
-          </h2>
-        </div>
-        {!editing && (
-          <button
-            onClick={() => setEditing(true)}
-            className="flex gap-xs items-center px-md py-sm rounded bg-accent/10 text-accent hover:bg-accent/20 transition-colors shrink-0 font-normal text-body"
-          >
-            <Edit2 className="h-4 w-4" />
-            Edit
-          </button>
-        )}
-      </div>
+    <div className="flex flex-col gap-3 h-full">
+      {/* Header section using Card + SectionHeader */}
+      <Card variant="muted" padding="md">
+        <SectionHeader
+          title="Here's the company you're founding. Edit anything before you apply."
+          actions={
+            !editing && (
+              <button
+                onClick={() => setEditing(true)}
+                className="flex gap-1 items-center px-3 py-2 rounded-none bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors shrink-0 font-normal text-sm"
+              >
+                <Edit2 className="h-4 w-4" />
+                Edit
+              </button>
+            )
+          }
+        />
+      </Card>
 
-      {/* VISION.md display/editor */}
-      <div className="flex-1 overflow-y-auto border border-border rounded p-lg bg-background">
-        {editing ? (
-          <textarea
-            value={editedBody}
-            onChange={(e) => setEditedBody(e.target.value)}
-            className="w-full h-full font-normal text-body p-0 border-0 resize-none focus:outline-none focus:ring-0"
-          />
-        ) : (
-          <div className="prose prose-sm max-w-none whitespace-pre-wrap text-body">
-            {vision.body}
-          </div>
-        )}
-      </div>
+      {/* VISION.md display/editor in card */}
+      <Card variant="default" padding="md">
+        <div className="flex-1 overflow-y-auto">
+          {editing ? (
+            <textarea
+              value={editedBody}
+              onChange={(e) => setEditedBody(e.target.value)}
+              className="w-full h-80 font-normal text-sm p-0 border-0 resize-none focus:outline-none focus:ring-0"
+            />
+          ) : (
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap text-sm">
+              {vision.body}
+            </div>
+          )}
+        </div>
+      </Card>
 
       {/* Edit error display */}
       {editing && editError && (
-        <div className="bg-destructive/10 border border-destructive rounded p-md flex gap-md">
-          <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-          <p className="text-body text-destructive">{editError}</p>
+        <div className="bg-red-500/10 border border-red-500/30 rounded-none p-3 flex gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <p className="text-sm text-red-600">{editError}</p>
         </div>
       )}
 
@@ -95,18 +100,18 @@ export function VisionPreview({
       <ProvisioningSummary preset={preset} />
 
       {/* Action buttons */}
-      <div className="flex gap-md justify-between pt-lg border-t border-border">
+      <div className="flex gap-3 justify-between pt-3 border-t border-border">
         <button
           onClick={onBack}
-          className="px-md py-sm rounded border border-border text-foreground hover:bg-card transition-colors font-normal text-body"
+          className="px-3 py-2 rounded-none border border-border text-foreground hover:bg-muted transition-colors font-normal text-sm"
         >
           Back to interview
         </button>
-        <div className="flex gap-md">
+        <div className="flex gap-3">
           {editing && (
             <button
               onClick={handleToggleEdit}
-              className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body"
+              className="px-3 py-2 rounded-none bg-emerald-500 text-white hover:bg-emerald-600 transition-colors font-medium text-sm"
             >
               Done editing
             </button>
@@ -114,7 +119,7 @@ export function VisionPreview({
           {!editing && (
             <button
               onClick={onConfirm}
-              className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body"
+              className="px-3 py-2 rounded-none bg-emerald-500 text-white hover:bg-emerald-600 transition-colors font-medium text-sm"
             >
               Confirm & apply
             </button>
