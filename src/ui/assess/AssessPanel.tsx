@@ -229,11 +229,11 @@ export function AssessPanel({
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="border-b border-border p-lg space-y-md flex-shrink-0">
-        <div className="flex items-start justify-between gap-md">
+      <div className="border-b border-border p-4 space-y-3 flex-shrink-0">
+        <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-display font-bold">{companyName}</h2>
+              <h2 className="text-xl font-bold">{companyName}</h2>
               <HelpTip
                 title="What does Assess mode do?"
                 body="Assess compares your VISION.md against the last 30 days of agent activity, scores drift per section, and proposes amendments you can review and approve."
@@ -241,7 +241,7 @@ export function AssessPanel({
                 size="sm"
               />
             </div>
-            <p className="text-body font-normal text-foreground/70 mt-sm">
+            <p className="text-sm font-normal text-foreground/70 mt-2">
               Audit your company's recent work against your vision document. This helps you stay aligned as you grow.
             </p>
           </div>
@@ -251,7 +251,7 @@ export function AssessPanel({
         {run && (
           <button
             onClick={() => setShowRoutingModal(true)}
-            className="text-label font-normal text-accent hover:text-accent/80 transition-colors"
+            className="text-xs font-normal text-emerald-600 hover:text-emerald-600/80 transition-colors"
             type="button"
           >
             Routing: <span className="font-bold">{run.approvalRouting}</span>
@@ -259,11 +259,11 @@ export function AssessPanel({
         )}
 
         {/* Header buttons */}
-        <div className="flex gap-md items-center">
+        <div className="flex gap-3 items-center">
           <button
             onClick={handleRunAudit}
             disabled={!visionExists || panelState === "running"}
-            className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-xs"
+            className="px-3 py-2 rounded-none bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors font-normal text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
             title={!visionExists
               ? "Create a vision document first by running Found mode."
               : "Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments."}
@@ -276,7 +276,7 @@ export function AssessPanel({
           {run && panelState !== "running" && (
             <button
               onClick={handleDiscardAudit}
-              className="text-label font-normal text-foreground/70 hover:text-foreground transition-colors"
+              className="text-xs font-normal text-foreground/70 hover:text-foreground transition-colors"
               type="button"
             >
               Discard
@@ -286,15 +286,15 @@ export function AssessPanel({
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 overflow-y-auto p-lg">
+      <div className="flex-1 overflow-y-auto p-4">
         {panelState === "empty" && !isLoadingState && (
-          <div className="text-center py-xl space-y-md">
-            <p className="text-body font-normal text-foreground/70">No drift audit in progress.</p>
+          <div className="text-center py-8 space-y-3">
+            <p className="text-sm font-normal text-foreground/70">No drift audit in progress.</p>
             <button
               onClick={handleRunAudit}
               disabled={!visionExists}
               title="Compare VISION.md against the last 30 days of activity. No writes happen until you approve amendments."
-              className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-normal text-body inline-block"
+              className="px-3 py-2 rounded-none bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors font-normal text-sm inline-block"
               type="button"
             >
               Run a drift audit
@@ -303,10 +303,10 @@ export function AssessPanel({
         )}
 
         {panelState === "running" && (
-          <div className="flex items-center justify-center py-xl">
-            <div className="text-center space-y-md">
-              <Loader className="h-8 w-8 animate-spin text-accent mx-auto" />
-              <p className="text-body font-normal">Detecting drift… {runProgress}%</p>
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center space-y-3">
+              <Loader className="h-8 w-8 animate-spin text-emerald-600 mx-auto" />
+              <p className="text-sm font-normal">Detecting drift… {runProgress}%</p>
             </div>
           </div>
         )}
@@ -342,9 +342,9 @@ export function AssessPanel({
         )}
 
         {panelState === "complete" && (
-          <div className="bg-accent/10 border border-accent rounded p-lg space-y-md">
-            <p className="text-body font-bold text-accent">✓ Amendments applied!</p>
-            <p className="text-label font-normal text-foreground/70">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-none p-4 space-y-3">
+            <p className="text-sm font-bold text-emerald-600">✓ Amendments applied!</p>
+            <p className="text-xs font-normal text-foreground/70">
               Your vision document has been updated and affected agents have been notified.
             </p>
           </div>
@@ -371,12 +371,12 @@ export function AssessPanel({
 
       {/* Sticky footer with Apply button */}
       {(panelState === "report" || panelState === "preview") && run && (
-        <div className="border-t border-border p-lg flex-shrink-0 bg-background">
+        <div className="border-t border-border p-4 flex-shrink-0 bg-background">
           <button
             onClick={handleApplyAmendments}
             disabled={acceptedCount === 0}
             title="Write the accepted amendments to VISION.md and route any approval-gated changes to the configured approver."
-            className="w-full px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 rounded-none bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
             type="button"
           >
             Apply {acceptedCount} accepted amendment{acceptedCount !== 1 ? "s" : ""}
