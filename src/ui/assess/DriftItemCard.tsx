@@ -15,6 +15,14 @@ import { EvidenceList } from "./EvidenceChip.js";
 import { AmendmentDiff } from "./AmendmentDiff.js";
 import type { DriftItem, ActivityItem } from "../../types/assess.js";
 
+// Static severity color classes map (Phase 8 D-02, UIA-02)
+// Full class strings for Tailwind JIT safety
+const SEVERITY_CLASSES: Record<"low" | "medium" | "high", string> = {
+  low: "text-muted-foreground",
+  medium: "text-yellow-600 bg-yellow-500/10",
+  high: "text-red-600 bg-red-500/10",
+};
+
 interface DriftItemCardProps {
   /** The drift item to render */
   item: DriftItem;
@@ -44,32 +52,25 @@ export function DriftItemCard({
   const isAccepted = acceptedState === true;
   const isRejected = acceptedState === false;
 
-  // Map severity to badge styling
-  const severityColor: Record<string, string> = {
-    info: "text-foreground/70",
-    warn: "text-accent",
-    blocker: "text-destructive",
-  };
-
   return (
-    <div className="bg-background border border-border rounded-lg overflow-hidden">
+    <div className="bg-card border border-border rounded-none overflow-hidden">
       {/* Header with confidence bar */}
-      <div className="p-lg border-b border-border space-y-md">
-        <div className="flex items-start justify-between gap-md">
+      <div className="p-4 border-b border-border space-y-3">
+        <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <ConfidenceBar confidence={item.confidence} />
           </div>
-          <span className={`text-label font-normal whitespace-nowrap ${severityColor[item.severity]}`}>
+          <span className={`text-xs font-medium whitespace-nowrap ${SEVERITY_CLASSES[item.severity as "low" | "medium" | "high"]}`}>
             {item.severity}
           </span>
         </div>
       </div>
 
       {/* Body with evidence and amendment */}
-      <div className="p-lg space-y-lg">
+      <div className="p-4 space-y-4">
         {/* Evidence section */}
-        <div className="space-y-sm">
-          <h4 className="text-heading font-bold">Evidence</h4>
+        <div className="space-y-2">
+          <h4 className="text-base font-semibold">Evidence</h4>
           <EvidenceList
             evidence={item.evidence}
             maxVisible={5}
@@ -79,24 +80,24 @@ export function DriftItemCard({
         </div>
 
         {/* Amendment diff section */}
-        <div className="space-y-sm">
+        <div className="space-y-2">
           <AmendmentDiff amendment={item.proposedAmendment} />
         </div>
 
         {/* Explanation text */}
-        <p className="text-body font-normal text-foreground/70">
+        <p className="text-sm font-normal text-foreground/70">
           {item.explanation}
         </p>
       </div>
 
       {/* Accept/Reject buttons */}
-      <div className="p-lg border-t border-border flex gap-md justify-end">
+      <div className="p-4 border-t border-border flex gap-3 justify-end">
         <button
           onClick={onReject}
-          className={`px-md py-sm rounded font-normal text-body transition-colors flex items-center gap-xs ${
+          className={`px-3 py-2 rounded-none font-normal text-sm transition-colors flex items-center gap-1 ${
             isRejected
               ? "bg-card border border-border text-foreground"
-              : "border border-border text-foreground hover:bg-card"
+              : "border border-border text-foreground hover:bg-muted"
           }`}
           aria-pressed={isRejected}
           type="button"
@@ -106,10 +107,10 @@ export function DriftItemCard({
         </button>
         <button
           onClick={onAccept}
-          className={`px-md py-sm rounded font-normal text-body transition-colors flex items-center gap-xs ${
+          className={`px-3 py-2 rounded-none font-normal text-sm transition-colors flex items-center gap-1 ${
             isAccepted
-              ? "bg-accent text-accent-foreground border border-accent"
-              : "border border-border text-foreground hover:bg-card"
+              ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+              : "border border-border text-foreground hover:bg-muted"
           }`}
           aria-pressed={isAccepted}
           type="button"
