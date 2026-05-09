@@ -86,96 +86,101 @@ export function ApprovalRoutingModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-lg" role="presentation">
-      <div
-        ref={modalRef}
-        className="bg-background border border-border rounded-lg shadow-lg max-w-md w-full mx-auto p-lg space-y-lg"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="routing-modal-title"
-      >
-        {/* Header */}
-        <h2 id="routing-modal-title" className="text-heading font-bold">
-          Approval routing
-        </h2>
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40" onClick={onCancel} />
+      {/* Panel */}
+      <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+        <div
+          ref={modalRef}
+          className="bg-card border border-border rounded-none shadow-lg max-w-md w-full mx-auto p-4 space-y-4 pointer-events-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="routing-modal-title"
+        >
+          {/* Header */}
+          <h2 id="routing-modal-title" className="text-base font-semibold">
+            Approval routing
+          </h2>
 
-        {/* Body text */}
-        <div className="space-y-md text-body font-normal">
-          <p>How should amendments be approved?</p>
-        </div>
-
-        {/* Radio buttons */}
-        <div className="space-y-md">
-          <label className="flex items-start gap-md cursor-pointer group">
-            <input
-              type="radio"
-              name="routing"
-              value="founder"
-              checked={selectedRouting === "founder"}
-              onChange={() => setSelectedRouting("founder")}
-              className="mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
-            />
-            <div className="flex-1">
-              <p className="text-body font-bold text-foreground group-hover:text-foreground/80">
-                Founder only
-              </p>
-              <p className="text-label font-normal text-foreground/70">
-                Amendments apply immediately after your approval
-              </p>
-            </div>
-          </label>
-
-          <label className="flex items-start gap-md cursor-pointer group">
-            <input
-              type="radio"
-              name="routing"
-              value="founder+ceo"
-              checked={selectedRouting === "founder+ceo"}
-              onChange={() => setSelectedRouting("founder+ceo")}
-              className="mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
-            />
-            <div className="flex-1">
-              <p className="text-body font-bold text-foreground group-hover:text-foreground/80">
-                Founder + CEO agent
-              </p>
-              <p className="text-label font-normal text-foreground/70">
-                Amendments queued for CEO review before applying
-              </p>
-            </div>
-          </label>
-        </div>
-
-        {/* Current status */}
-        <p className="text-label font-normal text-foreground/70">
-          Current: <span className="text-accent font-bold">{currentRouting}</span>
-        </p>
-
-        {/* Error */}
-        {error && (
-          <div className="bg-destructive/10 border border-destructive rounded p-md">
-            <p className="text-label font-normal text-destructive">{error}</p>
+          {/* Body text */}
+          <div className="space-y-3 text-sm font-normal">
+            <p>How should amendments be approved?</p>
           </div>
-        )}
 
-        {/* Action buttons */}
-        <div className="flex gap-md justify-end pt-lg border-t border-border">
-          <button
-            onClick={onCancel}
-            disabled={isSaving}
-            className="px-md py-sm rounded border border-border text-foreground hover:bg-card transition-colors font-normal text-body focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            ref={confirmButtonRef}
-            onClick={handleSave}
-            disabled={isSaving || selectedRouting === currentRouting}
-            className="px-md py-sm rounded bg-accent text-accent-foreground hover:bg-accent/90 transition-colors font-medium text-body focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? "Saving…" : "Save routing"}
-          </button>
+          {/* Radio buttons */}
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="radio"
+                name="routing"
+                value="founder"
+                checked={selectedRouting === "founder"}
+                onChange={() => setSelectedRouting("founder")}
+                className="mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+              />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-foreground group-hover:text-foreground/80">
+                  Founder only
+                </p>
+                <p className="text-xs font-medium text-foreground/70">
+                  Amendments apply immediately after your approval
+                </p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="radio"
+                name="routing"
+                value="founder+ceo"
+                checked={selectedRouting === "founder+ceo"}
+                onChange={() => setSelectedRouting("founder+ceo")}
+                className="mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+              />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-foreground group-hover:text-foreground/80">
+                  Founder + CEO agent
+                </p>
+                <p className="text-xs font-medium text-foreground/70">
+                  Amendments queued for CEO review before applying
+                </p>
+              </div>
+            </label>
+          </div>
+
+          {/* Current status */}
+          <p className="text-xs font-medium text-foreground/70">
+            Current: <span className="text-emerald-600 font-bold">{currentRouting}</span>
+          </p>
+
+          {/* Error */}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-none p-3">
+              <p className="text-xs font-medium text-red-600">{error}</p>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex gap-3 justify-end pt-4 border-t border-border">
+            <button
+              onClick={onCancel}
+              disabled={isSaving}
+              className="px-3 py-2 rounded-none border border-border text-foreground hover:bg-muted transition-colors font-normal text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              ref={confirmButtonRef}
+              onClick={handleSave}
+              disabled={isSaving || selectedRouting === currentRouting}
+              className="px-3 py-2 rounded-none bg-emerald-500 text-white hover:bg-emerald-600 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? "Saving…" : "Save routing"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
