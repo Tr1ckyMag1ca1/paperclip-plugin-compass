@@ -73,7 +73,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 5. FoundPanel and interview subcomponents (preset selector, question rendering, vision preview, apply gate) display indistinguishable from host shell
 6. Vision-quest interview flow visually consistent across all sections in light + dark themes
 
-**Plans:** 4/7 plans executed
+**Plans:** 6/7 plans executed
 
 **UI hint**: yes
 
@@ -129,7 +129,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. Foundations | 3/3 | Planned | 2026-05-04 |
-| 8. Assess + Found | 4/7 | In Progress|  |
+| 8. Assess + Found | 6/7 | In Progress|  |
 | 9. Revive + Reposition | 0/? | Not started | — |
 | 10. Memory + Verify + Docs | 0/? | Not started | — |
 
