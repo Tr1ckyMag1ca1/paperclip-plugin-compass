@@ -22,7 +22,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 ### Phases
 
 - [x] **Phase 7: Foundations + Shared Primitives** - Design token baseline and reusable components (9 reqs) — 3 plans
-- [ ] **Phase 8: Assess + Found Panels** - Migrate primary mode panels to host tokens (8 reqs)
+- [x] **Phase 8: Assess + Found Panels** - Migrate primary mode panels to host tokens (8 reqs) (completed 2026-05-09)
 - [ ] **Phase 9: Revive + Reposition Panels** - Complete secondary mode migrations (7 reqs)
 - [ ] **Phase 10: Memory + Verification + Documentation** - History panel, verification gates, documentation (14 reqs)
 
@@ -73,7 +73,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 5. FoundPanel and interview subcomponents (preset selector, question rendering, vision preview, apply gate) display indistinguishable from host shell
 6. Vision-quest interview flow visually consistent across all sections in light + dark themes
 
-**Plans:** 6/7 plans executed
+**Plans:** 7/7 plans complete
 
 **UI hint**: yes
 
@@ -129,7 +129,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. Foundations | 3/3 | Planned | 2026-05-04 |
-| 8. Assess + Found | 6/7 | In Progress|  |
+| 8. Assess + Found | 7/7 | Complete   | 2026-05-09 |
 | 9. Revive + Reposition | 0/? | Not started | — |
 | 10. Memory + Verify + Docs | 0/? | Not started | — |
 
