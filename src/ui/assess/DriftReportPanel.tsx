@@ -1,13 +1,21 @@
 /**
  * DriftReportPanel Component — Grouped drift report by VISION section
  *
- * Per 03-UI-SPEC.md: Renders all drift items grouped by VISION section,
+ * Per 08-UI-SPEC.md: Renders all drift items grouped by VISION section,
  * with section headers and severity badges. Scrollable main panel.
+ * Token migration to host design per Phase 8 UIA-02.
  */
 
 import React, { useMemo } from "react";
 import { DriftItemCard } from "./DriftItemCard.js";
 import type { DriftReport, DriftItem, ActivityItem } from "../../types/assess.js";
+
+// Static severity color classes map for section header badges (Phase 8 D-02)
+const SECTION_SEVERITY_CLASSES: Record<"low" | "medium" | "high", string> = {
+  low: "text-muted-foreground",
+  medium: "text-yellow-600",
+  high: "text-red-600",
+};
 
 /** Mapping of section keys to readable section names */
 const SECTION_NAMES: Record<string, string> = {
@@ -99,39 +107,41 @@ export function DriftReportPanel({
   const orderedSections = sectionOrder.filter(s => groupedItems[s]);
 
   return (
-    <div className="space-y-xl">
+    <div className="space-y-8">
       {orderedSections.map(sectionKey => {
         const items = groupedItems[sectionKey];
         const sectionName = SECTION_NAMES[sectionKey] || sectionKey;
 
-        // Calculate max severity in this section
-        const severities = items.map(i => i.severity);
-        const maxSeverity = severities.includes("blocker")
-          ? "blocker"
-          : severities.includes("warn")
-            ? "warn"
-            : "info";
-
-        const severityColor: Record<string, string> = {
-          info: "text-foreground/70",
-          warn: "text-accent",
-          blocker: "text-destructive",
-        };
+        // Calculate max severity in this section (low, medium, high)
+        const severities = items.map(i => {
+          // Normalize old v1.0 severity names (blocker->high, warn->medium, info->low)
+          const s = String(i.severity).toLowerCase();
+          if (s === "blocker") return "high";
+          if (s === "warn") return "medium";
+          return "low";
+        });
+        const maxSeverity = (
+          severities.includes("high")
+            ? "high"
+            : severities.includes("medium")
+              ? "medium"
+              : "low"
+        ) as "low" | "medium" | "high";
 
         return (
-          <section key={sectionKey} className="space-y-md">
+          <section key={sectionKey} className="space-y-2">
             {/* Section header */}
-            <div className="flex items-center gap-md">
-              <h3 className="text-heading font-bold">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-semibold">
                 {sectionName} — {items.length} drift detected
               </h3>
-              <span className={`text-label font-normal ${severityColor[maxSeverity]}`}>
+              <span className={`text-xs font-normal ${SECTION_SEVERITY_CLASSES[maxSeverity]}`}>
                 {maxSeverity}
               </span>
             </div>
 
             {/* Drift items for this section */}
-            <div className="space-y-md">
+            <div className="space-y-2">
               {items.map((item, idx) => {
                 // Create a stable key for this item across the whole report
                 const itemKey = `${sectionKey}-${idx}`;
@@ -157,8 +167,8 @@ export function DriftReportPanel({
       })}
 
       {report.items.length === 0 && (
-        <div className="text-center py-xl space-y-md">
-          <p className="text-body font-normal text-foreground/70">
+        <div className="text-center py-8 space-y-3">
+          <p className="text-sm font-normal text-foreground/70">
             No drift detected. Your company is aligned with the vision.
           </p>
         </div>
