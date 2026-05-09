@@ -43,15 +43,15 @@ export function CustomOverrideWarning({
   };
 
   return (
-    <div className="bg-destructive/10 border border-l-4 border-l-destructive border-destructive rounded p-lg space-y-md">
+    <div className="bg-red-500/10 border border-l-4 border-l-red-600 border-red-500/30 rounded-none p-4 space-y-3">
       {/* Header */}
-      <div className="flex gap-md items-start">
-        <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+      <div className="flex gap-3 items-start">
+        <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <h3 className="text-heading font-bold text-destructive">
+          <h3 className="text-base font-semibold text-red-600">
             Agent {override.agentName} has custom instructions
           </h3>
-          <p className="text-body font-normal text-foreground mt-sm">
+          <p className="text-sm font-normal text-foreground mt-2">
             This agent's instructions have been customized beyond the preset baseline.
             The {override.sectionName} amendment will cascade as a new work item, but
             the agent's custom overrides will not be automatically merged.
@@ -65,23 +65,23 @@ export function CustomOverrideWarning({
         onToggle={e => setIsExpanded(e.currentTarget.open)}
         className="group"
       >
-        <summary className="cursor-pointer flex items-center gap-sm text-label font-normal text-foreground hover:text-foreground/80 transition-colors p-sm hover:bg-background rounded select-none">
+        <summary className="cursor-pointer flex items-center gap-2 text-xs font-medium text-foreground hover:text-foreground/80 transition-colors p-2 hover:bg-background rounded-none select-none">
           <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
           <span>Review override conflict</span>
         </summary>
 
         {/* Diff content */}
-        <div className="mt-md p-md bg-background rounded border border-border space-y-md">
+        <div className="mt-3 p-3 bg-background rounded-none border border-border space-y-3">
           <div>
-            <p className="text-label font-bold text-foreground mb-sm">Custom override:</p>
-            <pre className="text-label font-normal text-foreground/70 bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap">
+            <p className="text-xs font-bold text-foreground mb-2">Custom override:</p>
+            <pre className="text-xs font-normal text-foreground/70 bg-card p-2 rounded-none overflow-x-auto whitespace-pre-wrap">
               {override.customOverride}
             </pre>
           </div>
 
           <div>
-            <p className="text-label font-bold text-foreground mb-sm">Proposed change:</p>
-            <pre className="text-label font-normal text-accent bg-card p-sm rounded overflow-x-auto whitespace-pre-wrap">
+            <p className="text-xs font-bold text-foreground mb-2">Proposed change:</p>
+            <pre className="text-xs font-normal text-emerald-600 bg-card p-2 rounded-none overflow-x-auto whitespace-pre-wrap">
               {override.proposedChange}
             </pre>
           </div>
@@ -90,14 +90,14 @@ export function CustomOverrideWarning({
 
       {/* Confirmation checkbox (if required) */}
       {requiresConfirmation && (
-        <label className="flex items-start gap-md cursor-pointer group">
+        <label className="flex items-start gap-3 cursor-pointer group">
           <input
             type="checkbox"
             checked={isConfirmed}
             onChange={e => handleConfirmChange(e.target.checked)}
-            className="mt-1 focus:outline-none focus:ring-2 focus:ring-accent rounded"
+            className="mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
           />
-          <span className="text-body font-normal text-foreground group-hover:text-foreground/80">
+          <span className="text-sm font-normal text-foreground group-hover:text-foreground/80">
             I've reviewed the override conflict and approve cascading anyway
           </span>
         </label>
@@ -125,8 +125,8 @@ export function CustomOverrideWarnings({
   onConfirmationChange,
 }: CustomOverrideWarningsProps): React.ReactElement {
   return (
-    <div className="space-y-md">
-      <p className="text-body font-bold text-foreground">Custom instruction overrides detected:</p>
+    <div className="space-y-3">
+      <p className="text-sm font-bold text-foreground">Custom instruction overrides detected:</p>
       {overrides.map(override => (
         <CustomOverrideWarning
           key={override.agentName}
@@ -138,7 +138,7 @@ export function CustomOverrideWarnings({
         />
       ))}
       {overrides.length > 0 && (
-        <p className="text-label font-normal text-foreground/70">
+        <p className="text-xs font-medium text-foreground/70">
           Please review and confirm for each agent before applying.
         </p>
       )}
