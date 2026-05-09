@@ -1,4 +1,6 @@
 import React from "react";
+import { Card } from "../primitives/Card.js";
+import { SectionHeader } from "../primitives/SectionHeader.js";
 import type { PresetDefinition } from "../../types/found.js";
 
 interface ProvisioningSummaryProps {
@@ -9,6 +11,7 @@ interface ProvisioningSummaryProps {
  * Display what will be created when founder applies the interview.
  * Shows agents, kickoff issues, write counts.
  * Used in both VisionPreview and ConfirmationModal.
+ * Per D-14: Uses Card variant=default + SectionHeader primitive.
  */
 export function ProvisioningSummary({
   preset,
@@ -22,16 +25,16 @@ export function ProvisioningSummary({
   const wakeupCount = agentCount; // One wakeup per agent
 
   return (
-    <div className="space-y-md border-t border-border pt-lg">
-      <h3 className="text-heading font-bold">When you apply</h3>
+    <Card variant="default" padding="md">
+      <SectionHeader title="When you apply" />
 
-      <div className="space-y-md">
+      <div className="mt-4 space-y-3">
         {/* Agents */}
         <div>
-          <p className="text-label font-normal">Agents to create</p>
-          <ul className="mt-sm space-y-xs list-none">
+          <p className="text-xs font-medium text-foreground">Agents to create</p>
+          <ul className="mt-2 space-y-1 list-none">
             {preset.agents.map(agent => (
-              <li key={agent.id} className="text-body text-foreground/70 font-normal">
+              <li key={agent.id} className="text-sm text-foreground/70 font-normal">
                 {agent.name} — {agent.role}
               </li>
             ))}
@@ -40,21 +43,21 @@ export function ProvisioningSummary({
 
         {/* Kickoff issues */}
         <div>
-          <p className="text-label font-normal">Kickoff issues</p>
-          <p className="text-body text-foreground/70 mt-xs font-normal">
+          <p className="text-xs font-medium text-foreground">Kickoff issues</p>
+          <p className="text-sm text-foreground/70 mt-1 font-normal">
             {issueCount} {issueCount === 1 ? "issue" : "issues"} filed (one per agent)
           </p>
         </div>
 
         {/* Write count box */}
-        <div className="bg-card p-md rounded border border-border">
-          <p className="text-label font-normal text-foreground">
+        <div className="bg-muted p-3 rounded-none border border-border mt-3">
+          <p className="text-xs font-medium text-foreground">
             Total: 1 document, {agentCount} {agentCount === 1 ? "agent" : "agents"}, {issueCount}{" "}
             {issueCount === 1 ? "issue" : "issues"}, {wakeupCount}{" "}
             {wakeupCount === 1 ? "wakeup" : "wakeups"}
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
