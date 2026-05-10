@@ -338,8 +338,8 @@ export function FoundPanel(): React.ReactElement {
   // Loading state
   if (draftLoading) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-[400px]">
-        <p className="text-body text-foreground/70">Loading interview...</p>
+      <div className="flex items-center justify-center p-6 min-h-[400px]">
+        <p className="text-sm text-muted-foreground">Loading interview...</p>
       </div>
     );
   }
@@ -347,13 +347,13 @@ export function FoundPanel(): React.ReactElement {
   // Error state
   if (draftError) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-[400px]">
+      <div className="flex items-center justify-center p-6 min-h-[400px]">
         <div className="text-center">
-          <p className="text-body text-error">
+          <p className="text-sm text-red-500">
             Failed to load interview draft
           </p>
           {draftError instanceof Error && (
-            <p className="text-sm text-foreground/70">{draftError.message}</p>
+            <p className="text-sm text-muted-foreground">{draftError.message}</p>
           )}
         </div>
       </div>
@@ -370,7 +370,7 @@ export function FoundPanel(): React.ReactElement {
 
     return (
       <div className="flex h-full flex-col gap-0">
-        <div className="flex flex-1 gap-lg">
+        <div className="flex flex-1 gap-6">
           {/* Section navigation rail */}
           <SectionNavRail
             sections={sections}
@@ -382,7 +382,7 @@ export function FoundPanel(): React.ReactElement {
           />
 
           {/* Interview section */}
-          <div className="flex-1 overflow-y-auto px-lg py-md">
+          <div className="flex-1 overflow-y-auto px-6 py-4">
             {section && (
               <InterviewSectionComponent
                 section={section}
@@ -399,10 +399,10 @@ export function FoundPanel(): React.ReactElement {
 
         {/* Preset selector (placed at end of interview) */}
         {currentSection === sections.length - 1 && (
-          <div className="border-t px-lg py-md">
-            <div className="mb-md">
-              <h3 className="text-body font-semibold">Choose Your Setup</h3>
-              <p className="text-sm text-foreground/70">
+          <div className="border-t border-border px-6 py-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold">Choose Your Setup</h3>
+              <p className="text-sm text-muted-foreground">
                 Select which agents to provision when you apply.
               </p>
             </div>
@@ -413,7 +413,7 @@ export function FoundPanel(): React.ReactElement {
                 onSelect={handlePresetSelect}
               />
             ) : (
-              <p className="text-sm text-foreground/70">
+              <p className="text-sm text-muted-foreground">
                 Loading presets...
               </p>
             )}
@@ -426,10 +426,10 @@ export function FoundPanel(): React.ReactElement {
   // Render preview step
   if (step === "preview" && vision) {
     return (
-      <div className="flex h-full flex-col gap-lg p-lg">
+      <div className="flex h-full flex-col gap-6 p-6">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-display font-bold">
+            <h2 className="text-xl font-bold">
               Here's the company you're founding.
             </h2>
             <HelpTip
@@ -439,7 +439,7 @@ export function FoundPanel(): React.ReactElement {
               size="sm"
             />
           </div>
-          <p className="text-body text-foreground/70 mt-md">
+          <p className="text-sm text-muted-foreground mt-3">
             Edit anything before you apply.
           </p>
         </div>
@@ -460,17 +460,17 @@ export function FoundPanel(): React.ReactElement {
         )}
 
         {/* Navigation buttons */}
-        <div className="flex gap-md border-t pt-md">
+        <div className="flex gap-3 border-t border-border pt-3">
           <button
             onClick={handleBackFromPreview}
-            className="flex-1 rounded px-md py-sm text-sm font-medium border border-border hover:bg-foreground/5"
+            className="flex-1 rounded-none px-3 py-2 text-sm font-medium border border-border hover:bg-muted"
           >
             Back to Interview
           </button>
           <button
             onClick={handlePreviewConfirm}
             title="Write VISION.md, provision agents, file kickoff issues, queue first wakeups. You'll get one final confirmation modal."
-            className="flex-1 rounded px-md py-sm text-sm font-medium bg-accent text-background hover:bg-accent/90 disabled:opacity-50"
+            className="flex-1 rounded-none px-3 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50"
             disabled={!qualityCheck?.isValid}
           >
             Confirm & Apply
@@ -479,11 +479,11 @@ export function FoundPanel(): React.ReactElement {
 
         {/* Quality check errors */}
         {qualityCheck && !qualityCheck.isValid && (
-          <div className="rounded border border-error/30 bg-error/5 p-md">
-            <p className="text-sm font-medium text-error">
+          <div className="rounded-none border border-red-500/30 bg-red-500/10 p-3">
+            <p className="text-sm font-medium text-red-600">
               Missing required sections:
             </p>
-            <ul className="mt-sm space-y-xs text-sm text-foreground/70">
+            <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
               {qualityCheck.missingRequiredSlots.map((slot) => (
                 <li key={slot}>• {slot}</li>
               ))}
@@ -509,10 +509,10 @@ export function FoundPanel(): React.ReactElement {
   // Render applying step
   if (step === "applying") {
     return (
-      <div className="flex h-full flex-col gap-lg p-lg">
+      <div className="flex h-full flex-col gap-6 p-6">
         <div>
-          <h2 className="text-display font-bold">Creating your company...</h2>
-          <p className="text-body text-foreground/70 mt-md">
+          <h2 className="text-xl font-bold">Creating your company...</h2>
+          <p className="text-sm text-muted-foreground mt-3">
             This may take a moment.
           </p>
         </div>
@@ -530,24 +530,24 @@ export function FoundPanel(): React.ReactElement {
   // Render complete step
   if (step === "complete" && applyResult) {
     return (
-      <div className="flex h-full flex-col gap-lg p-lg items-center justify-center">
+      <div className="flex h-full flex-col gap-6 p-6 items-center justify-center">
         <div className="text-center">
-          <div className="mb-md text-4xl">✓</div>
-          <h2 className="text-display font-bold">Company founded!</h2>
-          <p className="text-body text-foreground/70 mt-md">
+          <div className="mb-3 text-4xl">✓</div>
+          <h2 className="text-xl font-bold">Company founded!</h2>
+          <p className="text-sm text-muted-foreground mt-3">
             {(applyResult as any).agentIds?.length || 0} agents provisioned
           </p>
           {(applyResult as any).issueIds && (
-            <p className="text-body text-foreground/70">
+            <p className="text-sm text-muted-foreground">
               {(applyResult as any).issueIds.length} kickoff issues created
             </p>
           )}
         </div>
 
-        <div className="flex gap-md w-full">
+        <div className="flex gap-3 w-full">
           <button
             onClick={handleCloseComplete}
-            className="flex-1 rounded px-md py-sm text-sm font-medium border border-border hover:bg-foreground/5"
+            className="flex-1 rounded-none px-3 py-2 text-sm font-medium border border-border hover:bg-muted"
           >
             Close
           </button>
@@ -556,7 +556,7 @@ export function FoundPanel(): React.ReactElement {
               // In real impl: navigate to company view
               console.log("Navigate to company:", (applyResult as any).visionDocId);
             }}
-            className="flex-1 rounded px-md py-sm text-sm font-medium bg-accent text-background hover:bg-accent/90"
+            className="flex-1 rounded-none px-3 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90"
           >
             View Company
           </button>
@@ -568,7 +568,7 @@ export function FoundPanel(): React.ReactElement {
   // Render error step
   if (step === "error" && applyResult) {
     return (
-      <div className="flex h-full flex-col gap-lg p-lg">
+      <div className="flex h-full flex-col gap-6 p-6">
         <ApplyErrorDisplay
           step={currentApplyStep}
           errors={applyResult.blockingErrors || applyResult.errors || []}
@@ -583,8 +583,8 @@ export function FoundPanel(): React.ReactElement {
 
   // Fallback: should not reach here
   return (
-    <div className="flex items-center justify-center p-lg min-h-[400px]">
-      <p className="text-body text-error">Unknown state: {step}</p>
+    <div className="flex items-center justify-center p-6 min-h-[400px]">
+      <p className="text-sm text-red-500">Unknown state: {step}</p>
     </div>
   );
 }
