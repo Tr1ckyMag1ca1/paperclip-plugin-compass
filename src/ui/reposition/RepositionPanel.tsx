@@ -383,23 +383,23 @@ export function RepositionPanel({
   // Render based on step
   if (isLoadingRun) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-96">
+      <div className="flex items-center justify-center p-6 min-h-96">
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-md"></div>
-          <p className="text-body text-foreground/70">Loading reposition state...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-3"></div>
+          <p className="text-sm text-foreground/70">Loading reposition state...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="bg-background flex flex-col h-full">
       {/* Header */}
-      <header className="sticky top-0 bg-background border-b border-border p-lg z-10">
-        <div className="flex items-start justify-between gap-lg">
+      <header className="sticky top-0 bg-background border-b border-border p-4 z-10">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-display font-bold text-foreground">{companyName}</h1>
+              <h1 className="text-base font-bold text-foreground">{companyName}</h1>
               <HelpTip
                 title="What does Reposition mode do?"
                 body="Reposition lets you pivot a healthy company. Describe the strategic shift in plain English; Compass infers which VISION sections are affected, re-asks only those questions, and produces an amendment diff plus a cascade plan."
@@ -407,7 +407,7 @@ export function RepositionPanel({
                 size="sm"
               />
             </div>
-            <p className="text-body font-normal text-foreground/70 mt-xs">
+            <p className="text-sm font-normal text-foreground/70 mt-1">
               Describe the strategic shift and we'll guide you through updating your company.
             </p>
           </div>
@@ -415,7 +415,7 @@ export function RepositionPanel({
           {step !== "empty" && (
             <button
               onClick={handleDiscard}
-              className="text-body font-normal text-destructive hover:text-destructive/80 transition-colors"
+              className="text-sm font-normal text-destructive hover:text-destructive/80 transition-colors"
             >
               Discard shift
             </button>
@@ -424,13 +424,13 @@ export function RepositionPanel({
       </header>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto p-lg">
+      <main className="flex-1 overflow-y-auto p-4">
         {!visionExists && (
-          <div className="mb-lg p-lg bg-destructive/10 border border-destructive rounded flex items-start gap-md">
+          <div className="mb-4 p-4 bg-destructive/10 border border-destructive rounded-none flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-heading font-bold text-destructive">No VISION.md found</h3>
-              <p className="text-body font-normal text-foreground mt-sm">
+              <h3 className="text-base font-semibold text-destructive">No VISION.md found</h3>
+              <p className="text-sm font-normal text-foreground mt-1">
                 Run Found mode first to create a VISION.md document.
               </p>
             </div>
@@ -438,14 +438,14 @@ export function RepositionPanel({
         )}
 
         {step === "empty" && (
-          <div className="text-center py-3xl">
-            <p className="text-body font-normal text-foreground/70 mb-lg">
+          <div className="text-center py-12">
+            <p className="text-sm font-normal text-foreground/70 mb-4">
               Run a drift audit or make a strategic shift
             </p>
             <button
               onClick={() => setStep("intent")}
               disabled={!visionExists}
-              className="px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-3 bg-accent text-white font-bold rounded-none hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
             >
               Reposition this company
             </button>
@@ -510,11 +510,11 @@ export function RepositionPanel({
         )}
 
         {step === "complete" && (
-          <div className="text-center py-3xl">
-            <h2 className="text-display font-bold text-foreground mb-md">
+          <div className="text-center py-12">
+            <h2 className="text-base font-bold text-foreground mb-3">
               ✓ Company repositioned!
             </h2>
-            <p className="text-body font-normal text-foreground/70 mb-lg">
+            <p className="text-sm font-normal text-foreground/70 mb-4">
               Your VISION document has been updated and agents have been notified.
               Check your company's issue list for cascading work items.
             </p>
@@ -522,7 +522,7 @@ export function RepositionPanel({
               onClick={() => {
                 window.location.href = `/company/${companyId}`;
               }}
-              className="px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 transition-colors"
+              className="px-4 py-2 bg-accent text-white font-bold rounded-none hover:bg-accent/90 transition-colors"
             >
               Go to company
             </button>

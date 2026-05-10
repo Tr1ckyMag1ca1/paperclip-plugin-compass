@@ -87,20 +87,20 @@ export function CascadeReviewPanel({
   }, [decisions, canConfirm, onConfirm]);
 
   return (
-    <div className="space-y-lg">
+    <div className="space-y-4">
       {/* Header */}
       <div>
-        <h2 className="text-heading font-bold text-foreground">
+        <h2 className="text-base font-semibold text-foreground">
           Which agents get updated?
         </h2>
-        <p className="text-body font-normal text-foreground/70 mt-sm">
+        <p className="text-sm font-normal text-foreground/70 mt-1">
           These agents will receive new instructions from the repositioning.
           Skip any with custom overrides if you want to keep them.
         </p>
       </div>
 
       {/* Agent cards */}
-      <div className="space-y-md">
+      <div className="space-y-3">
         {cascadePlan.affectedAgents.map((agent) => {
           const hasOverride = cascadePlan.customOverrideWarnings?.some(
             (w) => w.agentId === agent.id
@@ -131,32 +131,32 @@ export function CascadeReviewPanel({
 
       {/* Error message */}
       {error && (
-        <p className="text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive">
+        <p className="text-sm font-normal text-destructive p-3 bg-destructive/10 rounded-none border border-destructive">
           {error}
         </p>
       )}
 
       {/* Validation message */}
       {!canConfirm && cascadePlan.customOverrideWarnings && cascadePlan.customOverrideWarnings.length > 0 && (
-        <p className="text-body font-normal text-destructive">
+        <p className="text-sm font-normal text-destructive">
           Review custom override conflicts above before continuing.
         </p>
       )}
 
       {/* Buttons */}
-      <div className="flex gap-md pt-md">
+      <div className="flex gap-3 pt-3">
         <button
           onClick={onBack}
           disabled={isLoading}
-          className="flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors"
+          className="flex-1 px-3 py-2 text-accent font-bold border border-border rounded-none hover:bg-card disabled:opacity-50 transition-colors"
         >
-          <ChevronLeft className="h-4 w-4 inline mr-sm" />
+          <ChevronLeft className="h-4 w-4 inline mr-1" />
           Back to preview
         </button>
         <button
           onClick={handleConfirm}
           disabled={!canConfirm || isLoading}
-          className="flex-1 px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 px-3 py-2 bg-accent text-white font-bold rounded-none hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? "Loading..." : "Apply repositioning"}
         </button>

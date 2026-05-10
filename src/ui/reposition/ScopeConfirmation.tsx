@@ -89,24 +89,24 @@ export function ScopeConfirmation({
   );
 
   return (
-    <div className="space-y-lg">
+    <div className="space-y-4">
       {/* Header */}
       <div>
-        <h2 className="text-heading font-bold text-foreground">Which sections change?</h2>
-        <p className="text-body font-normal text-foreground/70 mt-sm">
+        <h2 className="text-base font-semibold text-foreground">Which sections change?</h2>
+        <p className="text-sm font-normal text-foreground/70 mt-1">
           These sections will be re-interviewed. Add or remove any.
         </p>
       </div>
 
       {/* Classifier rationale */}
-      <div className="p-md bg-card rounded border border-border">
-        <p className="text-label font-normal text-foreground/70">
+      <div className="p-4 bg-card rounded-none border border-border">
+        <p className="text-xs font-medium text-foreground/70">
           {classifiedScope.rationale}
         </p>
       </div>
 
       {/* Checkbox list */}
-      <div className="space-y-sm">
+      <div className="space-y-2">
         {VISION_SECTIONS.map(({ id, label }) => {
           const isChecked = selectedSections.has(id);
           const wasClassified = classifiedSet.has(id);
@@ -114,19 +114,19 @@ export function ScopeConfirmation({
           return (
             <label
               key={id}
-              className="flex items-center gap-md cursor-pointer group p-sm hover:bg-card rounded transition-colors"
+              className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-card rounded-none transition-colors"
             >
               <input
                 type="checkbox"
                 checked={isChecked}
                 onChange={() => handleToggleSection(id)}
-                className="w-4 h-4 rounded border border-border checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-4 h-4 rounded-none border border-border checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent"
               />
-              <span className="text-body font-normal text-foreground flex-1">
+              <span className="text-sm font-normal text-foreground flex-1">
                 {label}
               </span>
               {!wasClassified && (
-                <span className="text-label font-normal text-foreground/70">
+                <span className="text-xs font-medium text-foreground/70">
                   (optional)
                 </span>
               )}
@@ -137,30 +137,30 @@ export function ScopeConfirmation({
 
       {/* Error message */}
       {error && (
-        <p className="text-body font-normal text-destructive">
+        <p className="text-sm font-normal text-destructive">
           {error}
         </p>
       )}
 
       {/* Validation message */}
       {!isValid && selectedSections.size === 0 && (
-        <p className="text-body font-normal text-destructive">
+        <p className="text-sm font-normal text-destructive">
           Select at least 1 section to continue.
         </p>
       )}
 
       {/* Buttons */}
-      <div className="flex gap-md pt-md">
+      <div className="flex gap-3 pt-3">
         <button
           onClick={onBack}
-          className="flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card transition-colors"
+          className="flex-1 px-3 py-2 text-accent font-bold border border-border rounded-none hover:bg-card transition-colors"
         >
           ← Back to shift description
         </button>
         <button
           onClick={handleConfirm}
           disabled={!isValid || isLoading}
-          className="flex-1 px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 px-3 py-2 bg-accent text-white font-bold rounded-none hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? "Loading..." : "Continue to interview"}
         </button>

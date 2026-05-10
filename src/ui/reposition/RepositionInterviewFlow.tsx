@@ -109,8 +109,8 @@ export function RepositionInterviewFlow({
 
   if (!currentSection) {
     return (
-      <div className="flex items-center justify-center p-lg min-h-96">
-        <p className="text-body text-foreground/70">No sections to interview.</p>
+      <div className="flex items-center justify-center p-4 min-h-96">
+        <p className="text-sm text-foreground/70">No sections to interview.</p>
       </div>
     );
   }
@@ -126,9 +126,9 @@ export function RepositionInterviewFlow({
     : "";
 
   return (
-    <div className="flex gap-lg h-full">
+    <div className="flex gap-4 h-full">
       {/* Left nav rail */}
-      <nav className="w-60 flex-shrink-0 border-r border-border p-lg overflow-y-auto">
+      <nav className="w-60 flex-shrink-0 border-r border-border p-4 overflow-y-auto">
         <SectionNavRail
           sections={scopedSections}
           currentSectionIndex={currentSectionIndex}
@@ -138,11 +138,11 @@ export function RepositionInterviewFlow({
       </nav>
 
       {/* Main interview content */}
-      <main className="flex-1 overflow-y-auto p-lg space-y-lg">
+      <main className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Back button */}
         <button
           onClick={handleBack}
-          className="flex items-center gap-sm text-accent font-normal hover:text-accent/80 transition-colors"
+          className="flex items-center gap-2 text-accent font-normal hover:text-accent/80 transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
           Back to scope confirmation
@@ -164,24 +164,24 @@ export function RepositionInterviewFlow({
 
         {/* Error message */}
         {error && (
-          <p className="text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive">
+          <p className="text-sm font-normal text-destructive p-3 bg-destructive/10 rounded-none border border-destructive">
             {error}
           </p>
         )}
 
         {/* Navigation buttons */}
-        <div className="flex gap-md pt-md">
+        <div className="flex gap-3 pt-3">
           <button
             onClick={handleBack}
             disabled={isLoading}
-            className="flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors"
+            className="flex-1 px-4 py-2 text-accent font-bold border border-border rounded-none hover:bg-card disabled:opacity-50 transition-colors"
           >
             ← Back
           </button>
           <button
             onClick={handleNext}
             disabled={isLoading}
-            className="flex-1 px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 px-4 py-2 bg-accent text-white font-bold rounded-none hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? "Loading..." : isLastSection ? "Review and preview" : `Next: ${nextSectionName}`}
           </button>

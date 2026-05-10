@@ -46,10 +46,10 @@ export function IntentEntry({
   }, [intent, isValid, onContinue]);
 
   return (
-    <div className="space-y-lg">
+    <div className="space-y-4">
       {/* Header */}
       <div>
-        <h2 className="text-heading font-bold text-foreground">Describe the shift</h2>
+        <h2 className="text-base font-semibold text-foreground">Describe the shift</h2>
       </div>
 
       {/* Textarea */}
@@ -57,24 +57,24 @@ export function IntentEntry({
         value={intent}
         onChange={(e) => setIntent(e.target.value)}
         placeholder="Describe the shift in plain English. Examples: 'rebrand toward compliance', 'narrow focus to enterprise customers', 'tighten our voice'."
-        className="w-full p-lg min-h-24 bg-card border border-border rounded text-body font-normal text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+        className="w-full p-4 min-h-24 bg-card border border-border rounded-none text-sm font-normal text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border focus:ring-1 focus:ring-foreground resize-none"
       />
 
       {/* Helper text */}
-      <p className="text-body font-normal text-foreground/70">
+      <p className="text-sm font-normal text-foreground/70">
         Be specific about the direction change, not just internal improvements.
       </p>
 
       {/* Error message */}
       {error && (
-        <p className="text-body font-normal text-destructive">
+        <p className="text-sm font-normal text-destructive">
           {error}
         </p>
       )}
 
       {/* Character count and validation */}
       <div className="flex items-baseline justify-between">
-        <p className={`text-label font-normal ${intent.length >= 20 ? "text-foreground/70" : "text-destructive"}`}>
+        <p className={`text-xs font-medium ${intent.length >= 20 ? "text-foreground/70" : "text-destructive"}`}>
           {intent.length} characters
           {intent.length < 20 && ` (minimum 20 required)`}
         </p>
@@ -84,7 +84,7 @@ export function IntentEntry({
       <button
         onClick={handleContinue}
         disabled={!isValid || isLoading}
-        className="w-full px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+        className="w-full px-4 py-2 bg-accent text-white font-bold rounded-none hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
       >
         {isLoading ? "Loading..." : "Continue"}
       </button>
