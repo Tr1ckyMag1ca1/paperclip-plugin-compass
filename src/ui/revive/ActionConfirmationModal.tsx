@@ -37,19 +37,19 @@ export const ActionConfirmationModal: React.FC<ActionConfirmationModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-card rounded-lg p-lg max-w-md shadow-lg max-h-[80vh] overflow-y-auto">
-        <h2 className="text-display font-bold mb-md">Apply this action?</h2>
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-card border border-border rounded-none p-4 max-w-md shadow-lg max-h-[80vh] overflow-y-auto gap-3 flex flex-col">
+        <h2 className="text-base font-semibold">Apply this action?</h2>
 
-        <div className="mb-lg text-body">
-          <p className="font-semibold mb-sm">{action.title}</p>
-          <p className="text-foreground/70 mb-md">
+        <div className="gap-3 flex flex-col text-sm">
+          <p className="font-semibold">{action.title}</p>
+          <p className="text-muted-foreground">
             Unlocks {action.unblocks_count || 1} downstream issue(s)
           </p>
 
-          <div className="text-label text-foreground/70 bg-background rounded p-md">
-            <p className="font-semibold mb-sm">This will:</p>
-            <ul className="list-disc list-inside space-y-xs">
+          <div className="text-xs font-medium text-muted-foreground bg-muted rounded-none p-3">
+            <p className="font-semibold mb-2">This will:</p>
+            <ul className="space-y-2">
               <li>Update issue</li>
               <li>
                 {action.recommended_action.type === "pivot-to-sample"
@@ -61,18 +61,18 @@ export const ActionConfirmationModal: React.FC<ActionConfirmationModalProps> = (
           </div>
         </div>
 
-        <div className="flex gap-md">
+        <div className="flex gap-2">
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-md py-sm border border-border rounded hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-3 py-2 text-xs font-medium border border-border bg-muted text-foreground rounded-none hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-md py-sm bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-3 py-2 text-xs font-medium bg-foreground text-background rounded-none hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Applying…" : "Apply"}
           </button>
