@@ -2,11 +2,13 @@
  * PriorityBadge Component
  *
  * Inline priority indicator for ActionItemCard.
- * Per 04-UI-SPEC.md: color-coded badge (High/Medium/Low) based on priority score (0..1).
+ * Per Phase 9 UI-SPEC.md (D-01): color-coded badge (High/Medium/Low) based on priority score (0..1).
  *
- * - Low priority (0–0.33): Gray background `bg-card`, `text-foreground`
- * - Medium priority (0.33–0.66): Accent background `bg-accent/20`, `text-accent` bold
- * - High priority (0.66–1.0): Destructive background `bg-destructive/20`, `text-destructive` bold
+ * - Low priority (0–0.33): Muted palette (`text-muted-foreground`, `bg-muted`)
+ * - Medium priority (0.33–0.66): Yellow warning palette (`text-yellow-600`, `bg-yellow-500/10`)
+ * - High priority (0.66–1.0): Red critical palette (`text-red-600`, `bg-red-500/10`)
+ *
+ * Uses static PRIORITY_CLASSES map (Tailwind JIT-safe per D-02).
  */
 
 import React from "react";
@@ -17,30 +19,38 @@ interface PriorityBadgeProps {
 }
 
 /**
+ * Static priority color map per Phase 9 D-01.
+ * Full class strings for Tailwind JIT safety (no dynamic ternaries).
+ */
+const PRIORITY_CLASSES: Record<"low" | "medium" | "high", string> = {
+  low: "px-2 py-1 text-xs font-medium text-muted-foreground bg-muted rounded-none",
+  medium: "px-2 py-1 text-xs font-medium text-yellow-600 bg-yellow-500/10 rounded-none",
+  high: "px-2 py-1 text-xs font-medium text-red-600 bg-red-500/10 rounded-none",
+};
+
+/**
  * Renders a color-coded priority badge with label.
  */
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
   let label: string;
-  let bgClass: string;
-  let textClass: string;
+  let severityKey: "low" | "medium" | "high";
 
   if (priority >= 0.66) {
     label = "High";
-    bgClass = "bg-destructive/20";
-    textClass = "text-destructive font-bold";
+    severityKey = "high";
   } else if (priority >= 0.33) {
     label = "Medium";
-    bgClass = "bg-accent/20";
-    textClass = "text-accent font-semibold";
+    severityKey = "medium";
   } else {
     label = "Low";
-    bgClass = "bg-card";
-    textClass = "text-foreground";
+    severityKey = "low";
   }
+
+  const classes = PRIORITY_CLASSES[severityKey];
 
   return (
     <span
-      className={`px-xs py-xs rounded text-label ${bgClass} ${textClass}`}
+      className={classes}
       aria-label={`Priority: ${label}`}
     >
       {label}

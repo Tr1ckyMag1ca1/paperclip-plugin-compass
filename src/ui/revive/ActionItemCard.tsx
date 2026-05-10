@@ -51,17 +51,17 @@ export const ActionItemCard: React.FC<ActionItemCardProps> = ({
 
   return (
     <>
-      <div className="p-md bg-card rounded border border-border">
+      <div className="p-3 bg-card border border-border rounded-none gap-3 flex flex-col">
         {/* Header: Priority | Title | Status */}
-        <div className="flex items-start gap-md mb-md">
+        <div className="flex items-start gap-3 mb-3">
           <PriorityBadge priority={item.priority} />
           <div className="flex-1">
-            <h4 className="text-body font-bold">{item.title}</h4>
-            <p className="text-label text-foreground/70 mt-xs">
+            <h4 className="text-sm font-bold">{item.title}</h4>
+            <p className="text-xs font-medium text-foreground/70 mt-1">
               Unlocks {item.unblocks_count || 1} downstream issue(s)
             </p>
           </div>
-          <span className="text-label text-foreground/70 whitespace-nowrap">
+          <span className="text-xs font-medium text-foreground/70 whitespace-nowrap">
             {item.status === "pending"
               ? "Pending"
               : item.status === "addressed"
@@ -71,27 +71,27 @@ export const ActionItemCard: React.FC<ActionItemCardProps> = ({
         </div>
 
         {/* Body: Description */}
-        <p className="text-body mb-md">{item.why_blocking}</p>
+        <p className="text-sm mb-3">{item.why_blocking}</p>
 
         {/* Action Buttons */}
-        <div className="flex gap-md">
+        <div className="flex gap-3">
           <button
             onClick={handleApply}
             disabled={item.status !== "pending" || isApplying}
-            className="flex-1 px-md py-sm bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-3 py-2 bg-accent text-white rounded-none hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isApplying ? "Applying…" : getActionButtonLabel(item.recommended_action.type)}
           </button>
           <button
             onClick={() => setShowExplain(!showExplain)}
-            className="px-md py-sm text-foreground border border-border rounded hover:bg-background"
+            className="px-3 py-2 text-foreground border border-border rounded-none hover:bg-background"
           >
             Explain
           </button>
           <button
             onClick={() => onDismiss?.()}
             disabled={item.status !== "pending"}
-            className="px-md py-sm text-destructive border border-border rounded hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 text-destructive border border-border rounded-none hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Dismiss
           </button>
@@ -100,11 +100,11 @@ export const ActionItemCard: React.FC<ActionItemCardProps> = ({
         {/* Collapsible Explanation */}
         {showExplain && (
           <div
-            className="mt-md p-md bg-background rounded text-body"
+            className="mt-3 p-3 bg-background rounded-none text-sm"
             role="region"
             aria-expanded="true"
           >
-            <p className="font-semibold mb-sm">{item.title}</p>
+            <p className="font-semibold mb-2">{item.title}</p>
             <p>{item.why_blocking}</p>
           </div>
         )}

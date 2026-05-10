@@ -112,9 +112,9 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Fixed Header */}
-      <header className="p-lg border-b border-border">
-        <div className="flex items-center gap-2 mb-sm">
-          <h1 className="text-display font-bold">{companyName}</h1>
+      <header className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-2">
+          <h1 className="text-base font-semibold">{companyName}</h1>
           <HelpTip
             title="What does Revive mode do?"
             body="Revive runs a stall classifier over this company's recent activity, identifies the most likely root cause, and queues unblocking actions for you to approve."
@@ -122,7 +122,7 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
             size="sm"
           />
         </div>
-        <p className="text-body text-foreground/70 mb-md">Fix what's blocking this company</p>
+        <p className="text-sm text-foreground/70 mb-3">Fix what's blocking this company</p>
 
         {inventory && <StallSummaryBadge inventory={inventory} />}
 
@@ -130,7 +130,7 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
           onClick={handleDiagnose}
           disabled={isLoading || panelState === "diagnosing"}
           title="Run the stall classifier and queue unblocking actions for review"
-          className="mt-md w-full px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-md"
+          className="mt-3 w-full px-4 py-3 bg-accent text-white rounded-none hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
           {isLoading || panelState === "diagnosing" ? (
             <>
@@ -144,16 +144,16 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-lg">
+      <main className="flex-1 overflow-y-auto p-4">
         {panelState === "diagnosing" ? (
           <div className="text-center py-3xl">
-            <Loader className="w-8 h-8 animate-spin mx-auto mb-md text-accent" />
-            <p className="text-body text-foreground/70">Analyzing blockers…</p>
+            <Loader className="w-8 h-8 animate-spin mx-auto mb-3 text-accent" />
+            <p className="text-sm text-foreground/70">Analyzing blockers…</p>
           </div>
         ) : panelState === "error" ? (
           <div className="text-center py-3xl">
-            <p className="text-heading font-bold mb-md text-destructive">Diagnosis failed</p>
-            <p className="text-body text-foreground/70">{errorMessage || "Something went wrong"}</p>
+            <p className="text-base font-semibold mb-3 text-destructive">Diagnosis failed</p>
+            <p className="text-sm text-foreground/70">{errorMessage || "Something went wrong"}</p>
           </div>
         ) : !queue || queue.total_items === 0 ? (
           <EmptyReviveState />
@@ -167,13 +167,13 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
 
       {/* Sticky Footer */}
       {queue && queue.total_items > 0 && panelState === "queue" && (
-        <footer className="sticky bottom-0 border-t border-border bg-card p-lg flex justify-between items-center gap-md">
-          <span className="text-label text-foreground/70">
+        <footer className="sticky bottom-0 border-t border-border bg-card p-4 flex justify-between items-center gap-3">
+          <span className="text-xs font-medium text-foreground/70">
             {queue.addressed_count} of {queue.total_items} addressed
           </span>
           <button
             disabled={queue.addressed_count === 0}
-            className="px-lg py-md bg-accent text-white rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="px-4 py-3 bg-accent text-white rounded-none hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
             Review and apply
           </button>
@@ -188,8 +188,8 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
  */
 const EmptyReviveState: React.FC = () => (
   <div className="text-center py-3xl">
-    <h2 className="text-heading font-bold mb-md">This company isn't stalled</h2>
-    <p className="text-body mb-lg text-foreground/70">
+    <h2 className="text-base font-semibold mb-3">This company isn't stalled</h2>
+    <p className="text-sm mb-4 text-foreground/70">
       No blocking issues detected. Try Assess for a strategic audit instead.
     </p>
   </div>
