@@ -1,34 +1,18 @@
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HelpCircle } from "lucide-react";
 
 interface HelpTipProps {
-  /** Short headline shown at top of popover. Plain English, no jargon. */
   title: string;
-  /** Body copy. Can be multi-line. Plain English. */
   body: string;
-  /** Optional advanced/technical detail revealed via "Learn more" expander. */
   details?: string;
-  /** Optional external link (e.g. docs page). */
   learnMoreHref?: string;
-  /** Visible label for the trigger. If omitted, renders the help icon only. */
   label?: string;
-  /** Additional className for the trigger element. */
   className?: string;
-  /** Trigger size. Defaults to "sm". */
   size?: "xs" | "sm" | "md";
 }
 
-/**
- * HelpTip — progressive-disclosure help affordance.
- *
- * Click (or focus + Enter) on the trigger reveals a popover with:
- *   - Plain-English title + body (always shown)
- *   - Optional "Learn more" expander for technical detail
- *   - Optional external link
- *
- * Closes on outside-click, Escape, or trigger re-click.
- * Accessible: button trigger, aria-expanded/aria-controls, focus-visible ring.
- */
+let helpTipIdCounter = 0;
+
 export function HelpTip({
   title,
   body,
@@ -41,7 +25,12 @@ export function HelpTip({
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const popoverId = useId();
+  const popoverIdRef = useRef<string | null>(null);
+  if (popoverIdRef.current === null) {
+    helpTipIdCounter += 1;
+    popoverIdRef.current = `compass-help-${helpTipIdCounter}`;
+  }
+  const popoverId = popoverIdRef.current;
 
   useEffect(() => {
     if (!open) return;
