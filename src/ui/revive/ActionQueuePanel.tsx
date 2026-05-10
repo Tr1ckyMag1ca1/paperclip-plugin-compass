@@ -36,16 +36,16 @@ export const ActionQueuePanel: React.FC<ActionQueuePanelProps> = ({
   onActionDismiss,
 }) => {
   return (
-    <div className="space-y-lg">
+    <div className="bg-card border border-border rounded-none p-4 space-y-4">
       {Object.entries(queue.items_by_cause).map(([cause, items]) => {
         if (!items || items.length === 0) return null;
 
         return (
           <section key={cause}>
-            <h3 className="text-heading font-bold mb-md">
+            <h3 className="text-base font-semibold mb-3">
               {CAUSE_HEADERS[cause as StallCause]}
             </h3>
-            <div className="space-y-sm">
+            <div className="space-y-3">
               {(items as ActionItem[])
                 .sort((a, b) => b.priority - a.priority) // High priority first
                 .map((item) => (
