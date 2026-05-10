@@ -64,13 +64,45 @@ export async function loadInventory(
     (issue: any) => issue.status === "blocked" || issue.priority === "blocker"
   ).length;
 
+  // Allowlist non-secret fields. SDK ctx.agents.list() returns the raw row
+  // including adapterConfig.env (LLM API keys, DATABASE_URL) and runtimeConfig
+  // — never expose those to the UI consumer.
+  const sanitizedAgents = (agents as any[]).map((a) => ({
+    id: a.id,
+    companyId: a.companyId,
+    name: a.name,
+    role: a.role,
+    title: a.title,
+    icon: a.icon,
+    status: a.status,
+    reportsTo: a.reportsTo,
+    capabilities: a.capabilities,
+    lastHeartbeatAt: a.lastHeartbeatAt,
+    pausedAt: a.pausedAt,
+    pauseReason: a.pauseReason,
+    createdAt: a.createdAt,
+    updatedAt: a.updatedAt,
+    urlKey: a.urlKey,
+  })) as Agent[];
+
+  // Issue rows can carry assigneeAdapterOverrides + executionWorkspaceSettings
+  // which may contain credentials. Strip before returning.
+  const sanitizeIssue = (i: any) => {
+    const {
+      assigneeAdapterOverrides: _o,
+      executionWorkspaceSettings: _s,
+      ...rest
+    } = i;
+    return rest;
+  };
+
   return {
     companyId,
-    agents,
+    agents: sanitizedAgents,
     agentCount: agents.length,
     documents,
     visionExists,
-    recentIssues,
+    recentIssues: recentIssues.map(sanitizeIssue) as Issue[],
     recentIssueCount: recentIssues.length,
     latestHeartbeat,
     blockerCount,

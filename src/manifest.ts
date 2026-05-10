@@ -3,7 +3,7 @@ import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 const manifest: PaperclipPluginManifestV1 = {
   id: "paperclip-plugin-compass",
   apiVersion: 1,
-  version: "0.3.23",
+  version: "0.3.25",
   displayName: "Compass",
   description:
     "Strategic consultant for AI company lifecycle — diagnose, found, revive, reposition",
@@ -34,6 +34,40 @@ const manifest: PaperclipPluginManifestV1 = {
   entrypoints: {
     worker: "./dist/worker.js",
     ui: "./dist/ui",
+  },
+  instanceConfigSchema: {
+    type: "object",
+    properties: {
+      anthropicApiKey: {
+        type: "string",
+        title: "Anthropic API Key",
+        description:
+          "Anthropic API key used by Compass for strategy reasoning (Found, Assess, Revive, Reposition modes). Required when running LLM-backed workflows; mode detection works without it.",
+        format: "password",
+      },
+      zaiApiKey: {
+        type: "string",
+        title: "Z.ai (Zhipu) API Key",
+        description:
+          "Optional Z.ai/Zhipu key. If set, Compass uses GLM-class models for cheap-tier reasoning (drift summaries, classification).",
+        format: "password",
+      },
+      primaryModel: {
+        type: "string",
+        title: "Primary Model",
+        description:
+          "Model identifier for strategy reasoning. Defaults to claude-sonnet-4-6 when an Anthropic key is set.",
+        default: "claude-sonnet-4-6",
+      },
+      cheapModel: {
+        type: "string",
+        title: "Cheap Model",
+        description:
+          "Model used for low-stakes summarization and classification. Defaults to claude-haiku-4-5-20251001.",
+        default: "claude-haiku-4-5-20251001",
+      },
+    },
+    required: [],
   },
   ui: {
     slots: [

@@ -110,13 +110,45 @@ export class PaperclipAdapter {
         issue.status === "blocked" || issue.priority === "blocker"
     ).length;
 
+    // Allowlist non-secret fields. SDK ctx.agents.list() returns the raw row
+    // including adapterConfig.env (LLM API keys, DATABASE_URL) and runtimeConfig
+    // — never expose those to the UI consumer.
+    const sanitizedAgents = agents.map((a: any) => ({
+      id: a.id,
+      companyId: a.companyId,
+      name: a.name,
+      role: a.role,
+      title: a.title,
+      icon: a.icon,
+      status: a.status,
+      reportsTo: a.reportsTo,
+      capabilities: a.capabilities,
+      lastHeartbeatAt: a.lastHeartbeatAt,
+      pausedAt: a.pausedAt,
+      pauseReason: a.pauseReason,
+      createdAt: a.createdAt,
+      updatedAt: a.updatedAt,
+      urlKey: a.urlKey,
+    }));
+
+    // Issue rows can contain assigneeAdapterOverrides + executionWorkspaceSettings
+    // which may carry credentials. Strip them before returning.
+    const sanitizeIssue = (i: any) => {
+      const {
+        assigneeAdapterOverrides: _o,
+        executionWorkspaceSettings: _s,
+        ...rest
+      } = i;
+      return rest;
+    };
+
     return {
       companyId,
-      agents: agents as InventorySnapshot["agents"],
+      agents: sanitizedAgents as InventorySnapshot["agents"],
       agentCount: agents.length,
       documents: documents as InventorySnapshot["documents"],
       visionExists,
-      recentIssues: recentIssues as InventorySnapshot["recentIssues"],
+      recentIssues: recentIssues.map(sanitizeIssue) as InventorySnapshot["recentIssues"],
       recentIssueCount: recentIssues.length,
       latestHeartbeat,
       blockerCount,

@@ -8339,13 +8339,38 @@ async function loadInventory(ctx, companyId) {
   const blockerCount = issues.filter(
     (issue) => issue.status === "blocked" || issue.priority === "blocker"
   ).length;
+  const sanitizedAgents = agents.map((a) => ({
+    id: a.id,
+    companyId: a.companyId,
+    name: a.name,
+    role: a.role,
+    title: a.title,
+    icon: a.icon,
+    status: a.status,
+    reportsTo: a.reportsTo,
+    capabilities: a.capabilities,
+    lastHeartbeatAt: a.lastHeartbeatAt,
+    pausedAt: a.pausedAt,
+    pauseReason: a.pauseReason,
+    createdAt: a.createdAt,
+    updatedAt: a.updatedAt,
+    urlKey: a.urlKey
+  }));
+  const sanitizeIssue = (i) => {
+    const {
+      assigneeAdapterOverrides: _o,
+      executionWorkspaceSettings: _s,
+      ...rest
+    } = i;
+    return rest;
+  };
   return {
     companyId,
-    agents,
+    agents: sanitizedAgents,
     agentCount: agents.length,
     documents,
     visionExists,
-    recentIssues,
+    recentIssues: recentIssues.map(sanitizeIssue),
     recentIssueCount: recentIssues.length,
     latestHeartbeat,
     blockerCount
@@ -8490,13 +8515,38 @@ var PaperclipAdapter = class {
     const blockerCount = issues.filter(
       (issue) => issue.status === "blocked" || issue.priority === "blocker"
     ).length;
+    const sanitizedAgents = agents.map((a) => ({
+      id: a.id,
+      companyId: a.companyId,
+      name: a.name,
+      role: a.role,
+      title: a.title,
+      icon: a.icon,
+      status: a.status,
+      reportsTo: a.reportsTo,
+      capabilities: a.capabilities,
+      lastHeartbeatAt: a.lastHeartbeatAt,
+      pausedAt: a.pausedAt,
+      pauseReason: a.pauseReason,
+      createdAt: a.createdAt,
+      updatedAt: a.updatedAt,
+      urlKey: a.urlKey
+    }));
+    const sanitizeIssue = (i) => {
+      const {
+        assigneeAdapterOverrides: _o,
+        executionWorkspaceSettings: _s,
+        ...rest
+      } = i;
+      return rest;
+    };
     return {
       companyId,
-      agents,
+      agents: sanitizedAgents,
       agentCount: agents.length,
       documents,
       visionExists,
-      recentIssues,
+      recentIssues: recentIssues.map(sanitizeIssue),
       recentIssueCount: recentIssues.length,
       latestHeartbeat,
       blockerCount
