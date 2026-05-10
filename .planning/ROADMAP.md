@@ -100,9 +100,9 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 **Plans:** 3 plans
 
 **Plan List:**
-- [ ] **09-01-PLAN.md** — Revive panel root + ActionItemCard + badges (PriorityBadge, StallSummaryBadge) with static priority/severity maps (UIR-01, UIR-02)
-- [ ] **09-02-PLAN.md** — Revive action queue + modals (ActionQueuePanel, ActionConfirmationModal, SamplePivotModal) with D-09 chrome (UIR-03, UIR-04)
-- [ ] **09-03-PLAN.md** — Reposition panels (RepositionPanel, RepositionInterviewFlow, IntentEntry, ScopeConfirmation, CascadeReviewPanel) + verification gates (React shim guard, live host mount smoke test, SDK payload audit) (UIRP-01, UIRP-02, UIRP-03)
+- [x] **09-01-PLAN.md** — Revive panel root + ActionItemCard + badges (PriorityBadge, StallSummaryBadge) with static priority/severity maps (UIR-01, UIR-02)
+- [x] **09-02-PLAN.md** — Revive action queue + modals (ActionQueuePanel, ActionConfirmationModal, SamplePivotModal) with D-09 chrome (UIR-03, UIR-04)
+- [x] **09-03-PLAN.md** — Reposition panels (RepositionPanel, RepositionInterviewFlow, IntentEntry, ScopeConfirmation, CascadeReviewPanel) + verification gates (React shim guard, live host mount smoke test, SDK payload audit) (UIRP-01, UIRP-02, UIRP-03)
 
 **UI hint**: yes
 
