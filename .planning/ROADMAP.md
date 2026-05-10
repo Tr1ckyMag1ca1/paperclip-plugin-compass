@@ -12,7 +12,7 @@
 
 ## Active Milestone: v1.1 Compass UI Parity with Paperclip Host
 
-**Status:** Phase 7 executed + verified PASS; Phase 8 next
+**Status:** Phase 8 complete; Phase 9 planning complete (3 plans created 2026-05-10)
 **Phases:** 4 (7–10, continuing from v1.0)
 **Total Requirements:** 38 v1.1
 **Granularity:** Coarse (per config.json)
@@ -23,7 +23,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 - [x] **Phase 7: Foundations + Shared Primitives** - Design token baseline and reusable components (9 reqs) — 3 plans
 - [x] **Phase 8: Assess + Found Panels** - Migrate primary mode panels to host tokens (8 reqs) (completed 2026-05-09)
-- [ ] **Phase 9: Revive + Reposition Panels** - Complete secondary mode migrations (7 reqs)
+- [ ] **Phase 9: Revive + Reposition Panels** - Complete secondary mode migrations (7 reqs) — 3 plans created 2026-05-10
 - [ ] **Phase 10: Memory + Verification + Documentation** - History panel, verification gates, documentation (14 reqs)
 
 ---
@@ -81,7 +81,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 ### Phase 9: Revive + Reposition Panels
 
-**Goal:** Migrate remaining mode panels (Revive + Reposition, ~20 components) to host tokens; ensure action/intent flows and modal confirmations respect new token hierarchy; no layout breakage.
+**Goal:** Migrate remaining mode panels (Revive + Reposition, ~20 components) to host tokens; ensure action/intent flows and modal confirmations respect new token hierarchy; no layout breakage. Introduce new verification gates: React shim guard, live host mount smoke test, plugin SDK payload audit (Phase 8 missed runtime bugs; these gates prevent regression).
 
 **Depends on:** Phase 8.
 
@@ -93,8 +93,16 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 3. SamplePivotModal migrated; one-click pivot UI matches host design
 4. RepositionInterviewFlow and IntentEntry use host tokens; scoped re-interview flow feels native
 5. ScopeConfirmation and CascadeReviewPanel migrated; all confirm/apply modals consistent across modes
+6. React shim guard passes: 0 forbidden imports (useId, useReducer, etc.) in plugin components
+7. Live host mount smoke test passes: RevivePanel and RepositionPanel render in VPS Paperclip host without errors
+8. SDK payload audit passes: 0 sensitive data leaks (adapterConfig.env, etc.)
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+**Plan List:**
+- [ ] **09-01-PLAN.md** — Revive panel root + ActionItemCard + badges (PriorityBadge, StallSummaryBadge) with static priority/severity maps (UIR-01, UIR-02)
+- [ ] **09-02-PLAN.md** — Revive action queue + modals (ActionQueuePanel, ActionConfirmationModal, SamplePivotModal) with D-09 chrome (UIR-03, UIR-04)
+- [ ] **09-03-PLAN.md** — Reposition panels (RepositionPanel, RepositionInterviewFlow, IntentEntry, ScopeConfirmation, CascadeReviewPanel) + verification gates (React shim guard, live host mount smoke test, SDK payload audit) (UIRP-01, UIRP-02, UIRP-03)
 
 **UI hint**: yes
 
@@ -128,9 +136,9 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Foundations | 3/3 | Planned | 2026-05-04 |
+| 7. Foundations | 3/3 | Complete | 2026-05-04 |
 | 8. Assess + Found | 7/7 | Complete   | 2026-05-09 |
-| 9. Revive + Reposition | 0/? | Not started | — |
+| 9. Revive + Reposition | 0/3 | Planned | 2026-05-10 |
 | 10. Memory + Verify + Docs | 0/? | Not started | — |
 
 ---
@@ -141,14 +149,14 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 | Category | Requirements | Count | Phase | Status |
 |----------|--------------|-------|-------|--------|
-| UI-FOUND | UIF-01 through UIF-09 | 9 | Phase 7 | Planned |
-| UI-ASSESS | UIA-01 through UIA-05 | 5 | Phase 8 | Pending |
-| UI-FOUND-MODE | UIFM-01 through UIFM-03 | 3 | Phase 8 | Pending |
-| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 | Pending |
-| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 | Pending |
-| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Pending |
-| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Pending |
-| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Pending |
+| UI-FOUND | UIF-01 through UIF-09 | 9 | Phase 7 | Complete |
+| UI-ASSESS | UIA-01 through UIA-05 | 5 | Phase 8 | Complete |
+| UI-FOUND-MODE | UIFM-01 through UIFM-03 | 3 | Phase 8 | Complete |
+| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 | Planned |
+| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 | Planned |
+| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Not started |
+| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Not started |
+| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Not started |
 
 **Total:** 38/38 requirements, 0 orphans, 0 duplicates.
 
@@ -160,6 +168,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 - **Phase 8 → 9:** Mode panel pattern established in Assess/Found informs Revive/Reposition migrations.
 - **Phase 9 → 10:** All components must be migrated before verification gates can pass.
 - **Verification gates (Phase 10):** Grep verifier, manual light/dark checks, contrast audit, and production build verification are gating criteria for v1.1 ship.
+- **Phase 9 NEW gates:** React shim guard (npm run lint:shim), live host mount smoke test (VPS), SDK payload audit — Phase 8 skipped these and shipped hotfixes post-launch.
 
 ---
 
@@ -189,6 +198,9 @@ All success criteria map to requirements; all requirements support at least one 
 - Criterion 3 (Sample-pivot modal) ← UIR-04
 - Criterion 4 (Reposition flow) ← UIRP-01, UIRP-02
 - Criterion 5 (Confirm/apply modals) ← UIRP-03
+- Criterion 6 (React shim guard) ← UIR-01 through UIRP-03 (all Phase 9 components)
+- Criterion 7 (Live host mount) ← UIR-01 through UIRP-03 (all Phase 9 components)
+- Criterion 8 (SDK payload audit) ← UIRP-01, UIRP-02 (Reposition bridge handlers)
 
 **Phase 10:**
 - Criterion 1 (History panel) ← UIM-01, UIM-02
@@ -202,4 +214,4 @@ All success criteria map to requirements; all requirements support at least one 
 
 ---
 
-*Last updated: 2026-05-04 — Phase 7 planning complete (3 plans created)*
+*Last updated: 2026-05-10 — Phase 9 planning complete (3 plans created)*
