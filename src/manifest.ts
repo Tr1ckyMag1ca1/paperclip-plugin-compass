@@ -3,7 +3,7 @@ import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 const manifest: PaperclipPluginManifestV1 = {
   id: "paperclip-plugin-compass",
   apiVersion: 1,
-  version: "0.3.0",
+  version: "0.3.2",
   displayName: "Compass",
   description:
     "Strategic consultant for AI company lifecycle — diagnose, found, revive, reposition",

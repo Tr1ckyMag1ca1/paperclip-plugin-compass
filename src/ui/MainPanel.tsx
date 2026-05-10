@@ -3,6 +3,7 @@ import {
   usePluginData,
   usePluginAction,
   useHostContext,
+  type PluginPageProps,
 } from "@paperclipai/plugin-sdk/ui";
 import type { InventorySnapshot, Mode } from "../types.js";
 import { ModeBanner } from "./components/ModeBanner.js";
@@ -94,11 +95,15 @@ function HistoryTabBar({
   );
 }
 
-export function MainPanel(): React.ReactElement {
+export function MainPanel(props?: Partial<PluginPageProps>): React.ReactElement {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedTab, setSelectedTab] = useState<TabType>("mode");
   const hostContext = useHostContext();
-  const companyId = ((hostContext as any)?.companyId as string | undefined) ?? "";
+  const propContext = props?.context;
+  const companyId =
+    (propContext?.companyId as string | undefined) ??
+    ((hostContext as any)?.companyId as string | undefined) ??
+    "";
 
   // Fetch inventory snapshot on plugin open (D-04)
   const { data: inventory, loading: inventoryLoading, error: inventoryError } =
@@ -157,13 +162,27 @@ export function MainPanel(): React.ReactElement {
     );
   }
 
+  if (!companyId) {
+    return (
+      <div className="flex items-center justify-center p-6 min-h-[400px] bg-background text-foreground">
+        <div className="text-center max-w-md space-y-2">
+          <h2 className="text-lg font-semibold">Compass needs a company context</h2>
+          <p className="text-sm text-muted-foreground">
+            Open Compass from inside a company workspace (sidebar link).
+            The plugin needs a companyId to load the diagnostic dashboard.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Initial load only — gate on data presence, not on hook loading flag,
   // so dropdown-triggered refreshes keep the panel mounted.
   if (!inventory || !modeData || storedOverride === undefined) {
     return (
-      <div className="flex items-center justify-center p-4 min-h-[400px]">
+      <div className="flex items-center justify-center p-4 min-h-[400px] bg-background text-foreground">
         <div className="text-center">
-          <p className="text-sm text-foreground/70">Loading diagnostic dashboard...</p>
+          <p className="text-sm text-muted-foreground">Loading diagnostic dashboard...</p>
         </div>
       </div>
     );
