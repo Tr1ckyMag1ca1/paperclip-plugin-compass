@@ -1,6 +1,6 @@
 {
   "name": "paperclip-plugin-compass",
-  "version": "0.3.25",
+  "version": "0.3.26",
   "type": "module",
   "private": false,
   "description": "Strategic consultant for AI company lifecycle — diagnose, found, revive, reposition",
@@ -28,7 +28,9 @@
     "dev": "node ./esbuild.config.mjs --watch",
     "test": "vitest",
     "test:run": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint:shim": "node ./scripts/check-react-shim.mjs",
+    "verify": "npm run typecheck && npm run lint:shim && npm run test:run"
   },
   "files": [
     "dist/",
