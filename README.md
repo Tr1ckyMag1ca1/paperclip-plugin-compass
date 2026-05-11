@@ -1,8 +1,13 @@
 # Compass — Paperclip Plugin
 
+[![npm version](https://img.shields.io/npm/v/@paperclipai/paperclip-plugin-compass)](https://www.npmjs.com/package/@paperclipai/paperclip-plugin-compass)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Strategic consultant for AI company lifecycle — found, assess, revive, reposition.
 
 Compass is a Paperclip plugin that acts as a strategic consultant for any Paperclip-hosted AI company at any lifecycle stage. It founds new companies, audits existing ones, revives stalled ones, and repositions mature ones — all from inside Paperclip's plugin sidebar with no separate Claude Code session, SSH, or shell scripting required.
+
+**Co-maintained with [Aron Prins](https://github.com/aronprins)**. This plugin builds on strategic interview depth from [paperclip-vision](https://github.com/aronprins/paperclip-vision).
 
 ## Table of Contents
 
@@ -95,25 +100,26 @@ If you're stuck, the inline help is designed to answer your question without lea
 
 ### npm Registry (recommended)
 
-```bash
-# In your Paperclip host:
-paperclip plugins install paperclip-plugin-compass
-```
-
-Or via the Paperclip plugin manager UI, search for `paperclip-plugin-compass`.
-
-### Pinned version
+Install the scoped package from npm:
 
 ```bash
-paperclip plugins install paperclip-plugin-compass --version 0.3.0
+npm install @paperclipai/paperclip-plugin-compass
 ```
+
+Or install via the Paperclip plugin manager UI:
+1. Open your Paperclip instance
+2. Go to **Administration > Plugins > Marketplace**
+3. Search for **Compass**
+4. Click **Install**
 
 ### Local Development
 
 Clone the repo and install from a local path:
 
 ```bash
-paperclip plugins install file:///path/to/paperclip-plugin-compass --local
+git clone https://github.com/Tr1ckyMag1ca1/paperclip-plugin-compass.git
+cd paperclip-plugin-compass
+paperclip plugins add file:///path/to/paperclip-plugin-compass
 ```
 
 ## Development
@@ -131,11 +137,9 @@ The Paperclip host auto-restarts the plugin worker on bundle changes (no manual 
 
 ## Credits
 
-Built with the strategic interview depth from [aronprins/paperclip-vision](https://github.com/aronprins/paperclip-vision).
-
-Plugin chassis adapted from [yesterday-ai/paperclip-plugin-company-wizard](https://github.com/yesterday-ai/paperclip-plugin-company-wizard).
-
-Co-maintained with [Aron Prins](https://github.com/aronprins).
+- **Strategic Interview Depth:** [paperclip-vision](https://github.com/aronprins/paperclip-vision) by Aron Prins
+- **Plugin Chassis:** [paperclip-plugin-company-wizard](https://github.com/yesterday-ai/paperclip-plugin-company-wizard) by Yesterday AI
+- **Co-Maintainer:** [Aron Prins](https://github.com/aronprins)
 
 ## Contributing
 
