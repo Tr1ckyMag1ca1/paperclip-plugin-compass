@@ -48,11 +48,12 @@ jobs:
 
       - name: Extract version and changelog notes
         id: release_info
+        shell: bash
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Extract CHANGELOG section for this version using sed
-          NOTES=$(sed -n '/^## \['"$VERSION"'\]/,/^## \[/p' CHANGELOG.md | sed '1d;$d')
+          # Extract CHANGELOG section for this version
+          NOTES=$(grep -A 1000 "## \[$VERSION\]" CHANGELOG.md | grep -B 1000 "^## " | tail -n +2 | sed '$d')
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
