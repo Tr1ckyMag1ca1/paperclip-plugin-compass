@@ -22,9 +22,17 @@ const watch = process.argv.includes("--watch");
 
 const withMd = (cfg) => ({ ...cfg, plugins: [...(cfg.plugins ?? []), rawMarkdownPlugin] });
 
+// Mark lucide-react as external to prevent bundling react transitively.
+// lucide-react depends on react; if lucide-react is bundled, react gets bundled too.
+// Host must provide both react and lucide-react via shims.
+const uiPreset = {
+  ...presets.esbuild.ui,
+  external: [...(presets.esbuild.ui.external || []), "lucide-react"],
+};
+
 const workerCtx = await esbuild.context(withMd(presets.esbuild.worker));
 const manifestCtx = await esbuild.context(withMd(presets.esbuild.manifest));
-const uiCtx = await esbuild.context(withMd(presets.esbuild.ui));
+const uiCtx = await esbuild.context(withMd(uiPreset));
 
 if (watch) {
   await Promise.all([workerCtx.watch(), manifestCtx.watch(), uiCtx.watch()]);

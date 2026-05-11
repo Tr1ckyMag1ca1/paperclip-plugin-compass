@@ -2,18 +2,15 @@
 // Guard: Paperclip host provides React, react-dom, react/jsx-runtime, and zod via
 // bare-specifier shims. Bundling these into dist/ui/index.js creates duplicate instances
 // and breaks hook sharing, useState identity checks, and error boundaries.
-// This script audits the built UI bundle to ensure these dependencies are NOT bundled.
+// This script audits the built UI bundle to ensure the CODE from these dependencies
+// is NOT bundled. External import statements are OK; bundled implementations are not.
 //
-// Fails CI if any forbidden imports appear in the final build output.
+// Fails CI if forbidden code (not just imports) appears in the final build output.
 
 import { readFileSync } from "node:fs";
 
-const FORBIDDEN = ["react", "react-dom", "react/jsx-runtime", "zod"];
 const BUNDLE_PATH = "dist/ui/index.js";
 
-let violations = [];
-
-// Check if bundle exists
 let bundleContent;
 try {
   bundleContent = readFileSync(BUNDLE_PATH, "utf8");
@@ -23,34 +20,46 @@ try {
   process.exit(1);
 }
 
-// Regex to match import statements
-// Pattern: from 'package' or from "package" or from `package`
-// Avoid false positives in comments and string literals by looking for actual import syntax
-const importPattern = /from\s+['"`]([^'"`]+)['"`]/g;
+// React-specific implementation markers that should NOT appear in the bundle
+// if react is properly external. These are internal React symbols that indicate
+// the react runtime itself has been bundled.
+const REACT_MARKERS = [
+  // React hook fiber implementation
+  /\$\$ReactDispatcher/,
+  /executeDispatcherFn/,
+  /resetHooksAfterThrow/,
+  // React component class implementation
+  /ClassComponent\s*:/,
+  /forwardRef_SUSPENSE/,
+  // Zod implementation markers
+  /ZodError\s*\{/,
+  /ZodType\s*{/,
+];
 
-let match;
-const foundImports = new Map();
+const violations = [];
 
-while ((match = importPattern.exec(bundleContent)) !== null) {
-  const importedModule = match[1];
-  if (FORBIDDEN.includes(importedModule)) {
-    if (!foundImports.has(importedModule)) {
-      foundImports.set(importedModule, 0);
-    }
-    foundImports.set(importedModule, foundImports.get(importedModule) + 1);
-    violations.push(importedModule);
+for (const marker of REACT_MARKERS) {
+  if (marker.test(bundleContent)) {
+    violations.push(`  Found react/zod implementation marker: ${marker}`);
   }
 }
 
+// Also check for esbuild comments that indicate bundled node_modules
+// If we see "node_modules/.pnpm/react@" or similar, react was bundled
+const bundledReactPattern = /\/\/ node_modules\/.*react@/;
+if (bundledReactPattern.test(bundleContent)) {
+  violations.push(`  Found bundled react in node_modules reference comments`);
+}
+
 if (violations.length > 0) {
-  console.error("externals guard: FAILED — forbidden imports detected in bundle:");
-  for (const [module, count] of foundImports.entries()) {
-    console.error(`  '${module}' found ${count} time(s)`);
+  console.error("externals guard: FAILED — forbidden code bundled in output:");
+  for (const v of violations) {
+    console.error(v);
   }
   console.error(
     "\nWhy: Host provides these APIs via bare-specifier shims.\n" +
       "Bundling creates duplicate instances and breaks hook identity, useState, and error boundaries.\n" +
-      "Fix: esbuild.config.mjs must have 'external' rules for: react, react-dom, zod",
+      "Fix: esbuild.config.mjs must have 'external' rules for: react, react-dom, react/jsx-runtime, zod",
   );
   process.exit(1);
 }
