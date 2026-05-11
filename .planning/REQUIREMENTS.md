@@ -72,6 +72,22 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 - [ ] **UID-01**: README + UI_REDO_HANDOFF.md updated with corrected emerald-as-accent (not primary) semantics
 - [ ] **UID-02**: Short PATTERNS doc in `src/ui/` documenting Card/SectionHeader usage and token conventions for future contributors
 
+### DIST — Distribution (4)
+
+- [ ] **DIST-01**: `npm publish` succeeds for `@paperclipai/paperclip-plugin-compass` with valid `package.json#paperclipPlugin` metadata (manifest/worker/UI paths correct, files allowlist includes `dist/`)
+- [ ] **DIST-02**: Plugin-manager install verified on live Paperclip VPS host — install via plugin-manager UI, plugin registers, renders all 5 mode panels without runtime errors
+- [ ] **DIST-03**: GitHub release tagged `v1.1.0` with `.tgz` artifact attached and release notes derived from CHANGELOG
+- [ ] **DIST-04**: Bundle audit passes — React/zod/lucide-react externals declared correctly, peer deps validated, final UI bundle <200KB gzipped
+
+### OSS — Open-Source Launch (6)
+
+- [ ] **OSS-01**: README rewritten — install steps (npm + plugin-manager), 5-mode overview, screenshots per mode, Aron Prins co-maintainer credit, `paperclip-vision` lineage link
+- [ ] **OSS-02**: CONTRIBUTING.md committed — dev setup, Plugin SDK pointers, test guidance, GSD workflow expectations, code review norms
+- [ ] **OSS-03**: LICENSE (MIT) committed at repo root and matches `package.json#license`
+- [ ] **OSS-04**: CODEOWNERS file committed; Aron Prins added as repo collaborator with maintainer permissions
+- [ ] **OSS-05**: `.github/ISSUE_TEMPLATE/` (bug, feature, question) and `.github/PULL_REQUEST_TEMPLATE.md` committed
+- [ ] **OSS-06**: CHANGELOG.md initialized at repo root with v1.0 and v1.1 entries (keepachangelog format)
+
 ## Future Requirements (deferred to v1.2+)
 
 - Screenshot-diff regression infrastructure (Percy/Chromatic)
@@ -133,9 +149,19 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 | UIV-05 | UI-VERIFY | 10 | Pending |
 | UID-01 | UI-DOCS | 10 | Pending |
 | UID-02 | UI-DOCS | 10 | Pending |
+| DIST-01 | DIST | 11 | Pending |
+| DIST-02 | DIST | 11 | Pending |
+| DIST-03 | DIST | 11 | Pending |
+| DIST-04 | DIST | 11 | Pending |
+| OSS-01 | OSS | 11 | Pending |
+| OSS-02 | OSS | 11 | Pending |
+| OSS-03 | OSS | 11 | Pending |
+| OSS-04 | OSS | 11 | Pending |
+| OSS-05 | OSS | 11 | Pending |
+| OSS-06 | OSS | 11 | Pending |
 
-**Coverage:** 38/38 requirements mapped to phases 7-10. No orphaned requirements.
+**Coverage:** 48/48 requirements mapped to phases 7-11. No orphaned requirements.
 
 ---
 
-*Last updated: 2026-05-04 — milestone v1.1 roadmap created with full traceability*
+*Last updated: 2026-05-11 — Phase 11 added (Distribution + OSS Launch, 10 reqs)*

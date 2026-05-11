@@ -12,9 +12,9 @@
 
 ## Active Milestone: v1.1 Compass UI Parity with Paperclip Host
 
-**Status:** Phase 8 complete; Phase 9 planning complete (3 plans created 2026-05-10)
-**Phases:** 4 (7–10, continuing from v1.0)
-**Total Requirements:** 38 v1.1
+**Status:** Phase 8 complete; Phase 9 planning complete (3 plans created 2026-05-10); Phase 11 added 2026-05-11
+**Phases:** 5 (7–11, continuing from v1.0)
+**Total Requirements:** 48 v1.1 (38 UI parity + 10 distribution/OSS launch)
 **Granularity:** Coarse (per config.json)
 
 Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishable from Paperclip host shell. Fix layout bugs caused by nonexistent custom Tailwind tokens and light-only color utilities.
@@ -25,6 +25,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 - [x] **Phase 8: Assess + Found Panels** - Migrate primary mode panels to host tokens (8 reqs) (completed 2026-05-09)
 - [ ] **Phase 9: Revive + Reposition Panels** - Complete secondary mode migrations (7 reqs) — 3 plans created 2026-05-10
 - [ ] **Phase 10: Memory + Verification + Documentation** - History panel, verification gates, documentation (14 reqs)
+- [ ] **Phase 11: Distribution + Open-Source Launch** - npm publish, plugin-manager install verify, OSS docs, Aron co-maintainer setup (10 reqs)
 
 ---
 
@@ -132,6 +133,32 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 ---
 
+### Phase 11: Distribution + Open-Source Launch
+
+**Goal:** Ship Compass v1.1 publicly — npm publish under `@paperclipai/paperclip-plugin-compass`, verify install on live Paperclip plugin-manager, publish OSS contributor docs (README, CONTRIBUTING, LICENSE, CHANGELOG, issue/PR templates), and onboard Aron Prins as co-maintainer with CODEOWNERS + repo access.
+
+**Depends on:** Phase 10 (v1.1 must pass UI parity verification gates before public release).
+
+**Requirements:** DIST-01, DIST-02, DIST-03, DIST-04, OSS-01, OSS-02, OSS-03, OSS-04, OSS-05, OSS-06
+
+**Success Criteria** (what must be TRUE):
+1. `npm publish` succeeds for `@paperclipai/paperclip-plugin-compass` with valid `package.json#paperclipPlugin` metadata pointing at correct manifest/worker/UI paths
+2. Plugin-manager install verified on live Paperclip VPS host — plugin installs, registers, renders without errors end-to-end
+3. GitHub release tagged `v1.1.0` with `.tgz` artifact attached + release notes derived from CHANGELOG
+4. Bundle audit passes: React/zod/lucide-react externals correct, peer deps declared, final bundle <200KB gzipped
+5. README rewritten with install steps, mode overview, screenshots, and Aron Prins co-maintainer credit + `paperclip-vision` lineage link
+6. CONTRIBUTING.md committed with dev setup, Plugin SDK pointers, test guidance, GSD workflow expectations
+7. LICENSE (MIT) committed and matches `package.json#license`
+8. CODEOWNERS committed and Aron Prins added as repo collaborator with maintainer permissions
+9. `.github/` issue + PR templates committed
+10. CHANGELOG.md initialized with v1.0 and v1.1 entries
+
+**Plans:** TBD
+
+**UI hint**: no
+
+---
+
 ## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
@@ -140,12 +167,13 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | 8. Assess + Found | 7/7 | Complete   | 2026-05-09 |
 | 9. Revive + Reposition | 0/3 | Planned | 2026-05-10 |
 | 10. Memory + Verify + Docs | 0/? | Not started | — |
+| 11. Distribution + OSS Launch | 0/? | Planned | — |
 
 ---
 
 ## Coverage Summary
 
-**Requirements mapped:** 38/38 ✓
+**Requirements mapped:** 48/48 ✓
 
 | Category | Requirements | Count | Phase | Status |
 |----------|--------------|-------|-------|--------|
@@ -157,8 +185,10 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Not started |
 | UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Not started |
 | UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Not started |
+| DIST | DIST-01 through DIST-04 | 4 | Phase 11 | Planned |
+| OSS | OSS-01 through OSS-06 | 6 | Phase 11 | Planned |
 
-**Total:** 38/38 requirements, 0 orphans, 0 duplicates.
+**Total:** 48/48 requirements, 0 orphans, 0 duplicates.
 
 ---
 
@@ -169,6 +199,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 - **Phase 9 → 10:** All components must be migrated before verification gates can pass.
 - **Verification gates (Phase 10):** Grep verifier, manual light/dark checks, contrast audit, and production build verification are gating criteria for v1.1 ship.
 - **Phase 9 NEW gates:** React shim guard (npm run lint:shim), live host mount smoke test (VPS), SDK payload audit — Phase 8 skipped these and shipped hotfixes post-launch.
+- **Phase 10 → 11:** Public release gated on v1.1 UI parity verification (grep, contrast, build, bundle) — do not `npm publish` until Phase 10 success criteria pass.
 
 ---
 
@@ -212,6 +243,18 @@ All success criteria map to requirements; all requirements support at least one 
 - Criterion 7 (Bundle size check) ← UIV-05
 - Criterion 8 (Documentation) ← UID-01, UID-02
 
+**Phase 11:**
+- Criterion 1 (npm publish) ← DIST-01
+- Criterion 2 (plugin-manager install verified) ← DIST-02
+- Criterion 3 (GitHub release v1.1.0) ← DIST-03
+- Criterion 4 (Bundle audit) ← DIST-04
+- Criterion 5 (README) ← OSS-01
+- Criterion 6 (CONTRIBUTING) ← OSS-02
+- Criterion 7 (LICENSE) ← OSS-03
+- Criterion 8 (CODEOWNERS + Aron access) ← OSS-04
+- Criterion 9 (Issue/PR templates) ← OSS-05
+- Criterion 10 (CHANGELOG) ← OSS-06
+
 ---
 
-*Last updated: 2026-05-10 — Phase 9 planning complete (3 plans created)*
+*Last updated: 2026-05-11 — Phase 11 added (Distribution + OSS Launch, 10 reqs)*
