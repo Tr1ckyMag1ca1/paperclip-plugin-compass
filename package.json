@@ -30,7 +30,8 @@
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint:shim": "node ./scripts/check-react-shim.mjs",
-    "verify": "npm run typecheck && npm run lint:shim && npm run test:run"
+    "size": "size-limit",
+    "verify": "npm run typecheck && npm run lint:shim && npm run test:run && npm run size && node ./scripts/check-externals.mjs && npm pack --dry-run"
   },
   "files": [
     "dist/",
