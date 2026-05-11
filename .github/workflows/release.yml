@@ -6,12 +6,10 @@ on:
       - 'v*.*.*'
 
 permissions:
-  contents: read
-  id-token: write
-  releases: write
+  contents: write
 
 jobs:
-  verify-and-publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,7 +31,6 @@ jobs:
 
       - name: Run full verify gate
         run: npm run verify
-        # This runs: typecheck + lint:shim + test:run + size-limit + check-externals + npm pack dry-run
 
       - name: Build plugin bundles
         run: npm run build
@@ -42,27 +39,14 @@ jobs:
         run: npm pack
 
       - name: Publish to npm
-        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
 
-      - name: Extract version and changelog notes
-        id: release_info
-        shell: bash
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Extract CHANGELOG section for this version
-          NOTES=$(grep -A 1000 "## \[$VERSION\]" CHANGELOG.md | grep -B 1000 "^## " | tail -n +2 | sed '$d')
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release with .tgz artifact
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./paperclip-plugin-compass-*.tgz
-          body: ${{ steps.release_info.outputs.notes }}
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: paperclip-plugin-compass-*.tgz
+          body: 'See CHANGELOG.md for release notes'
+          draft: false
+          prerelease: false
