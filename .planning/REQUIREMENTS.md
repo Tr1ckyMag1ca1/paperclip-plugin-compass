@@ -74,7 +74,7 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 
 ### DIST — Distribution (4)
 
-- [ ] **DIST-01**: `npm publish` succeeds for `@paperclipai/paperclip-plugin-compass` with valid `package.json#paperclipPlugin` metadata (manifest/worker/UI paths correct, files allowlist includes `dist/`)
+- [ ] **DIST-01**: `npm publish` succeeds for `paperclip-plugin-compass` (unscoped, third-party) with valid `package.json#paperclipPlugin` metadata (manifest/worker/UI paths correct, files allowlist includes `dist/`)
 - [ ] **DIST-02**: Plugin-manager install verified on live Paperclip VPS host — install via plugin-manager UI, plugin registers, renders all 5 mode panels without runtime errors
 - [ ] **DIST-03**: GitHub release tagged `v1.1.0` with `.tgz` artifact attached and release notes derived from CHANGELOG
 - [ ] **DIST-04**: Bundle audit passes — React/zod/lucide-react externals declared correctly, peer deps validated, final UI bundle <200KB gzipped

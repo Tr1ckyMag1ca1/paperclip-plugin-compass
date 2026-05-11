@@ -135,14 +135,14 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 
 ### Phase 11: Distribution + Open-Source Launch
 
-**Goal:** Ship Compass v1.1 publicly — npm publish under `@paperclipai/paperclip-plugin-compass`, verify install on live Paperclip plugin-manager, publish OSS contributor docs (README, CONTRIBUTING, LICENSE, CHANGELOG, issue/PR templates), and onboard Aron Prins as co-maintainer with CODEOWNERS + repo access.
+**Goal:** Ship Compass v1.1 publicly — npm publish under `paperclip-plugin-compass` (unscoped, third-party), verify install on live Paperclip plugin-manager, publish OSS contributor docs (README, CONTRIBUTING, LICENSE, CHANGELOG, issue/PR templates), and onboard Aron Prins as co-maintainer with CODEOWNERS + repo access.
 
 **Depends on:** Phase 10 (v1.1 must pass UI parity verification gates before public release).
 
 **Requirements:** DIST-01, DIST-02, DIST-03, DIST-04, OSS-01, OSS-02, OSS-03, OSS-04, OSS-05, OSS-06
 
 **Success Criteria** (what must be TRUE):
-1. `npm publish` succeeds for `@paperclipai/paperclip-plugin-compass` with valid `package.json#paperclipPlugin` metadata pointing at correct manifest/worker/UI paths
+1. `npm publish` succeeds for `paperclip-plugin-compass` (unscoped, third-party) with valid `package.json#paperclipPlugin` metadata pointing at correct manifest/worker/UI paths
 2. Plugin-manager install verified on live Paperclip VPS host — plugin installs, registers, renders without errors end-to-end
 3. GitHub release tagged `v1.1.0` with `.tgz` artifact attached + release notes derived from CHANGELOG
 4. Bundle audit passes: React/zod/lucide-react externals correct, peer deps declared, final bundle <200KB gzipped

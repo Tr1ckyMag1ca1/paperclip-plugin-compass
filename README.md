@@ -1,6 +1,6 @@
 # Compass — Paperclip Plugin
 
-[![npm version](https://img.shields.io/npm/v/@paperclipai/paperclip-plugin-compass)](https://www.npmjs.com/package/@paperclipai/paperclip-plugin-compass)
+[![npm version](https://img.shields.io/npm/v/paperclip-plugin-compass)](https://www.npmjs.com/package/paperclip-plugin-compass)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Strategic consultant for AI company lifecycle — found, assess, revive, reposition.
@@ -103,7 +103,7 @@ If you're stuck, the inline help is designed to answer your question without lea
 Install the scoped package from npm:
 
 ```bash
-npm install @paperclipai/paperclip-plugin-compass
+npm install paperclip-plugin-compass
 ```
 
 Or install via the Paperclip plugin manager UI:

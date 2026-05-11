@@ -121,7 +121,7 @@ Compass is a Paperclip plugin that acts as a strategic consultant for any Paperc
 - [ ] `package.json#paperclipPlugin` points to correct paths
 - [ ] React is peer dependency, not bundled (esbuild external rule)
 - [ ] `npm run build && npm run typecheck && npm run test:run` all pass
-- [ ] `npm publish` pushes to `@paperclipai/paperclip-plugin-compass`
+- [ ] `npm publish` pushes to `paperclip-plugin-compass` (unscoped, third-party name)
 - [ ] GitHub release includes `.tgz` artifact for local installs
 - [ ] README credits Aron Prins and links to `paperclip-vision` repo
 ## Sources
