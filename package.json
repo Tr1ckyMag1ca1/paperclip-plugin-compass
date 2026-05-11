@@ -1,6 +1,6 @@
 {
-  "name": "paperclip-plugin-compass",
-  "version": "0.3.26",
+  "name": "@paperclipai/paperclip-plugin-compass",
+  "version": "1.1.0",
   "type": "module",
   "private": false,
   "description": "Strategic consultant for AI company lifecycle — diagnose, found, revive, reposition",
@@ -40,8 +40,7 @@
   ],
   "dependencies": {
     "@paperclipai/plugin-sdk": "2026.428.0",
-    "lucide-react": "^1.14.0",
-    "paperclip-plugin-compass": "0.2.0"
+    "lucide-react": "^1.14.0"
   },
   "devDependencies": {
     "@types/node": ">=20",
