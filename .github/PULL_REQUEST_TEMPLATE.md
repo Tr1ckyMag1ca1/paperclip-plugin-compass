@@ -1,40 +1,32 @@
 ## Description
 
-Briefly describe what this PR does and why it's needed.
+What does this PR do?
 
-## Changes
+## Related Issue
 
-- Change 1
-- Change 2
-- Change 3
+Closes #(issue number) or fixes (Compass mode/feature).
 
-## Related Issues
+## Type of Change
 
-Closes #(issue number) (if applicable)
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Refactor
 
-## Test Plan
+## Testing
 
-How to verify that these changes work as expected:
-
-1. Run `pnpm typecheck`
-2. Run `pnpm test:run`
-3. Build the plugin: `pnpm build`
-4. Install locally: `paperclip plugins add file:///path/to/repo`
-5. [Additional manual testing steps if needed]
+- [ ] Added/updated tests
+- [ ] Manual testing on Paperclip instance (if UI changes)
+- [ ] `pnpm verify` passes locally
+- [ ] Zero console errors in plugin panels
 
 ## Checklist
 
-- [ ] Code follows TypeScript strict mode
-- [ ] Tests are added or updated
-- [ ] `pnpm typecheck` passes
-- [ ] `pnpm test:run` passes
+- [ ] Code follows project conventions (TypeScript strict mode, React hooks)
+- [ ] README or docs updated (if needed)
+- [ ] Changes are small and focused (one feature per PR)
 - [ ] Commit messages follow Conventional Commits (see CONTRIBUTING.md)
-- [ ] Documentation is updated if needed
-
-## Notes
-
-Any additional context for reviewers (architectural decisions, potential edge cases, dependencies on other PRs, etc.).
 
 ---
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines and [DECISIONS.md](../DECISIONS.md) for architectural context.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.

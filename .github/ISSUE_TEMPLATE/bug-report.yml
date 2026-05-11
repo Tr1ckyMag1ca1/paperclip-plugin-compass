@@ -1,0 +1,49 @@
+name: Bug Report
+description: Report a problem with Compass
+title: "[Bug] "
+labels: ["bug"]
+assignees:
+  - nicholasrhodes
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for reporting! Please provide as much detail as you can."
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "What is the problem?"
+      placeholder: "When I click 'Run drift audit' in Assess mode, the panel crashes with..."
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: "Steps to Reproduce"
+      placeholder: |
+        1. Open a company in Paperclip
+        2. Click Compass in sidebar
+        3. Click "Run drift audit" button
+        4. Observe: [error]
+    validations:
+      required: true
+  - type: input
+    id: compass-version
+    attributes:
+      label: "Compass Version"
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: input
+    id: paperclip-version
+    attributes:
+      label: "Paperclip Host Version"
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Console Errors"
+      description: "Paste any browser console errors (F12 > Console tab)"
+      render: "javascript"
