@@ -6,226 +6,12 @@ import {
   useHostContext
 } from "@paperclipai/plugin-sdk/ui";
 
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-import { forwardRef as forwardRef2, createElement as createElement3 } from "react";
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
-var mergeClasses = (...classes) => classes.filter((className, index, array) => {
-  return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
-}).join(" ").trim();
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
-var toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs
-var toCamelCase = (string) => string.replace(
-  /^([A-Z])|[\s-_]+(\w)/g,
-  (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
-);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs
-var toPascalCase = (string) => {
-  const camelCase = toCamelCase(string);
-  return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-};
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/Icon.mjs
-import { forwardRef, createElement as createElement2 } from "react";
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/defaultAttributes.mjs
-var defaultAttributes = {
-  xmlns: "http://www.w3.org/2000/svg",
-  width: 24,
-  height: 24,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round"
-};
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs
-var hasA11yProp = (props) => {
-  for (const prop in props) {
-    if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
-      return true;
-    }
-  }
-  return false;
-};
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/context.mjs
-import { createContext, useContext, useMemo, createElement } from "react";
-var LucideContext = createContext({});
-var useLucideContext = () => useContext(LucideContext);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/Icon.mjs
-var Icon = forwardRef(
-  ({ color, size, strokeWidth, absoluteStrokeWidth, className = "", children, iconNode, ...rest }, ref) => {
-    const {
-      size: contextSize = 24,
-      strokeWidth: contextStrokeWidth = 2,
-      absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
-      color: contextColor = "currentColor",
-      className: contextClass = ""
-    } = useLucideContext() ?? {};
-    const calculatedStrokeWidth = absoluteStrokeWidth ?? contextAbsoluteStrokeWidth ? Number(strokeWidth ?? contextStrokeWidth) * 24 / Number(size ?? contextSize) : strokeWidth ?? contextStrokeWidth;
-    return createElement2(
-      "svg",
-      {
-        ref,
-        ...defaultAttributes,
-        width: size ?? contextSize ?? defaultAttributes.width,
-        height: size ?? contextSize ?? defaultAttributes.height,
-        stroke: color ?? contextColor,
-        strokeWidth: calculatedStrokeWidth,
-        className: mergeClasses("lucide", contextClass, className),
-        ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
-        ...rest
-      },
-      [
-        ...iconNode.map(([tag, attrs]) => createElement2(tag, attrs)),
-        ...Array.isArray(children) ? children : [children]
-      ]
-    );
-  }
-);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
-var createLucideIcon = (iconName, iconNode) => {
-  const Component = forwardRef2(
-    ({ className, ...props }, ref) => createElement3(Icon, {
-      ref,
-      iconNode,
-      className: mergeClasses(
-        `lucide-${toKebabCase(toPascalCase(iconName))}`,
-        `lucide-${iconName}`,
-        className
-      ),
-      ...props
-    })
-  );
-  Component.displayName = toPascalCase(iconName);
-  return Component;
-};
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/activity.mjs
-var __iconNode = [
-  [
-    "path",
-    {
-      d: "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2",
-      key: "169zse"
-    }
-  ]
-];
-var Activity = createLucideIcon("activity", __iconNode);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/check.mjs
-var __iconNode2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-var Check = createLucideIcon("check", __iconNode2);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
-var __iconNode3 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-var ChevronDown = createLucideIcon("chevron-down", __iconNode3);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/circle-alert.mjs
-var __iconNode4 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
-];
-var CircleAlert = createLucideIcon("circle-alert", __iconNode4);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/circle-question-mark.mjs
-var __iconNode5 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
-];
-var CircleQuestionMark = createLucideIcon("circle-question-mark", __iconNode5);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/clock.mjs
-var __iconNode6 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
-];
-var Clock = createLucideIcon("clock", __iconNode6);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/compass.mjs
-var __iconNode7 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  [
-    "path",
-    {
-      d: "m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z",
-      key: "9ktpf1"
-    }
-  ]
-];
-var Compass = createLucideIcon("compass", __iconNode7);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-var __iconNode8 = [
-  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-  ["path", { d: "M8 16H3v5", key: "1cv678" }]
-];
-var RefreshCw = createLucideIcon("refresh-cw", __iconNode8);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/send.mjs
-var __iconNode9 = [
-  [
-    "path",
-    {
-      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
-      key: "1ffxy3"
-    }
-  ],
-  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
-];
-var Send = createLucideIcon("send", __iconNode9);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/sparkles.mjs
-var __iconNode10 = [
-  [
-    "path",
-    {
-      d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
-      key: "1s2grr"
-    }
-  ],
-  ["path", { d: "M20 2v4", key: "1rf3ol" }],
-  ["path", { d: "M22 4h-4", key: "gwowj6" }],
-  ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
-];
-var Sparkles = createLucideIcon("sparkles", __iconNode10);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs
-var __iconNode11 = [
-  [
-    "path",
-    {
-      d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
-      key: "wmoenq"
-    }
-  ],
-  ["path", { d: "M12 9v4", key: "juzpu7" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
-];
-var TriangleAlert = createLucideIcon("triangle-alert", __iconNode11);
-
-// node_modules/.pnpm/lucide-react@1.14.0_react@19.2.5/node_modules/lucide-react/dist/esm/icons/x.mjs
-var __iconNode12 = [
-  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
-];
-var X = createLucideIcon("x", __iconNode12);
+// src/ui/components/ModeBanner.tsx
+import { Compass } from "lucide-react";
 
 // src/ui/primitives/HelpTip.tsx
 import { useEffect, useRef, useState } from "react";
+import { HelpCircle } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 var helpTipIdCounter = 0;
 function HelpTip({
@@ -280,7 +66,7 @@ function HelpTip({
         className: "inline-flex items-center gap-1 text-foreground/60 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-none",
         children: [
           label ? /* @__PURE__ */ jsx("span", { className: "text-xs underline-offset-2 hover:underline", children: label }) : null,
-          /* @__PURE__ */ jsx(CircleQuestionMark, { className: iconSize, "aria-hidden": "true" })
+          /* @__PURE__ */ jsx(HelpCircle, { className: iconSize, "aria-hidden": "true" })
         ]
       }
     ),
@@ -444,6 +230,7 @@ function getModeBannerCopy(mode) {
 
 // src/ui/components/WelcomeCard.tsx
 import { useState as useState2 } from "react";
+import { X, Compass as Compass2, Sparkles, Activity, AlertCircle, RefreshCw } from "lucide-react";
 import { Fragment, jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
 var STORAGE_KEY_PREFIX = "compass:welcome:dismissed:";
 function WelcomeCard({
@@ -464,7 +251,7 @@ function WelcomeCard({
   return /* @__PURE__ */ jsx3("div", { className: "border-b border-border bg-muted/40 px-4 py-4", children: /* @__PURE__ */ jsxs3("div", { className: "flex items-start justify-between gap-4", children: [
     /* @__PURE__ */ jsxs3("div", { className: "flex-1", children: [
       /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-2 mb-2", children: [
-        /* @__PURE__ */ jsx3(Compass, { className: "h-4 w-4 text-accent" }),
+        /* @__PURE__ */ jsx3(Compass2, { className: "h-4 w-4 text-accent" }),
         /* @__PURE__ */ jsx3("h3", { className: "text-sm font-semibold", children: "Welcome to Compass" })
       ] }),
       /* @__PURE__ */ jsxs3("p", { className: "text-sm text-foreground/80 leading-relaxed mb-3", children: [
@@ -493,7 +280,7 @@ function WelcomeCard({
           ] })
         ] }),
         /* @__PURE__ */ jsxs3("li", { className: "flex items-start gap-2", children: [
-          /* @__PURE__ */ jsx3(CircleAlert, { className: "h-3 w-3 mt-0.5 text-red-500 flex-shrink-0" }),
+          /* @__PURE__ */ jsx3(AlertCircle, { className: "h-3 w-3 mt-0.5 text-red-500 flex-shrink-0" }),
           /* @__PURE__ */ jsxs3("span", { children: [
             /* @__PURE__ */ jsx3("strong", { children: "Revive" }),
             " \u2014 diagnose why a stalled company has gone quiet"
@@ -528,8 +315,13 @@ function WelcomeCard({
 
 // src/ui/components/InventoryDisplay.tsx
 import { useState as useState3 } from "react";
+import { ChevronDown } from "lucide-react";
+
+// src/ui/components/AgentCard.tsx
+import { Clock } from "lucide-react";
 
 // src/ui/components/StatusBadge.tsx
+import { Check, X as X2 } from "lucide-react";
 import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 function StatusBadge({ status }) {
   const config = {
@@ -539,7 +331,7 @@ function StatusBadge({ status }) {
       className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
     },
     stalled: {
-      icon: /* @__PURE__ */ jsx4(X, { className: "h-3 w-3" }),
+      icon: /* @__PURE__ */ jsx4(X2, { className: "h-3 w-3" }),
       label: "Stalled",
       className: "bg-red-500/10 text-red-500 border-red-500/20"
     },
@@ -608,24 +400,26 @@ function getHeartbeatLabel(lastHeartbeatAt) {
 }
 
 // src/ui/components/DocumentList.tsx
+import { Check as Check2 } from "lucide-react";
 import { jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
 function DocumentList({ documents }) {
   return /* @__PURE__ */ jsxs6("div", { className: "space-y-4", children: [
     /* @__PURE__ */ jsxs6("div", { className: "flex items-center gap-4", children: [
-      /* @__PURE__ */ jsx6(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
+      /* @__PURE__ */ jsx6(Check2, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
       /* @__PURE__ */ jsxs6("div", { className: "flex-1 min-w-0", children: [
         /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: "VISION.md" }),
         /* @__PURE__ */ jsx6("p", { className: "text-xs text-foreground/60", children: "Company vision and strategic plan" })
       ] })
     ] }),
     documents.map((doc) => /* @__PURE__ */ jsxs6("div", { className: "flex items-center gap-4", children: [
-      /* @__PURE__ */ jsx6(Check, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
+      /* @__PURE__ */ jsx6(Check2, { className: "h-4 w-4 text-emerald-500 flex-shrink-0" }),
       /* @__PURE__ */ jsx6("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx6("p", { className: "text-sm font-medium text-foreground", children: doc.title || doc.key }) })
     ] }, doc.id))
   ] });
 }
 
 // src/ui/components/ActivityTimeline.tsx
+import { Clock as Clock2 } from "lucide-react";
 import { jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
 function ActivityTimeline({
   issues
@@ -634,7 +428,7 @@ function ActivityTimeline({
     return /* @__PURE__ */ jsx7("p", { className: "text-sm text-foreground/60", children: "No activity in the last 30 days. Agents may need to be woken up." });
   }
   return /* @__PURE__ */ jsx7("div", { className: "space-y-2", children: issues.map((issue) => /* @__PURE__ */ jsxs7("div", { className: "flex gap-4", children: [
-    /* @__PURE__ */ jsx7("div", { className: "flex flex-col items-center gap-1", children: /* @__PURE__ */ jsx7(Clock, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
+    /* @__PURE__ */ jsx7("div", { className: "flex flex-col items-center gap-1", children: /* @__PURE__ */ jsx7(Clock2, { className: "h-4 w-4 text-accent flex-shrink-0 mt-1" }) }),
     /* @__PURE__ */ jsxs7("div", { className: "flex-1 min-w-0 pb-2", children: [
       /* @__PURE__ */ jsxs7("div", { className: "flex items-baseline justify-between gap-4", children: [
         /* @__PURE__ */ jsx7("p", { className: "text-sm font-medium text-foreground line-clamp-2", children: issue.title }),
@@ -668,13 +462,14 @@ function formatDate(date) {
 }
 
 // src/ui/components/VisionStatusDisplay.tsx
+import { Check as Check3, X as X3 } from "lucide-react";
 import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
 function VisionStatusDisplay({
   visionExists
 }) {
   if (visionExists) {
     return /* @__PURE__ */ jsxs8("div", { className: "flex items-start gap-4", children: [
-      /* @__PURE__ */ jsx8(Check, { className: "h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" }),
+      /* @__PURE__ */ jsx8(Check3, { className: "h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" }),
       /* @__PURE__ */ jsxs8("div", { children: [
         /* @__PURE__ */ jsx8("p", { className: "text-sm font-medium text-foreground", children: "VISION.md found" }),
         /* @__PURE__ */ jsx8("p", { className: "text-xs text-foreground/60 mt-1", children: "Your company has a strategic vision document." })
@@ -682,7 +477,7 @@ function VisionStatusDisplay({
     ] });
   }
   return /* @__PURE__ */ jsxs8("div", { className: "flex items-start gap-4", children: [
-    /* @__PURE__ */ jsx8(X, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
+    /* @__PURE__ */ jsx8(X3, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
     /* @__PURE__ */ jsxs8("div", { children: [
       /* @__PURE__ */ jsx8("p", { className: "text-sm font-medium text-foreground", children: "No VISION.md" }),
       /* @__PURE__ */ jsx8("p", { className: "text-xs text-foreground/60 mt-1", children: "Create one using Found mode to establish your company's strategic foundation." })
@@ -746,6 +541,7 @@ function CollapsibleSection({
 
 // src/ui/components/ChatPanel.tsx
 import { useState as useState4, useCallback } from "react";
+import { Send } from "lucide-react";
 
 // src/primitives/mode-detect.ts
 function classifyChatInput(input) {
@@ -823,6 +619,7 @@ function ChatPanel({
 
 // src/ui/components/ErrorBoundary.tsx
 import { useState as useState5 } from "react";
+import { AlertTriangle, X as X4 } from "lucide-react";
 import { jsx as jsx11, jsxs as jsxs11 } from "react/jsx-runtime";
 function ErrorBoundary({ error }) {
   const [dismissed, setDismissed] = useState5(false);
@@ -831,7 +628,7 @@ function ErrorBoundary({ error }) {
   }
   const { title, message, nextSteps } = parseError(error);
   return /* @__PURE__ */ jsx11("div", { className: "flex items-center justify-center p-4 min-h-[400px]", children: /* @__PURE__ */ jsx11("div", { className: "max-w-md w-full rounded-none border border-red-500/20 bg-red-500/10 p-4", children: /* @__PURE__ */ jsxs11("div", { className: "flex items-start gap-4", children: [
-    /* @__PURE__ */ jsx11(TriangleAlert, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
+    /* @__PURE__ */ jsx11(AlertTriangle, { className: "h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" }),
     /* @__PURE__ */ jsxs11("div", { className: "flex-1 min-w-0", children: [
       /* @__PURE__ */ jsx11("h3", { className: "font-semibold text-sm text-red-500", children: title }),
       /* @__PURE__ */ jsx11("p", { className: "text-sm text-red-500 mt-4", children: message }),
@@ -845,7 +642,7 @@ function ErrorBoundary({ error }) {
           onClick: () => setDismissed(true),
           className: "mt-4 inline-flex items-center gap-1 px-2 py-1 rounded-none text-xs font-medium text-red-500 hover:bg-red-500/20",
           children: [
-            /* @__PURE__ */ jsx11(X, { className: "h-3 w-3" }),
+            /* @__PURE__ */ jsx11(X4, { className: "h-3 w-3" }),
             /* @__PURE__ */ jsx11("span", { children: "Dismiss" })
           ]
         }
@@ -967,6 +764,7 @@ function MainPanel(props) {
 }
 
 // src/ui/SidebarLink.tsx
+import { Compass as Compass3 } from "lucide-react";
 import { jsx as jsx13, jsxs as jsxs13 } from "react/jsx-runtime";
 function SidebarLink({ context }) {
   const href = context.companyPrefix ? `/${context.companyPrefix}/compass` : "#";
@@ -977,7 +775,7 @@ function SidebarLink({ context }) {
       href,
       className: `flex items-center gap-2 px-3 py-2 rounded-none text-sm ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "bg-sidebar text-sidebar-foreground hover:opacity-80"}`,
       children: [
-        /* @__PURE__ */ jsx13(Compass, { size: 16 }),
+        /* @__PURE__ */ jsx13(Compass3, { size: 16 }),
         /* @__PURE__ */ jsx13("span", { children: "Compass" })
       ]
     }
@@ -987,35 +785,4 @@ export {
   MainPanel,
   SidebarLink
 };
-/*! Bundled license information:
-
-lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs:
-lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs:
-lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs:
-lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs:
-lucide-react/dist/esm/defaultAttributes.mjs:
-lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs:
-lucide-react/dist/esm/context.mjs:
-lucide-react/dist/esm/Icon.mjs:
-lucide-react/dist/esm/createLucideIcon.mjs:
-lucide-react/dist/esm/icons/activity.mjs:
-lucide-react/dist/esm/icons/check.mjs:
-lucide-react/dist/esm/icons/chevron-down.mjs:
-lucide-react/dist/esm/icons/circle-alert.mjs:
-lucide-react/dist/esm/icons/circle-question-mark.mjs:
-lucide-react/dist/esm/icons/clock.mjs:
-lucide-react/dist/esm/icons/compass.mjs:
-lucide-react/dist/esm/icons/refresh-cw.mjs:
-lucide-react/dist/esm/icons/send.mjs:
-lucide-react/dist/esm/icons/sparkles.mjs:
-lucide-react/dist/esm/icons/triangle-alert.mjs:
-lucide-react/dist/esm/icons/x.mjs:
-lucide-react/dist/esm/lucide-react.mjs:
-  (**
-   * @license lucide-react v1.14.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   *)
-*/
 //# sourceMappingURL=index.js.map
