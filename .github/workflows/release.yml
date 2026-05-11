@@ -59,7 +59,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release with .tgz artifact
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ./paperclip-plugin-compass-*.tgz
           body: ${{ steps.release_info.outputs.notes }}
