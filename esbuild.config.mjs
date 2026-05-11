@@ -22,12 +22,19 @@ const watch = process.argv.includes("--watch");
 
 const withMd = (cfg) => ({ ...cfg, plugins: [...(cfg.plugins ?? []), rawMarkdownPlugin] });
 
-// Mark lucide-react as external to prevent bundling react transitively.
-// lucide-react depends on react; if lucide-react is bundled, react gets bundled too.
-// Host must provide both react and lucide-react via shims.
+// Mark react packages as external to prevent bundling.
+// Host provides react, react-dom, react/jsx-runtime via browser shims.
+// lucide-react depends on react; must mark both as external.
+// zod is already external via plugin SDK presets.
 const uiPreset = {
   ...presets.esbuild.ui,
-  external: [...(presets.esbuild.ui.external || []), "lucide-react"],
+  external: [
+    ...(presets.esbuild.ui.external || []),
+    "react",
+    "react-dom",
+    "react/jsx-runtime",
+    "lucide-react",
+  ],
 };
 
 const workerCtx = await esbuild.context(withMd(presets.esbuild.worker));
