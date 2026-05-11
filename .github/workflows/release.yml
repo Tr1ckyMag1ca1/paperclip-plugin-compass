@@ -38,9 +38,12 @@ jobs:
       - name: Pack for npm
         run: npm pack
 
+      - name: Configure npm registry auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          chmod 600 ~/.npmrc
+
       - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
       - name: Create GitHub Release
