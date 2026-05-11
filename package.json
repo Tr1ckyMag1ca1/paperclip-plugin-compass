@@ -44,6 +44,7 @@
     "lucide-react": "^1.14.0"
   },
   "devDependencies": {
+    "@size-limit/preset-app": "^12.1.0",
     "@types/node": ">=20",
     "@types/react": "^19.0.8",
     "esbuild": "^0.27.3",

@@ -1,4 +1,7 @@
 {
+  "defaults": {
+    "preset": "@size-limit/preset-app"
+  },
   "size-limit": [
     {
       "path": "dist/ui/index.js",
