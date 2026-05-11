@@ -51,8 +51,8 @@ jobs:
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Extract CHANGELOG section for this version (simplified; adjust regex as needed)
-          NOTES=$(awk '/^## \['"$VERSION"'\]/,/^## \[/' CHANGELOG.md | head -n -1 | tail -n +2)
+          # Extract CHANGELOG section for this version using sed
+          NOTES=$(sed -n '/^## \['"$VERSION"'\]/,/^## \[/p' CHANGELOG.md | sed '1d;$d')
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
