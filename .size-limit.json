@@ -1,0 +1,10 @@
+{
+  "size-limit": [
+    {
+      "path": "dist/ui/index.js",
+      "gzip": true,
+      "limit": "80 KB",
+      "name": "UI bundle (gzipped)"
+    }
+  ]
+}
