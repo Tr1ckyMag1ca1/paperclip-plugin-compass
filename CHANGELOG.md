@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-05-11
+
+### Fixed
+
+- Hotfix: Mode-specific panels (Assess, Found, Revive, Reposition) were reskinned in phases 8 and 9 of the v1.1 milestone but never wired into `MainPanel` routing. The body always rendered `InventoryDisplay` regardless of detected mode, leaving the mode-specific flows (vision-quest interview, drift report, action queue, cascade review) unreachable from the UI. Restored conditional rendering: `currentMode === "Assess|Found|Revive|Reposition"` now mounts the corresponding panel, falling back to `InventoryDisplay` for probe/unknown modes. Matches pre-reskin behavior from commit `2204f3f`.
+
 ## [1.1.1] - 2026-05-11
 
 ### Fixed

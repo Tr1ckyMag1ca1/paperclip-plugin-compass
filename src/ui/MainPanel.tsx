@@ -11,6 +11,10 @@ import { WelcomeCard } from "./components/WelcomeCard.js";
 import { InventoryDisplay } from "./components/InventoryDisplay.js";
 import { ChatPanel } from "./components/ChatPanel.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.js";
+import { AssessPanel } from "./assess/AssessPanel.js";
+import { FoundPanel } from "./found/FoundPanel.js";
+import { RevivePanel } from "./revive/RevivePanel.js";
+import { RepositionPanel } from "./reposition/RepositionPanel.js";
 
 export function MainPanel(props?: Partial<PluginPageProps>): React.ReactElement {
   console.log("[Compass] MainPanel mounted", props);
@@ -80,6 +84,38 @@ export function MainPanel(props?: Partial<PluginPageProps>): React.ReactElement 
 
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
+  const visionExists = inventory.visionExists;
+  const companyName = "Company";
+
+  const renderModeBody = () => {
+    if (currentMode === "Assess") {
+      return (
+        <AssessPanel
+          companyId={companyId}
+          companyName={companyName}
+          visionExists={visionExists}
+        />
+      );
+    }
+    if (currentMode === "Found") {
+      return <FoundPanel />;
+    }
+    if (currentMode === "Revive") {
+      return (
+        <RevivePanel companyId={companyId} companyName={companyName} />
+      );
+    }
+    if (currentMode === "Reposition") {
+      return (
+        <RepositionPanel
+          companyId={companyId}
+          companyName={companyName}
+          visionExists={visionExists}
+        />
+      );
+    }
+    return <InventoryDisplay inventory={inventory} />;
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -90,9 +126,7 @@ export function MainPanel(props?: Partial<PluginPageProps>): React.ReactElement 
         onOverrideChange={handleModeOverride}
       />
       <WelcomeCard companyId={companyId} detectedMode={currentMode} />
-      <div className="flex-1 overflow-y-auto">
-        <InventoryDisplay inventory={inventory} />
-      </div>
+      <div className="flex-1 overflow-y-auto">{renderModeBody()}</div>
       <div className="border-t px-4 py-4">
         <button
           onClick={handleRefresh}
