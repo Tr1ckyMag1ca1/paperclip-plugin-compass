@@ -6,3 +6,4 @@ node_modules/
 coverage/
 .vitest-cache/
 .playwright-mcp/
+compass-*.png
