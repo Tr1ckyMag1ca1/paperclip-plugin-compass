@@ -127,7 +127,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 7. Plugin bundle size unchanged or smaller (no inflation from migration)
 8. README + UI_REDO_HANDOFF.md updated with corrected semantics (emerald=accent, NOT primary); PATTERNS doc shipped documenting Card/SectionHeader usage and token conventions
 
-**Plans:** 2/6 plans executed
+**Plans:** 6/6 plans complete
 
 **UI hint**: yes
 
@@ -165,8 +165,8 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 |-------|----------------|--------|-----------|
 | 7. Foundations | 3/3 | Complete | 2026-05-04 |
 | 8. Assess + Found | 7/7 | Complete   | 2026-05-09 |
-| 9. Revive + Reposition | 0/3 | Planned | 2026-05-10 |
-| 10. Memory + Verify + Docs | 2/6 | In Progress|  |
+| 9. Revive + Reposition | 3/3 | Complete | 2026-05-11 |
+| 10. Memory + Verify + Docs | 6/6 | Complete | 2026-05-12 |
 | 11. Distribution + OSS Launch | 0/? | Planned | — |
 
 ---
@@ -180,11 +180,11 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | UI-FOUND | UIF-01 through UIF-09 | 9 | Phase 7 | Complete |
 | UI-ASSESS | UIA-01 through UIA-05 | 5 | Phase 8 | Complete |
 | UI-FOUND-MODE | UIFM-01 through UIFM-03 | 3 | Phase 8 | Complete |
-| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 | Planned |
-| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 | Planned |
-| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Not started |
-| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Not started |
-| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Not started |
+| UI-REVIVE | UIR-01 through UIR-04 | 4 | Phase 9 | Complete |
+| UI-REPO | UIRP-01 through UIRP-03 | 3 | Phase 9 | Complete |
+| UI-MEM | UIM-01 through UIM-05 | 5 | Phase 10 | Complete |
+| UI-VERIFY | UIV-01 through UIV-05 | 5 | Phase 10 | Complete |
+| UI-DOCS | UID-01, UID-02 | 2 | Phase 10 | Complete |
 | DIST | DIST-01 through DIST-04 | 4 | Phase 11 | Planned |
 | OSS | OSS-01 through OSS-06 | 6 | Phase 11 | Planned |
 

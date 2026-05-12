@@ -70,7 +70,7 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 ### UI-DOCS — Documentation (2)
 
 - [ ] **UID-01**: README + UI_REDO_HANDOFF.md updated with corrected emerald-as-accent (not primary) semantics
-- [ ] **UID-02**: Short PATTERNS doc in `src/ui/` documenting Card/SectionHeader usage and token conventions for future contributors
+- [x] **UID-02**: Short PATTERNS doc in `src/ui/` documenting Card/SectionHeader usage and token conventions for future contributors
 
 ### DIST — Distribution (4)
 
@@ -148,7 +148,7 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 | UIV-04 | UI-VERIFY | 10 | Pending |
 | UIV-05 | UI-VERIFY | 10 | Pending |
 | UID-01 | UI-DOCS | 10 | Pending |
-| UID-02 | UI-DOCS | 10 | Pending |
+| UID-02 | UI-DOCS | 10 | Complete |
 | DIST-01 | DIST | 11 | Pending |
 | DIST-02 | DIST | 11 | Pending |
 | DIST-03 | DIST | 11 | Pending |
