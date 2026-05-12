@@ -53,32 +53,32 @@ export const ScheduleRoutineRow: React.FC<ScheduleRoutineRowProps> = ({
   };
 
   return (
-    <div className="p-md bg-card rounded border border-border">
-      <div className="flex items-center justify-between gap-md flex-wrap">
+    <div className="p-3 bg-card rounded border border-border">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         {/* Left: Name + Mode */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-sm flex-wrap mb-xs">
-            <h4 className="text-body font-bold">{routine.name}</h4>
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h4 className="text-sm font-bold">{routine.name}</h4>
             <ModeBadge mode={routine.mode} />
           </div>
-          <p className="text-label text-foreground/70 mb-xs">
+          <p className="text-xs font-medium text-foreground/70 mb-1">
             {cronToReadable(routine.cron)}
           </p>
           {routine.last_run_at ? (
-            <p className="text-label text-foreground/70">
+            <p className="text-xs font-medium text-foreground/70">
               Last run: {formatDistanceToNow(new Date(routine.last_run_at), { addSuffix: true })}
             </p>
           ) : (
-            <p className="text-label text-foreground/70">Never run</p>
+            <p className="text-xs font-medium text-foreground/70">Never run</p>
           )}
         </div>
 
         {/* Right: Action Buttons */}
-        <div className="flex gap-xs flex-shrink-0">
+        <div className="flex gap-1 flex-shrink-0">
           <button
             onClick={handleRunNow}
             disabled={isRunning || isDisabling}
-            className="px-md py-sm text-label text-accent hover:underline disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="px-3 py-2 text-xs font-medium text-accent hover:underline disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             aria-label={`Run check-in now for ${routine.name}`}
           >
             {isRunning ? "Running…" : "Run check-in now"}
@@ -86,7 +86,7 @@ export const ScheduleRoutineRow: React.FC<ScheduleRoutineRowProps> = ({
           <button
             onClick={handleDisable}
             disabled={isDisabling || isRunning}
-            className="px-md py-sm text-label text-destructive hover:underline disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            className="px-3 py-2 text-xs font-medium text-destructive hover:underline disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             aria-label={`Disable routine ${routine.name}`}
           >
             {isDisabling ? "Disabling…" : "Disable"}
