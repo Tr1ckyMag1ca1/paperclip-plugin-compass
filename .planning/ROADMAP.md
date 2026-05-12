@@ -127,7 +127,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 7. Plugin bundle size unchanged or smaller (no inflation from migration)
 8. README + UI_REDO_HANDOFF.md updated with corrected semantics (emerald=accent, NOT primary); PATTERNS doc shipped documenting Card/SectionHeader usage and token conventions
 
-**Plans:** TBD
+**Plans:** 2/6 plans executed
 
 **UI hint**: yes
 
@@ -166,7 +166,7 @@ Goal: Reskin Compass UI (~55 components, 5 mode panels) to look indistinguishabl
 | 7. Foundations | 3/3 | Complete | 2026-05-04 |
 | 8. Assess + Found | 7/7 | Complete   | 2026-05-09 |
 | 9. Revive + Reposition | 0/3 | Planned | 2026-05-10 |
-| 10. Memory + Verify + Docs | 0/? | Not started | — |
+| 10. Memory + Verify + Docs | 2/6 | In Progress|  |
 | 11. Distribution + OSS Launch | 0/? | Planned | — |
 
 ---

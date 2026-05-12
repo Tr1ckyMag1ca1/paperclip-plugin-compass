@@ -55,9 +55,9 @@ Compass v1.0 shipped with broken UI: 173 broken Tailwind class references — 14
 
 - [ ] **UIM-01**: HistoryPanel migrated to host tokens
 - [ ] **UIM-02**: FindingCard + ModeBadge + FindingStatusBadge migrated
-- [ ] **UIM-03**: ContextRefreshBanner + PriorFindingsLink migrated
+- [x] **UIM-03**: ContextRefreshBanner + PriorFindingsLink migrated
 - [ ] **UIM-04**: SchedulesSection + ScheduleCreationForm + ScheduleRoutineRow migrated
-- [ ] **UIM-05**: HistoryTabBadge migrated
+- [x] **UIM-05**: HistoryTabBadge migrated
 
 ### UI-VERIFY — Verification Gates (5)
 
