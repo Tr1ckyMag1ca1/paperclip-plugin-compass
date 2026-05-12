@@ -8395,19 +8395,17 @@ function calculateLatestHeartbeat(agents) {
 
 // src/primitives/mode-detect.ts
 function detectMode(inventory) {
-  if (!inventory.visionExists && inventory.agentCount === 0) {
+  if (!inventory.visionExists) {
     return "Found";
   }
-  if (inventory.visionExists) {
-    if (inventory.latestHeartbeat) {
-      const daysSinceHeartbeat = (Date.now() - inventory.latestHeartbeat.getTime()) / (1e3 * 60 * 60 * 24);
-      if (daysSinceHeartbeat < 7) {
-        return "Assess";
-      }
+  if (inventory.latestHeartbeat) {
+    const daysSinceHeartbeat = (Date.now() - inventory.latestHeartbeat.getTime()) / (1e3 * 60 * 60 * 24);
+    if (daysSinceHeartbeat < 7) {
+      return "Assess";
     }
-    if (!inventory.latestHeartbeat || inventory.blockerCount > 2) {
-      return "Revive";
-    }
+  }
+  if (!inventory.latestHeartbeat || inventory.blockerCount > 2) {
+    return "Revive";
   }
   return "Reposition";
 }

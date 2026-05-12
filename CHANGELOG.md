@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-05-12
+
+### Fixed
+
+- `detectMode`: Rule 1 used to fire only when `!visionExists && agentCount === 0`. A company that had agents but no VISION fell through to Rule 4 and was classified as Reposition, sending the founder to a panel that immediately rendered "No VISION.md found" with a disabled CTA. Tightened Rule 1 to "no VISION → Found" regardless of agent count — every other mode panel requires a VISION document, so Found is the only useful starting point until VISION exists. Verified live against ALE (no VISION + agents) now auto-detects Found.
+
 ## [1.1.4] - 2026-05-12
 
 ### Added

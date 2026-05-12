@@ -7,7 +7,10 @@ import type { InventorySnapshot, Mode } from "../types.js";
  * Rules are deterministic: same input → same output, zero token cost.
  *
  * Hard rules (in order):
- * 1. If no VISION and no agents → Found (new company)
+ * 1. If no VISION → Found (every other mode panel requires a VISION document;
+ *    Assess audits drift against VISION, Revive references it for stall diagnosis,
+ *    Reposition pivots it. Returning Reposition for an agents-only company sends
+ *    the founder to a panel that just says "No VISION.md found" with a disabled CTA.)
  * 2. Else if VISION exists and recent heartbeats (< 7 days) → Assess (healthy)
  * 3. Else if VISION exists and (no heartbeats OR blockers > 2) → Revive (stalled)
  * 4. Else → Reposition (healthy, founder-initiated shift; requires override in MODE-03)
@@ -16,28 +19,25 @@ import type { InventorySnapshot, Mode } from "../types.js";
  * @returns One of: "Found" | "Assess" | "Revive" | "Reposition"
  */
 export function detectMode(inventory: InventorySnapshot): Mode {
-  // Rule 1: No VISION and no agents → Found (new company)
-  if (!inventory.visionExists && inventory.agentCount === 0) {
+  // Rule 1: No VISION → Found
+  if (!inventory.visionExists) {
     return "Found";
   }
 
-  // Rules 2–4 require VISION to exist
-  if (inventory.visionExists) {
-    // Rule 2: Recent heartbeats (< 7 days) → Assess (healthy)
-    if (inventory.latestHeartbeat) {
-      const daysSinceHeartbeat =
-        (Date.now() - inventory.latestHeartbeat.getTime()) /
-        (1000 * 60 * 60 * 24);
+  // Rule 2: Recent heartbeats (< 7 days) → Assess (healthy)
+  if (inventory.latestHeartbeat) {
+    const daysSinceHeartbeat =
+      (Date.now() - inventory.latestHeartbeat.getTime()) /
+      (1000 * 60 * 60 * 24);
 
-      if (daysSinceHeartbeat < 7) {
-        return "Assess";
-      }
+    if (daysSinceHeartbeat < 7) {
+      return "Assess";
     }
+  }
 
-    // Rule 3: No heartbeats OR blockers > 2 → Revive (stalled)
-    if (!inventory.latestHeartbeat || inventory.blockerCount > 2) {
-      return "Revive";
-    }
+  // Rule 3: No heartbeats OR blockers > 2 → Revive (stalled)
+  if (!inventory.latestHeartbeat || inventory.blockerCount > 2) {
+    return "Revive";
   }
 
   // Rule 4: Default to Reposition (healthy, founder-initiated)
