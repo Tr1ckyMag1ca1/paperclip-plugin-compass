@@ -50,23 +50,23 @@ export const SchedulesSection: React.FC<SchedulesSectionProps> = ({ companyId })
   };
 
   return (
-    <div className="space-y-lg">
+    <div className="space-y-4">
       {/* Header */}
       <div>
-        <h3 className="text-heading font-bold mb-xs">Scheduled check-ins</h3>
-        <p className="text-label text-foreground/70">
+        <h3 className="text-base font-semibold font-bold mb-1">Scheduled check-ins</h3>
+        <p className="text-xs font-medium text-foreground/70">
           These routines automatically trigger Compass modes on a schedule.
         </p>
       </div>
 
       {/* Routines List or Empty State */}
       {routines.length === 0 && !showForm ? (
-        <p className="text-label text-foreground/70 py-md">
+        <p className="text-xs font-medium text-foreground/70 py-4">
           No scheduled check-ins yet. Create one to auto-trigger Assess or Revive on a
           schedule.
         </p>
       ) : (
-        <div className="space-y-sm">
+        <div className="space-y-2">
           {routines.map((routine) => (
             <ScheduleRoutineRow
               key={routine.id}
@@ -88,7 +88,7 @@ export const SchedulesSection: React.FC<SchedulesSectionProps> = ({ companyId })
       ) : (
         <button
           onClick={() => setShowForm(true)}
-          className="text-label text-accent hover:underline"
+          className="text-xs font-medium text-accent hover:underline"
         >
           Create schedule
         </button>

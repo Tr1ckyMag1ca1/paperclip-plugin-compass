@@ -95,13 +95,13 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-lg bg-card rounded border border-border space-y-md"
+      className="p-4 bg-card rounded border border-border space-y-4"
     >
-      <h3 className="text-heading font-bold">Create schedule</h3>
+      <h3 className="text-base font-semibold font-bold">Create schedule</h3>
 
       {/* Name Input */}
       <div>
-        <label htmlFor="routine-name" className="text-label font-bold mb-xs block">
+        <label htmlFor="routine-name" className="text-xs font-medium font-bold mb-1 block">
           Routine name <span className="text-destructive">*</span>
         </label>
         <input
@@ -112,11 +112,11 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
           placeholder="My quarterly audit review"
           required
           maxLength={100}
-          className="w-full px-sm py-xs rounded border border-border text-body"
+          className="w-full px-2 py-1 rounded border border-border text-sm"
           aria-required="true"
           aria-label="Routine name"
         />
-        <p className="text-label text-foreground/70 mt-xs">
+        <p className="text-xs font-medium text-foreground/70 mt-1">
           {name.length}/100 characters
         </p>
       </div>
@@ -124,9 +124,9 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
       {/* Mode Choice */}
       <div>
         <fieldset>
-          <legend className="text-label font-bold mb-sm block">Which mode?</legend>
+          <legend className="text-xs font-medium font-bold mb-2 block">Which mode?</legend>
           <div className="space-y-xs">
-            <label className="flex items-center gap-sm cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="mode"
@@ -135,9 +135,9 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
                 onChange={() => setMode("Assess")}
                 aria-label="Run Assess drift review"
               />
-              <span className="text-body">Assess drift review</span>
+              <span className="text-sm">Assess drift review</span>
             </label>
-            <label className="flex items-center gap-sm cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="mode"
@@ -146,7 +146,7 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
                 onChange={() => setMode("Revive")}
                 aria-label="Run Revive stall diagnosis"
               />
-              <span className="text-body">Revive stall diagnosis</span>
+              <span className="text-sm">Revive stall diagnosis</span>
             </label>
           </div>
         </fieldset>
@@ -155,9 +155,9 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
       {/* Frequency Preset */}
       <div>
         <fieldset>
-          <legend className="text-label font-bold mb-sm block">When?</legend>
+          <legend className="text-xs font-medium font-bold mb-2 block">When?</legend>
           <div className="space-y-xs">
-            <label className="flex items-center gap-sm cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="frequency"
@@ -169,10 +169,10 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
                 }}
                 aria-label="Quarterly drift review"
               />
-              <span className="text-body">Quarterly drift review</span>
-              <span className="text-label text-foreground/50">(9am, 1st of Q months)</span>
+              <span className="text-sm">Quarterly drift review</span>
+              <span className="text-xs font-medium text-foreground/50">(9am, 1st of Q months)</span>
             </label>
-            <label className="flex items-center gap-sm cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="frequency"
@@ -184,10 +184,10 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
                 }}
                 aria-label="Monthly trust-gate review"
               />
-              <span className="text-body">Monthly trust-gate review</span>
-              <span className="text-label text-foreground/50">(9am, 1st of month)</span>
+              <span className="text-sm">Monthly trust-gate review</span>
+              <span className="text-xs font-medium text-foreground/50">(9am, 1st of month)</span>
             </label>
-            <label className="flex items-center gap-sm cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="frequency"
@@ -196,7 +196,7 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
                 onChange={() => setFrequencyPreset("custom")}
                 aria-label="Custom cron expression"
               />
-              <span className="text-body">Custom cron expression</span>
+              <span className="text-sm">Custom cron expression</span>
             </label>
           </div>
         </fieldset>
@@ -205,7 +205,7 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
       {/* Custom Cron Input (if Custom selected) */}
       {frequencyPreset === "custom" && (
         <div>
-          <label htmlFor="custom-cron" className="text-label font-bold mb-xs block">
+          <label htmlFor="custom-cron" className="text-xs font-medium font-bold mb-1 block">
             Cron expression (5-field standard) <span className="text-destructive">*</span>
           </label>
           <input
@@ -217,19 +217,19 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
               setCronError(null);
             }}
             placeholder="0 9 1 1,4,7,10 *"
-            className={`w-full px-sm py-xs rounded border ${
+            className={`w-full px-2 py-1 rounded border ${
               cronError ? "border-destructive" : "border-border"
-            } text-body`}
+            } text-sm`}
             aria-required="true"
             aria-invalid={!!cronError}
             aria-describedby={cronError ? "cron-error" : undefined}
           />
           {cronError && (
-            <p id="cron-error" className="text-label text-destructive mt-xs">
+            <p id="cron-error" className="text-xs font-medium text-destructive mt-1">
               {cronError}
             </p>
           )}
-          <p className="text-label text-foreground/70 mt-xs">
+          <p className="text-xs font-medium text-foreground/70 mt-1">
             Format: minute hour day month weekday. E.g., '0 9 1 * *' = first of every
             month at 9am
           </p>
@@ -237,12 +237,12 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
       )}
 
       {/* Submit / Cancel Buttons */}
-      <div className="flex gap-sm justify-end pt-md border-t border-border">
+      <div className="flex gap-2 justify-end pt-4 border-t border-border">
         <button
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-md py-sm text-label text-foreground hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 text-xs font-medium text-foreground hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancel
         </button>
@@ -251,7 +251,7 @@ export const ScheduleCreationForm: React.FC<ScheduleCreationFormProps> = ({
           disabled={
             !name.trim() || (frequencyPreset === "custom" && !customCron) || isSubmitting
           }
-          className="px-md py-sm text-label bg-accent text-background rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 text-xs font-medium bg-accent text-background rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Creating…" : "Create schedule"}
         </button>
