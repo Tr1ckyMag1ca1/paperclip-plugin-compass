@@ -44,9 +44,10 @@ for (const marker of REACT_MARKERS) {
   }
 }
 
-// Also check for esbuild comments that indicate bundled node_modules
-// If we see "node_modules/.pnpm/react@" or similar, react was bundled
-const bundledReactPattern = /\/\/ node_modules\/.*react@/;
+// Also check for esbuild comments that indicate bundled node_modules.
+// Match react@ as a path component (preceded by / or @, to avoid matching
+// lucide-react@ or other "*-react" packages which are allowed to bundle).
+const bundledReactPattern = /\/\/ node_modules\/[^\n]*[/@]react@/;
 if (bundledReactPattern.test(bundleContent)) {
   violations.push(`  Found bundled react in node_modules reference comments`);
 }

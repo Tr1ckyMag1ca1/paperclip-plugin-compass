@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-05-11
+
+### Fixed
+
+- Hotfix: `Compass: Compass` placeholder rendered in sidebar with no icon and no click handler on v1.1.0. Root cause: `lucide-react` was marked as an esbuild external in v1.1.0, but the Paperclip host React shim only resolves `react`, `react-dom`, and `react/jsx-runtime` bare specifiers — not `lucide-react`. The browser could not resolve the bare `lucide-react` import at runtime, so the UI module load failed and the host fell back to the `{pluginDisplayName}: {displayName}` placeholder. Fix: bundle `lucide-react` (still tree-shaken; ~11 kB gzipped final UI bundle), keep only `react` / `react-dom` / `react/jsx-runtime` external.
+- Sync `src/manifest.ts` version (was stuck at `0.3.26`) with `package.json` so the host DB's `plugins.version` row reflects published version.
+- Tighten `scripts/check-externals.mjs` regex so `// node_modules/.../lucide-react@...` comments no longer false-positive as "bundled react".
+
 ## [1.1.0] - 2026-05-11
 
 ### Added

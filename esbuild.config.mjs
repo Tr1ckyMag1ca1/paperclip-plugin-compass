@@ -22,10 +22,11 @@ const watch = process.argv.includes("--watch");
 
 const withMd = (cfg) => ({ ...cfg, plugins: [...(cfg.plugins ?? []), rawMarkdownPlugin] });
 
-// Mark react packages as external to prevent bundling.
-// Host provides react, react-dom, react/jsx-runtime via browser shims.
-// lucide-react depends on react; must mark both as external.
-// zod is already external via plugin SDK presets.
+// Host shim resolves react / react-dom / react/jsx-runtime only.
+// lucide-react is NOT shimmed; bundling it (with react still external) lets esbuild
+// tree-shake icon usage while leaving react imports unresolved for the host shim.
+// Marking lucide-react external caused "Compass: Compass" placeholder in v1.1.0 —
+// browser cannot resolve the bare "lucide-react" specifier at runtime.
 const uiPreset = {
   ...presets.esbuild.ui,
   external: [
@@ -33,7 +34,6 @@ const uiPreset = {
     "react",
     "react-dom",
     "react/jsx-runtime",
-    "lucide-react",
   ],
 };
 
