@@ -54,26 +54,26 @@ const StatusChangeConfirmationModal: React.FC<StatusChangeConfirmationProps> = (
       onClick={onCancel}
     >
       <div
-        className="bg-background p-lg rounded border border-border w-full max-w-sm mx-auto"
+        className="bg-background p-4 rounded border border-border w-full max-w-sm mx-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-heading font-bold mb-md">Confirm status change</h3>
-        <p className="text-body text-foreground/70 mb-lg">
+        <h3 className="text-base font-semibold font-bold mb-3">Confirm status change</h3>
+        <p className="text-sm text-foreground/70 mb-4">
           Are you sure you want to {newStatus} this finding?
         </p>
 
-        <div className="flex gap-sm justify-end">
+        <div className="flex gap-2 justify-end">
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="px-md py-sm text-label text-foreground border border-border rounded hover:bg-background disabled:opacity-50"
+            className="px-3 py-2 text-xs font-medium text-foreground border border-border rounded hover:bg-background disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="px-md py-sm text-label bg-accent text-background rounded hover:bg-accent/90 disabled:opacity-50"
+            className="px-3 py-2 text-xs font-medium bg-accent text-background rounded hover:bg-accent/90 disabled:opacity-50"
           >
             {isLoading ? "Confirming…" : actionLabel}
           </button>
@@ -114,16 +114,16 @@ export const FindingCard: React.FC<FindingCardProps> = ({
 
   return (
     <>
-      <div className="p-md bg-card rounded border border-border">
+      <div className="p-3 bg-card rounded border border-border">
         {/* Header: Summary + Timestamp + Badges */}
-        <div className="flex items-start justify-between gap-md mb-md">
+        <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1">
-            <h4 className="text-body font-bold">{finding.summary}</h4>
-            <p className="text-label text-foreground/70 mt-xs">
+            <h4 className="text-sm font-bold">{finding.summary}</h4>
+            <p className="text-xs font-medium text-foreground/70 mt-1">
               {formatDistanceToNow(new Date(finding.created_at), { addSuffix: true })}
             </p>
           </div>
-          <div className="flex gap-xs flex-shrink-0">
+          <div className="flex gap-1 flex-shrink-0">
             <ModeBadge mode={finding.mode} />
             <FindingStatusBadge status={finding.status} />
           </div>
@@ -131,13 +131,13 @@ export const FindingCard: React.FC<FindingCardProps> = ({
 
         {/* Evidence Section */}
         {finding.evidence_refs.length > 0 && (
-          <div className="mt-md">
-            <p className="text-label font-bold mb-xs">Evidence:</p>
-            <div className="flex flex-wrap gap-xs">
+          <div className="mt-3">
+            <p className="text-xs font-medium font-bold mb-1">Evidence:</p>
+            <div className="flex flex-wrap gap-1">
               {finding.evidence_refs.map((ref, idx) => (
                 <span
                   key={idx}
-                  className="inline-block px-xs py-xs rounded-full bg-foreground/10 text-label text-foreground/70 whitespace-nowrap"
+                  className="inline-block px-1 py-1 rounded-full bg-foreground/10 text-xs font-medium text-foreground/70 whitespace-nowrap"
                   title={ref}
                 >
                   {ref.length > 20 ? `${ref.substring(0, 17)}…` : ref}
@@ -149,13 +149,13 @@ export const FindingCard: React.FC<FindingCardProps> = ({
 
         {/* Status History (collapsible, optional) */}
         {finding.status_history.length > 0 && (
-          <details className="mt-md">
-            <summary className="text-label font-bold cursor-pointer text-foreground/70">
+          <details className="mt-3">
+            <summary className="text-xs font-medium font-bold cursor-pointer text-foreground/70">
               Status history ({finding.status_history.length} changes)
             </summary>
-            <div className="mt-sm space-y-xs ml-md">
+            <div className="mt-2 space-y-1 ml-3">
               {finding.status_history.map((transition, idx) => (
-                <p key={idx} className="text-label text-foreground/50">
+                <p key={idx} className="text-xs font-medium text-foreground/50">
                   {transition.from || "Created"} → {transition.to} at{" "}
                   {new Date(transition.at).toLocaleString()}
                 </p>
@@ -165,12 +165,12 @@ export const FindingCard: React.FC<FindingCardProps> = ({
         )}
 
         {/* Status Change Buttons */}
-        <div className="flex gap-xs mt-md flex-wrap">
+        <div className="flex gap-1 mt-3 flex-wrap">
           {canMarkAddressed && (
             <button
               onClick={() => setShowStatusModal("addressed")}
               disabled={isLoading}
-              className="text-label text-accent hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-xs font-medium text-accent hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Mark this finding as addressed"
             >
               Mark addressed
@@ -180,7 +180,7 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             <button
               onClick={() => setShowStatusModal("invalidated")}
               disabled={isLoading}
-              className="text-label text-foreground/70 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-xs font-medium text-foreground/70 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Mark this finding as invalidated"
             >
               Mark invalidated
