@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-05-12
+
+### Fixed
+
+- `FoundPanel`: the section nav rail (horizontal tab strip with `border-b`) was being rendered as a sibling column in a `flex flex-row` container alongside the interview section. The nav rail's natural width (~940px of section title tabs) starved the interview section down to ~48px, pushing all question content off the right edge and leaving the body looking blank. Switched the container to `flex flex-col min-h-0` so the tab strip sits on top of the section as designed.
+- `interview-loader.ts`: the hand-rolled YAML frontmatter parser was treating the nested `questions` array as a flat list of strings. Each `- id: mission` line was pushed verbatim into the array, and the next `prompt:` line was treated as a top-level key, so `section.questions` always collapsed to a single object with `id`/`prompt`/`required` all `undefined`. Replaced with an indent-aware parser that supports arrays of objects (the only YAML shape Compass actually uses).
+- `interview-loader.ts`: trimmed each paragraph before testing for a leading `#`, otherwise a leading newline (e.g. `\n# Big Picture`) slipped past `startsWith("#")` and the section heading ended up rendered as the intro paragraph.
+
 ## [1.1.2] - 2026-05-11
 
 ### Fixed

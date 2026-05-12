@@ -370,8 +370,8 @@ export function FoundPanel(): React.ReactElement {
 
     return (
       <div className="flex h-full flex-col gap-0">
-        <div className="flex flex-1 gap-6">
-          {/* Section navigation rail */}
+        <div className="flex flex-1 flex-col gap-0 min-h-0">
+          {/* Section navigation rail (horizontal tab strip, sits above the section) */}
           <SectionNavRail
             sections={sections}
             currentSectionIndex={currentSection}

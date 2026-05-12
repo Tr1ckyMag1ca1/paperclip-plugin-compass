@@ -2876,43 +2876,84 @@ function parseFrontmatter(markdown) {
   }
   const yamlLines = lines.slice(firstDelim + 1, secondDelim);
   const contentLines = lines.slice(secondDelim + 1);
-  const frontmatter = {};
-  let currentKey = null;
-  let currentArray = [];
-  for (const line of yamlLines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith("- ")) {
-      const value = trimmed.slice(2);
-      currentArray.push(value);
-    } else if (trimmed.includes(":")) {
-      if (currentKey && currentArray.length > 0) {
-        frontmatter[currentKey] = currentArray;
-        currentArray = [];
-      }
-      const [key, ...valueParts] = trimmed.split(":");
-      const value = valueParts.join(":").trim();
-      currentKey = key.trim();
-      if (value) {
-        if (value === "true") {
-          frontmatter[currentKey] = true;
-        } else if (value === "false") {
-          frontmatter[currentKey] = false;
-        } else if (!isNaN(Number(value))) {
-          frontmatter[currentKey] = Number(value);
-        } else {
-          frontmatter[currentKey] = value;
-        }
-      }
-    }
-  }
-  if (currentKey && currentArray.length > 0) {
-    frontmatter[currentKey] = currentArray;
-  }
+  const frontmatter = parseYamlSubset(yamlLines);
   return {
     frontmatter,
     content: contentLines.join("\n")
   };
+}
+function parseYamlSubset(lines) {
+  const result = {};
+  let i = 0;
+  const stripQuotes = (s) => {
+    const t = s.trim();
+    if (t.startsWith('"') && t.endsWith('"') || t.startsWith("'") && t.endsWith("'")) {
+      return t.slice(1, -1);
+    }
+    return t;
+  };
+  const coerce = (s) => {
+    const t = s.trim();
+    if (t === "true") return true;
+    if (t === "false") return false;
+    if (t !== "" && !isNaN(Number(t))) return Number(t);
+    return stripQuotes(t);
+  };
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      i++;
+      continue;
+    }
+    const colonIdx = trimmed.indexOf(":");
+    if (colonIdx === -1) {
+      i++;
+      continue;
+    }
+    const key = trimmed.slice(0, colonIdx).trim();
+    const inlineValue = trimmed.slice(colonIdx + 1).trim();
+    if (inlineValue !== "") {
+      result[key] = coerce(inlineValue);
+      i++;
+      continue;
+    }
+    const arr = [];
+    let currentObj = null;
+    i++;
+    while (i < lines.length) {
+      const childLine = lines[i];
+      const childTrimmed = childLine.trim();
+      if (!childTrimmed) {
+        i++;
+        continue;
+      }
+      const leadingSpaces = childLine.length - childLine.trimStart().length;
+      if (leadingSpaces === 0) break;
+      if (childTrimmed.startsWith("- ")) {
+        if (currentObj) arr.push(currentObj);
+        currentObj = {};
+        const afterDash = childTrimmed.slice(2);
+        const cIdx = afterDash.indexOf(":");
+        if (cIdx !== -1) {
+          const k = afterDash.slice(0, cIdx).trim();
+          const v = afterDash.slice(cIdx + 1).trim();
+          currentObj[k] = coerce(v);
+        }
+      } else if (currentObj) {
+        const cIdx = childTrimmed.indexOf(":");
+        if (cIdx !== -1) {
+          const k = childTrimmed.slice(0, cIdx).trim();
+          const v = childTrimmed.slice(cIdx + 1).trim();
+          currentObj[k] = coerce(v);
+        }
+      }
+      i++;
+    }
+    if (currentObj) arr.push(currentObj);
+    result[key] = arr;
+  }
+  return result;
 }
 function loadSectionFromFrontmatter(frontmatter) {
   const id = frontmatter.id || "";
@@ -2939,9 +2980,9 @@ function loadInterviewSections() {
   for (const { raw, expectedId } of rawSections) {
     const { frontmatter, content } = parseFrontmatter(raw);
     const section = loadSectionFromFrontmatter(frontmatter);
-    const paragraphs = content.split("\n\n").filter((p) => p.trim() && !p.startsWith("#"));
+    const paragraphs = content.split("\n\n").map((p) => p.trim()).filter((p) => p && !p.startsWith("#"));
     if (paragraphs.length > 0) {
-      section.intro = paragraphs[0].trim();
+      section.intro = paragraphs[0];
     }
     sections.push(section);
   }
@@ -3537,7 +3578,7 @@ function FoundPanel() {
     const section = sections[currentSection];
     const nextSectionName = currentSection < sections.length - 1 ? sections[currentSection + 1].title : "Review & Apply";
     return /* @__PURE__ */ jsxs38("div", { className: "flex h-full flex-col gap-0", children: [
-      /* @__PURE__ */ jsxs38("div", { className: "flex flex-1 gap-6", children: [
+      /* @__PURE__ */ jsxs38("div", { className: "flex flex-1 flex-col gap-0 min-h-0", children: [
         /* @__PURE__ */ jsx40(
           SectionNavRail,
           {

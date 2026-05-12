@@ -75,55 +75,116 @@ function parseFrontmatter(markdown: string): {
   const yamlLines = lines.slice(firstDelim + 1, secondDelim);
   const contentLines = lines.slice(secondDelim + 1);
 
-  // Parse YAML (simple parser for our limited format)
-  const frontmatter: Record<string, any> = {};
-  let currentKey: string | null = null;
-  let currentArray: any[] = [];
-
-  for (const line of yamlLines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    // Check for array item
-    if (trimmed.startsWith("- ")) {
-      const value = trimmed.slice(2);
-      currentArray.push(value);
-    } else if (trimmed.includes(":")) {
-      // Save previous array if exists
-      if (currentKey && currentArray.length > 0) {
-        frontmatter[currentKey] = currentArray;
-        currentArray = [];
-      }
-
-      const [key, ...valueParts] = trimmed.split(":");
-      const value = valueParts.join(":").trim();
-
-      currentKey = key.trim();
-
-      if (value) {
-        // Parse value
-        if (value === "true") {
-          frontmatter[currentKey] = true;
-        } else if (value === "false") {
-          frontmatter[currentKey] = false;
-        } else if (!isNaN(Number(value))) {
-          frontmatter[currentKey] = Number(value);
-        } else {
-          frontmatter[currentKey] = value;
-        }
-      }
-    }
-  }
-
-  // Save final array if exists
-  if (currentKey && currentArray.length > 0) {
-    frontmatter[currentKey] = currentArray;
-  }
+  const frontmatter = parseYamlSubset(yamlLines);
 
   return {
     frontmatter,
     content: contentLines.join("\n"),
   };
+}
+
+/**
+ * Parse a YAML subset supporting top-level scalars, top-level arrays of objects,
+ * and quoted/unquoted scalar values. Indent-aware (2-space).
+ *
+ * Supports:
+ *   key: value
+ *   key: "quoted value"
+ *   key: true | false | <number>
+ *   key:
+ *     - subkey: val
+ *       subkey: val
+ *
+ * Does not support: nested objects (non-array), multi-line strings, anchors.
+ */
+function parseYamlSubset(lines: string[]): Record<string, any> {
+  const result: Record<string, any> = {};
+  let i = 0;
+
+  const stripQuotes = (s: string): string => {
+    const t = s.trim();
+    if (
+      (t.startsWith('"') && t.endsWith('"')) ||
+      (t.startsWith("'") && t.endsWith("'"))
+    ) {
+      return t.slice(1, -1);
+    }
+    return t;
+  };
+
+  const coerce = (s: string): any => {
+    const t = s.trim();
+    if (t === "true") return true;
+    if (t === "false") return false;
+    if (t !== "" && !isNaN(Number(t))) return Number(t);
+    return stripQuotes(t);
+  };
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      i++;
+      continue;
+    }
+
+    const colonIdx = trimmed.indexOf(":");
+    if (colonIdx === -1) {
+      i++;
+      continue;
+    }
+
+    const key = trimmed.slice(0, colonIdx).trim();
+    const inlineValue = trimmed.slice(colonIdx + 1).trim();
+
+    if (inlineValue !== "") {
+      result[key] = coerce(inlineValue);
+      i++;
+      continue;
+    }
+
+    // Look ahead — child block. Determine if array-of-objects or empty.
+    const arr: any[] = [];
+    let currentObj: Record<string, any> | null = null;
+    i++;
+    while (i < lines.length) {
+      const childLine = lines[i];
+      const childTrimmed = childLine.trim();
+      if (!childTrimmed) {
+        i++;
+        continue;
+      }
+      const leadingSpaces = childLine.length - childLine.trimStart().length;
+      // Stop when we return to top level (0 indent).
+      if (leadingSpaces === 0) break;
+
+      if (childTrimmed.startsWith("- ")) {
+        // New item in the array.
+        if (currentObj) arr.push(currentObj);
+        currentObj = {};
+        const afterDash = childTrimmed.slice(2);
+        const cIdx = afterDash.indexOf(":");
+        if (cIdx !== -1) {
+          const k = afterDash.slice(0, cIdx).trim();
+          const v = afterDash.slice(cIdx + 1).trim();
+          currentObj[k] = coerce(v);
+        }
+      } else if (currentObj) {
+        // Continuation of current object.
+        const cIdx = childTrimmed.indexOf(":");
+        if (cIdx !== -1) {
+          const k = childTrimmed.slice(0, cIdx).trim();
+          const v = childTrimmed.slice(cIdx + 1).trim();
+          currentObj[k] = coerce(v);
+        }
+      }
+      i++;
+    }
+    if (currentObj) arr.push(currentObj);
+    result[key] = arr;
+  }
+
+  return result;
 }
 
 /**
@@ -171,12 +232,16 @@ export function loadInterviewSections(): InterviewSection[] {
     const { frontmatter, content } = parseFrontmatter(raw);
     const section = loadSectionFromFrontmatter(frontmatter);
 
-    // Set intro from markdown body (first paragraph)
+    // Set intro from markdown body (first non-heading paragraph).
+    // Trim each paragraph before testing for heading prefix; otherwise a leading
+    // newline (e.g. "\n# Big Picture") slips past startsWith("#") and the heading
+    // ends up rendered as the intro paragraph.
     const paragraphs = content
       .split("\n\n")
-      .filter((p) => p.trim() && !p.startsWith("#"));
+      .map((p) => p.trim())
+      .filter((p) => p && !p.startsWith("#"));
     if (paragraphs.length > 0) {
-      section.intro = paragraphs[0].trim();
+      section.intro = paragraphs[0];
     }
 
     sections.push(section);
