@@ -7,6 +7,57 @@
 ## Shipped Milestones
 
 - ✅ **v1.0** — Compass Plugin (all 4 modes + engagement memory + scheduled check-ins). 6 phases, 22 plans, 829 tests, 72/72 requirements. See [`.planning/milestones/v1.0-ROADMAP.md`](milestones/v1.0-ROADMAP.md).
+- ✅ **v1.1** — Compass UI Parity with Paperclip Host. 5 phases (7–11), token migration, OSS launch, npm publish. 48/48 requirements.
+
+---
+
+## Next Milestone: v1.2 Conversational Vision Quest + Aaron Template Parity
+
+**Status:** Filed 2026-05-12; planning not yet started
+**Phases:** TBD (estimate 3–4)
+**Granularity:** Coarse
+
+### Why this milestone
+
+Compass v1.0/v1.1 ships Found mode as a **static 6-section form**. Original spec called for the "strategic-interview depth of `aronprins/paperclip-vision`" — i.e. a conversational, adaptive interview that asks one question at a time, follows up, and extracts VISION sections from natural-language answers.
+
+Additionally, Compass's current VISION.md template (`src/content/vision-template.md`) has **20 sections** while Aaron's canonical template has **13 sections** — with renames (`Org Structure` vs `Organisational Structure`, `Principles` vs `Guiding Principles`, `Success Criteria` vs `What Success Looks Like`) and 7 Compass-only additions (Voice, Issue Structure, Locality, Launch Plan, Trust Governance, Amendment Protocol, plus extras). Downstream agents and any Aaron-built tooling that reads VISION.md will not find the sections they expect → company drifts.
+
+### Goal
+
+1. Replace the Found-mode form with a conversational chat-style interview (paperclip-vision parity).
+2. Output VISION.md strictly matches Aaron's 13-section template, header included:
+   ```
+   # VISION.md — [Company Name]
+   ## Mission
+   ## 12-Month Goal
+   ## 3-Year Vision
+   ## Revenue Model
+   ## Target Customer
+   ## Growth Strategy
+   ## Sales Model
+   ## Product Direction
+   ## Organisational Structure
+   ## Operating Philosophy
+   ## CEO Mandate
+   ## Guiding Principles
+   ## What Success Looks Like
+   ```
+3. Provide a migration path / parser shim so existing Compass-format VISION files (v1.0/v1.1) still load in Assess/Revive/Reposition without breaking.
+
+### Constraints
+
+- Aaron's vision-template.md (`~/.claude/skills/paperclip-vision/references/vision-template.md`) is the authoritative format reference — copy verbatim section names + ordering
+- Chat UX must run inside plugin sidebar — no new windows, no external LLM dialog
+- LLM call path: route through Paperclip Plugin SDK `ctx.llm` (or whatever the SDK exposes) — no direct Anthropic API keys in plugin
+- Form fallback retained for accessibility / no-LLM environments
+- All four mode panels (Found/Assess/Revive/Reposition) must accept both old (20-section) and new (13-section) VISION.md without crashing
+
+### Phases (provisional)
+
+- [ ] **Phase 12: Vision Template Migration** — swap `src/content/vision-template.md` to Aaron's 13-section format; update `template-fill.ts`, `vision-parse.ts`, and downstream readers; ship parser shim for legacy 20-section files; tests
+- [ ] **Phase 13: Conversational Interview UI** — new ChatInterview component, message thread persistence (documents table), question state machine, LLM-driven follow-ups, section extraction
+- [ ] **Phase 14: Mode Integration + Cutover** — wire chat interview into Found panel, deprecate form (keep behind `?form=1` query for fallback), update Assess/Revive/Reposition to read new format, regression tests
 
 ---
 
