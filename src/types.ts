@@ -42,6 +42,7 @@ export type Issue = SDKIssue;
  */
 export interface InventorySnapshot {
   companyId: string;
+  companyName: string;
   agents: Agent[];
   agentCount: number;
   documents: Document[];

@@ -31,9 +31,9 @@ export function SectionNavRail({
   );
 
   return (
-    <div className="border-b border-border bg-background px-4 py-2">
-      <div className="flex gap-1 items-center overflow-x-auto pb-2">
-        <span className="text-xs font-medium text-muted-foreground mr-2 shrink-0">
+    <div className="border-b border-border bg-background px-4 py-2 w-full min-w-0">
+      <div className="flex gap-1 items-center overflow-x-auto pb-2 w-full min-w-0">
+        <span className="text-xs font-medium text-muted-foreground mr-2 shrink-0 whitespace-nowrap">
           {completedSections.length} of {sections.length} sections
         </span>
 

@@ -67,10 +67,13 @@ export class PaperclipAdapter {
    * (not re-queried per mode).
    */
   async getInventorySnapshot(companyId: string): Promise<InventorySnapshot> {
-    const [agents, issues] = await Promise.all([
+    const [agents, issues, companies] = await Promise.all([
       this.ctx.agents.list({ companyId }),
       this.ctx.issues.list({ companyId }),
+      this.ctx.companies.list().catch(() => [] as any[]),
     ]);
+    const companyName =
+      (companies as any[]).find((c) => c.id === companyId)?.name ?? "";
 
     // Calculate visionExists by checking for VISION in issue titles or descriptions
     let visionExists = false;
@@ -144,6 +147,7 @@ export class PaperclipAdapter {
 
     return {
       companyId,
+      companyName,
       agents: sanitizedAgents as InventorySnapshot["agents"],
       agentCount: agents.length,
       documents: documents as InventorySnapshot["documents"],

@@ -3041,7 +3041,7 @@ function QuestionRenderer({
         value,
         onChange: handleChange,
         maxLength: 200,
-        placeholder: question.hint || "",
+        placeholder: "",
         "aria-required": question.required,
         "aria-describedby": question.hint ? descriptionId : void 0,
         className: "w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -3055,7 +3055,7 @@ function QuestionRenderer({
         onChange: handleChange,
         maxLength: 2e3,
         rows: 4,
-        placeholder: question.hint || "",
+        placeholder: "",
         "aria-required": question.required,
         "aria-describedby": question.hint ? descriptionId : void 0,
         className: "w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
@@ -3104,7 +3104,7 @@ function QuestionRenderer({
         onChange: handleChange,
         maxLength: 2e3,
         rows: 3,
-        placeholder: question.hint || "",
+        placeholder: "",
         "aria-required": question.required,
         "aria-describedby": question.hint ? descriptionId : void 0,
         className: "w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
@@ -3199,8 +3199,8 @@ function SectionNavRail({
     },
     [currentSectionIndex, onJumpTo]
   );
-  return /* @__PURE__ */ jsx37("div", { className: "border-b border-border bg-background px-4 py-2", children: /* @__PURE__ */ jsxs35("div", { className: "flex gap-1 items-center overflow-x-auto pb-2", children: [
-    /* @__PURE__ */ jsxs35("span", { className: "text-xs font-medium text-muted-foreground mr-2 shrink-0", children: [
+  return /* @__PURE__ */ jsx37("div", { className: "border-b border-border bg-background px-4 py-2 w-full min-w-0", children: /* @__PURE__ */ jsxs35("div", { className: "flex gap-1 items-center overflow-x-auto pb-2 w-full min-w-0", children: [
+    /* @__PURE__ */ jsxs35("span", { className: "text-xs font-medium text-muted-foreground mr-2 shrink-0 whitespace-nowrap", children: [
       completedSections.length,
       " of ",
       sections.length,
@@ -4250,8 +4250,8 @@ function RevivePanel({ companyId, companyName }) {
   ] });
 }
 var EmptyReviveState = () => /* @__PURE__ */ jsxs44("div", { className: "text-center py-3xl", children: [
-  /* @__PURE__ */ jsx47("h2", { className: "text-base font-semibold mb-3", children: "This company isn't stalled" }),
-  /* @__PURE__ */ jsx47("p", { className: "text-sm mb-4 text-foreground/70", children: "No blocking issues detected. Try Assess for a strategic audit instead." })
+  /* @__PURE__ */ jsx47("h2", { className: "text-base font-semibold mb-3", children: "No actions queued yet" }),
+  /* @__PURE__ */ jsx47("p", { className: "text-sm mb-4 text-foreground/70", children: `Click "Find what's blocking this company" to diagnose and queue unblocking actions.` })
 ] });
 
 // src/ui/reposition/RepositionPanel.tsx
@@ -5513,7 +5513,7 @@ function MainPanel(props) {
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
   const visionExists = inventory.visionExists;
-  const companyName = "Company";
+  const companyName = inventory.companyName || "Company";
   const renderModeBody = () => {
     if (currentMode === "Assess") {
       return /* @__PURE__ */ jsx56(

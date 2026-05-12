@@ -69,7 +69,7 @@ export function QuestionRenderer({
             value={value}
             onChange={handleChange}
             maxLength={200}
-            placeholder={question.hint || ""}
+            placeholder=""
             aria-required={question.required}
             aria-describedby={question.hint ? descriptionId : undefined}
             className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600"
@@ -83,7 +83,7 @@ export function QuestionRenderer({
             onChange={handleChange}
             maxLength={2000}
             rows={4}
-            placeholder={question.hint || ""}
+            placeholder=""
             aria-required={question.required}
             aria-describedby={question.hint ? descriptionId : undefined}
             className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
@@ -136,7 +136,7 @@ export function QuestionRenderer({
             onChange={handleChange}
             maxLength={2000}
             rows={3}
-            placeholder={question.hint || ""}
+            placeholder=""
             aria-required={question.required}
             aria-describedby={question.hint ? descriptionId : undefined}
             className="w-full px-3 py-2 rounded-none border border-border bg-background text-sm placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"

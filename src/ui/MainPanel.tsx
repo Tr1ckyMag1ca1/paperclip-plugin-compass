@@ -85,7 +85,7 @@ export function MainPanel(props?: Partial<PluginPageProps>): React.ReactElement 
   const detectedMode = modeData.mode;
   const currentMode = storedOverride || detectedMode;
   const visionExists = inventory.visionExists;
-  const companyName = "Company";
+  const companyName = inventory.companyName || "Company";
 
   const renderModeBody = () => {
     if (currentMode === "Assess") {

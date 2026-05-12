@@ -26,11 +26,16 @@ export async function loadInventory(
   ctx: PluginContext,
   companyId: string
 ): Promise<InventorySnapshot> {
-  // Fetch agents and issues in parallel
-  const [agents, issues] = await Promise.all([
+  // Fetch agents, issues, and company list in parallel. The SDK has no
+  // `companies.get`; pulling the full list and filtering by id is cheap and
+  // happens once per plugin open.
+  const [agents, issues, companies] = await Promise.all([
     ctx.agents.list({ companyId }),
     ctx.issues.list({ companyId, limit: 100 }),
+    ctx.companies.list().catch(() => []),
   ]);
+  const companyName =
+    (companies as any[]).find((c) => c.id === companyId)?.name ?? "";
 
   // Check for VISION document by examining issue title patterns or description
   // (VISION is typically stored as an issue or referenced in issue data)
@@ -98,6 +103,7 @@ export async function loadInventory(
 
   return {
     companyId,
+    companyName,
     agents: sanitizedAgents,
     agentCount: agents.length,
     documents,

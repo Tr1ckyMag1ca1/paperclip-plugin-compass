@@ -30,6 +30,7 @@ export function DualRenderProbe(): React.ReactElement {
   // Sample data for rendering components
   const sampleInventory: InventorySnapshot = {
     companyId: "probe-test",
+    companyName: "Probe Test Co",
     agentCount: 2,
     agents: [
       {

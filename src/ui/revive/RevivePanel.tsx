@@ -184,13 +184,16 @@ export function RevivePanel({ companyId, companyName }: RevivePanelProps): React
 }
 
 /**
- * Empty state shown when company is not stalled.
+ * Empty state shown before diagnosis runs OR when diagnosis returns no items.
+ * The stall signal (heartbeat / blocker count) is shown in the header banner;
+ * this body state is about the action queue, which is empty until the classifier
+ * runs. Wording avoids contradicting the header.
  */
 const EmptyReviveState: React.FC = () => (
   <div className="text-center py-3xl">
-    <h2 className="text-base font-semibold mb-3">This company isn't stalled</h2>
+    <h2 className="text-base font-semibold mb-3">No actions queued yet</h2>
     <p className="text-sm mb-4 text-foreground/70">
-      No blocking issues detected. Try Assess for a strategic audit instead.
+      Click "Find what's blocking this company" to diagnose and queue unblocking actions.
     </p>
   </div>
 );

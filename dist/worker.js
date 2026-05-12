@@ -8318,10 +8318,12 @@ var paperclipConfigSchema = external_exports.object({
 
 // src/primitives/inventory.ts
 async function loadInventory(ctx, companyId) {
-  const [agents, issues] = await Promise.all([
+  const [agents, issues, companies] = await Promise.all([
     ctx.agents.list({ companyId }),
-    ctx.issues.list({ companyId, limit: 100 })
+    ctx.issues.list({ companyId, limit: 100 }),
+    ctx.companies.list().catch(() => [])
   ]);
+  const companyName = companies.find((c) => c.id === companyId)?.name ?? "";
   let visionExists = false;
   for (const issue of issues) {
     if (issue.title?.toUpperCase().includes("VISION") || issue.description?.toUpperCase().includes("VISION.MD")) {
@@ -8366,6 +8368,7 @@ async function loadInventory(ctx, companyId) {
   };
   return {
     companyId,
+    companyName,
     agents: sanitizedAgents,
     agentCount: agents.length,
     documents,
@@ -8485,10 +8488,12 @@ var PaperclipAdapter = class {
    * (not re-queried per mode).
    */
   async getInventorySnapshot(companyId) {
-    const [agents, issues] = await Promise.all([
+    const [agents, issues, companies] = await Promise.all([
       this.ctx.agents.list({ companyId }),
-      this.ctx.issues.list({ companyId })
+      this.ctx.issues.list({ companyId }),
+      this.ctx.companies.list().catch(() => [])
     ]);
+    const companyName = companies.find((c) => c.id === companyId)?.name ?? "";
     let visionExists = false;
     for (const issue of issues) {
       if (issue.title?.toUpperCase().includes("VISION") || issue.description?.toUpperCase().includes("VISION.MD")) {
@@ -8542,6 +8547,7 @@ var PaperclipAdapter = class {
     };
     return {
       companyId,
+      companyName,
       agents: sanitizedAgents,
       agentCount: agents.length,
       documents,

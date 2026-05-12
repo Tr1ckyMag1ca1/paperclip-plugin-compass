@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2026-05-12
+
+### Added
+
+- `InventorySnapshot.companyName`: the worker now resolves the live company name via `ctx.companies.list()` and threads it through to the UI so mode panels (Assess / Revive / Reposition) show "Biz Ops OS Generator" instead of the literal placeholder "Company".
+
+### Fixed
+
+- `QuestionRenderer`: removed the redundant `placeholder={question.hint}` on every input. The hint already renders as the description paragraph below the input via `aria-describedby`; doubling it up made the textarea look stuffed and broke when the user started typing.
+- `RevivePanel`: empty body state used to read "This company isn't stalled / No blocking issues detected" even when the header banner showed "Stalled — 20 days no activity". The header reports the inventory stall signal; the body reports the action queue. Rewrote the empty state to "No actions queued yet / Click 'Find what's blocking this company' to diagnose" so the two surfaces stop contradicting each other.
+- `SectionNavRail`: outer container now declares `w-full min-w-0` so the horizontal tab strip honors its parent's width instead of expanding to fit content and overflowing the layout. Tabs remain horizontally scrollable for narrow viewports.
+
 ## [1.1.3] - 2026-05-12
 
 ### Fixed
