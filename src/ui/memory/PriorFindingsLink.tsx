@@ -33,7 +33,7 @@ export const PriorFindingsLink: React.FC<PriorFindingsLinkProps> = ({
   return (
     <button
       onClick={onViewFindings}
-      className="text-label text-accent hover:underline font-bold"
+      className="text-xs font-medium text-accent hover:underline font-bold"
       aria-label={label}
     >
       {label}

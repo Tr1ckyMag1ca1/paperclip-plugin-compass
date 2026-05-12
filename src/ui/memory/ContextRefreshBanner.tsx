@@ -38,8 +38,8 @@ export const ContextRefreshBanner: React.FC<ContextRefreshBannerProps> = ({
       : "";
 
   return (
-    <div className="p-md bg-card border-l-4 border-accent rounded mb-md">
-      <p className="text-body text-foreground/90">
+    <div className="p-4 bg-card border-l-4 border-accent rounded mb-4">
+      <p className="text-sm text-foreground/90">
         Assessed against{" "}
         {onViewFindings ? (
           <button
