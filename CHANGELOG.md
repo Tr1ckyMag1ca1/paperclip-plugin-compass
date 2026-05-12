@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2026-05-12
+
+### Changed
+
+- **Phase 10 — Memory + Verification + Documentation.** Migrated remaining memory UI components (`HistoryPanel`, `FindingCard`, `FindingStatusBadge`, `ScheduleRoutineRow`, `ModeBadge`, `HistoryTabBadge`, `ContextRefreshBanner`, `PriorFindingsLink`, `ScheduleCreationForm`, `SchedulesSection`) plus two Phase 9 stragglers (`AgentDecisionCard`, `AmendmentPreview`) from custom Tailwind tokens (`gap-xs`, `px-sm`, `py-md`, `text-label`, `text-body`, `text-heading`, etc.) to Paperclip-host tokens. Zero behavior change; layouts and dark-mode rendering now correct.
+
+### Added
+
+- `scripts/verify-broken-patterns.mjs` (+ `pnpm verify:broken-patterns`) — CI gate that fails on any reintroduction of nonexistent custom tokens across all 55+ UI components. Currently zero hits.
+- `src/ui/components/DualRenderProbe.tsx` — dev-only side-by-side light/dark visual probe expanded to cover Phase 10 memory components.
+- `src/ui/PATTERNS.md` — contributor guide documenting host-token inheritance model, semantic palette (emerald=accent, not primary), spacing scale, typography, dark-mode CSS variables, component primitives, anti-patterns, and v1.0→v1.1 migration reference.
+- `docs/WCAG_AUDIT.md` — WCAG AA contrast audit for all badges and semantic colors in light + dark modes (all ≥4.5:1).
+- `docs/BUILD_VERIFICATION.md` — production build verification (Tailwind JIT purge, bundle size 47.7 KB gzipped, 152 KB under 200 KB target).
+
+### Fixed
+
+- `README.md`, `UI_REDO_HANDOFF.md` — corrected color semantics (emerald is the success/accent color, not primary).
+
 ## [1.1.5] - 2026-05-12
 
 ### Fixed

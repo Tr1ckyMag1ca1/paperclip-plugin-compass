@@ -2010,7 +2010,7 @@ var ContextRefreshBanner = ({
   if (priorOpenFindingsCount === 0) return null;
   const findingLabel = priorOpenFindingsCount === 1 ? "finding" : "findings";
   const deduplicationText = deduplicatedCount > 0 ? ` (${deduplicatedCount} ${deduplicatedCount === 1 ? "is" : "are"} ${deduplicatedCount === 1 ? "a" : ""} repeat${deduplicatedCount === 1 ? "" : "s"} of earlier issues)` : "";
-  return /* @__PURE__ */ jsx32("div", { className: "p-md bg-card border-l-4 border-accent rounded mb-md", children: /* @__PURE__ */ jsxs31("p", { className: "text-body text-foreground/90", children: [
+  return /* @__PURE__ */ jsx32("div", { className: "p-4 bg-card border-l-4 border-accent rounded mb-4", children: /* @__PURE__ */ jsxs31("p", { className: "text-sm text-foreground/90", children: [
     "Assessed against",
     " ",
     onViewFindings ? /* @__PURE__ */ jsxs31(
@@ -4712,20 +4712,20 @@ function AmendmentPreview({
       const sectionLabel = SECTION_LABELS[amendment.section] || amendment.section;
       const diff = `- ${amendment.currentContent}
 + ${amendment.proposedContent}`;
-      return /* @__PURE__ */ jsxs48("div", { className: "border border-border rounded p-lg space-y-md", children: [
-        /* @__PURE__ */ jsx51("h3", { className: "text-heading font-bold text-foreground", children: sectionLabel }),
-        /* @__PURE__ */ jsx51("div", { className: "text-label font-normal text-foreground/70", children: amendment.reason }),
+      return /* @__PURE__ */ jsxs48("div", { className: "border border-border rounded p-4 space-y-3", children: [
+        /* @__PURE__ */ jsx51("h3", { className: "text-base font-semibold font-bold text-foreground", children: sectionLabel }),
+        /* @__PURE__ */ jsx51("div", { className: "text-xs font-medium font-normal text-foreground/70", children: amendment.reason }),
         /* @__PURE__ */ jsx51(AmendmentDiff, { amendment: diff })
       ] }, amendment.section);
     }) }),
-    error && /* @__PURE__ */ jsx51("p", { className: "text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive", children: error }),
-    /* @__PURE__ */ jsxs48("div", { className: "flex gap-md pt-md", children: [
+    error && /* @__PURE__ */ jsx51("p", { className: "text-sm font-normal text-destructive p-3 bg-destructive/10 rounded border border-destructive", children: error }),
+    /* @__PURE__ */ jsxs48("div", { className: "flex gap-3 pt-3", children: [
       /* @__PURE__ */ jsxs48(
         "button",
         {
           onClick: onBack,
           disabled: isLoading,
-          className: "flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors",
+          className: "flex-1 px-4 py-3 text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors",
           children: [
             /* @__PURE__ */ jsx51(ChevronLeft, { className: "h-4 w-4 inline mr-sm" }),
             "Back to interview"
@@ -4737,7 +4737,7 @@ function AmendmentPreview({
         {
           onClick: handleContinue,
           disabled: isLoading,
-          className: "flex-1 px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors",
+          className: "flex-1 px-4 py-3 bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors",
           children: isLoading ? "Loading..." : "Review cascade"
         }
       )
@@ -4830,18 +4830,18 @@ function AgentDecisionCard({
 }) {
   const canApply = !hasOverride || isOverrideConfirmed;
   return /* @__PURE__ */ jsxs50("div", { className: "bg-card rounded border border-border overflow-hidden", children: [
-    /* @__PURE__ */ jsx53("div", { className: "p-md bg-background border-b border-border", children: /* @__PURE__ */ jsx53("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ jsxs50("div", { children: [
-      /* @__PURE__ */ jsxs50("h3", { className: "text-body font-bold text-foreground", children: [
+    /* @__PURE__ */ jsx53("div", { className: "p-3 bg-background border-b border-border", children: /* @__PURE__ */ jsx53("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ jsxs50("div", { children: [
+      /* @__PURE__ */ jsxs50("h3", { className: "text-sm font-bold text-foreground", children: [
         agent.name,
         " \u2014 ",
         agent.role || "Agent"
       ] }),
-      affectedSection && /* @__PURE__ */ jsxs50("p", { className: "text-label font-normal text-foreground/70 mt-xs", children: [
+      affectedSection && /* @__PURE__ */ jsxs50("p", { className: "text-xs font-medium font-normal text-foreground/70 mt-1", children: [
         "Current: ",
         affectedSection
       ] })
     ] }) }) }),
-    /* @__PURE__ */ jsxs50("div", { className: "p-md space-y-md", children: [
+    /* @__PURE__ */ jsxs50("div", { className: "p-3 space-y-3", children: [
       hasOverride && /* @__PURE__ */ jsx53(
         CustomOverrideWarning,
         {
@@ -4855,12 +4855,12 @@ function AgentDecisionCard({
           onConfirmed: onOverrideConfirm
         }
       ),
-      /* @__PURE__ */ jsxs50("div", { className: "flex gap-md", children: [
+      /* @__PURE__ */ jsxs50("div", { className: "flex gap-3", children: [
         /* @__PURE__ */ jsx53(
           "button",
           {
             onClick: () => onDecisionChange("keep"),
-            className: `flex-1 px-md py-sm font-bold rounded transition-colors ${decision === "keep" ? "bg-foreground text-background" : "bg-card border border-border text-foreground hover:bg-background"}`,
+            className: `flex-1 px-3 py-2 font-bold rounded transition-colors ${decision === "keep" ? "bg-foreground text-background" : "bg-card border border-border text-foreground hover:bg-background"}`,
             children: "Keep custom"
           }
         ),
@@ -4869,7 +4869,7 @@ function AgentDecisionCard({
           {
             onClick: () => onDecisionChange("apply"),
             disabled: !canApply,
-            className: `flex-1 px-md py-sm font-bold rounded transition-colors ${decision === "apply" ? "bg-accent text-white" : canApply ? "bg-card border border-border text-foreground hover:bg-background" : "bg-foreground/20 text-foreground/40 cursor-not-allowed"}`,
+            className: `flex-1 px-3 py-2 font-bold rounded transition-colors ${decision === "apply" ? "bg-accent text-white" : canApply ? "bg-card border border-border text-foreground hover:bg-background" : "bg-foreground/20 text-foreground/40 cursor-not-allowed"}`,
             children: "Apply repositioning"
           }
         )
