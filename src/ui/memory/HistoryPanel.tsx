@@ -82,21 +82,21 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
 
   if (loading && !history) {
     return (
-      <div className="flex items-center justify-center p-lg">
-        <div className="text-label text-foreground/70">Loading engagement history…</div>
+      <div className="flex items-center justify-center p-4">
+        <div className="text-xs font-medium text-foreground/70">Loading engagement history…</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-lg">
-        <div className="p-md bg-card rounded border border-destructive/50">
-          <h4 className="text-body font-bold text-destructive">Error loading history</h4>
-          <p className="text-label text-foreground/70 mt-sm">{error}</p>
+      <div className="p-4">
+        <div className="p-3 bg-card rounded border border-destructive/50">
+          <h4 className="text-sm font-bold text-destructive">Error loading history</h4>
+          <p className="text-xs font-medium text-foreground/70 mt-2">{error}</p>
           <button
             onClick={refetch}
-            className="mt-md px-md py-sm text-label text-accent hover:underline"
+            className="mt-4 px-3 py-2 text-xs font-medium text-accent hover:underline"
           >
             Try again
           </button>
@@ -111,10 +111,10 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Tab Headers */}
-      <div className="sticky top-0 bg-background border-b border-border px-lg py-sm flex gap-md z-10">
+      <div className="sticky top-0 bg-background border-b border-border px-4 py-2 flex gap-4 z-10">
         <button
           onClick={() => setActiveTab("findings")}
-          className={`text-label font-bold pb-sm border-b-2 transition-colors ${
+          className={`text-xs font-medium font-bold pb-2 border-b-2 transition-colors ${
             activeTab === "findings"
               ? "text-accent border-accent"
               : "text-foreground/70 border-transparent hover:text-foreground"
@@ -124,7 +124,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
         </button>
         <button
           onClick={() => setActiveTab("schedules")}
-          className={`text-label font-bold pb-sm border-b-2 transition-colors ${
+          className={`text-xs font-medium font-bold pb-2 border-b-2 transition-colors ${
             activeTab === "schedules"
               ? "text-accent border-accent"
               : "text-foreground/70 border-transparent hover:text-foreground"
@@ -139,17 +139,17 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
         {activeTab === "findings" ? (
           <>
             {/* Sticky Filter Header */}
-            <div className="sticky top-12 bg-background border-b border-border px-lg py-md z-10">
-              <div className="space-y-sm">
+            <div className="sticky top-12 bg-background border-b border-border px-4 py-3 z-10">
+              <div className="space-y-2">
                 {/* Status Filter */}
                 <div>
-                  <label className="text-label font-bold mb-xs block">Status</label>
-                  <div className="flex flex-wrap gap-xs">
+                  <label className="text-xs font-medium font-bold mb-1 block">Status</label>
+                  <div className="flex flex-wrap gap-1">
                     {(["all", "open", "addressed", "invalidated"] as const).map((s) => (
                       <button
                         key={s}
                         onClick={() => setStatusFilter(s)}
-                        className={`px-sm py-xs rounded text-label transition-colors ${
+                        className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                           statusFilter === s
                             ? "bg-accent text-background"
                             : "bg-foreground/10 text-foreground hover:bg-foreground/20"
@@ -163,14 +163,14 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
 
                 {/* Mode Filter */}
                 <div>
-                  <label className="text-label font-bold mb-xs block">Mode</label>
-                  <div className="flex flex-wrap gap-xs">
+                  <label className="text-xs font-medium font-bold mb-1 block">Mode</label>
+                  <div className="flex flex-wrap gap-1">
                     {(["all", "Found", "Assess", "Revive", "Reposition"] as const).map(
                       (m) => (
                         <button
                           key={m}
                           onClick={() => setModeFilter(m)}
-                          className={`px-sm py-xs rounded text-label transition-colors ${
+                          className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                             modeFilter === m
                               ? "bg-accent text-background"
                               : "bg-foreground/10 text-foreground hover:bg-foreground/20"
@@ -187,25 +187,25 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
 
             {/* Findings List or Empty State */}
             {findingCount === 0 ? (
-              <div className="p-lg text-center">
-                <h4 className="text-heading font-bold mb-sm">No engagement history yet</h4>
-                <p className="text-body text-foreground/70">
+              <div className="p-4 text-center">
+                <h4 className="text-base font-semibold font-bold mb-2">No engagement history yet</h4>
+                <p className="text-sm text-foreground/70">
                   Findings appear here after you Found, Assess, Revive, or Reposition a
                   company.
                 </p>
               </div>
             ) : Object.keys(groupedFindings).length === 0 ? (
-              <div className="p-lg text-center">
-                <p className="text-body text-foreground/70">
+              <div className="p-4 text-center">
+                <p className="text-sm text-foreground/70">
                   No findings match the selected filters.
                 </p>
               </div>
             ) : (
-              <div className="p-lg space-y-lg">
+              <div className="p-4 space-y-4">
                 {Object.entries(groupedFindings).map(([date, findings]) => (
                   <div key={date}>
                     {/* Date Header */}
-                    <p className="text-label font-bold text-foreground/70 mb-sm">
+                    <p className="text-xs font-medium font-bold text-foreground/70 mb-2">
                       {new Date(date).toLocaleDateString("en-US", {
                         weekday: "short",
                         year: "numeric",
@@ -215,7 +215,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
                     </p>
 
                     {/* Findings for this date */}
-                    <div className="space-y-sm">
+                    <div className="space-y-2">
                       {findings.map((finding) => (
                         <FindingCard
                           key={finding.id}
@@ -236,7 +236,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ companyId }) => {
           </>
         ) : (
           /* Schedules Tab */
-          <div className="p-lg">
+          <div className="p-4">
             <SchedulesSection companyId={companyId} />
           </div>
         )}
