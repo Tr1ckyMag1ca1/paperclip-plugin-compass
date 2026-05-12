@@ -18,7 +18,7 @@ interface FindingStatusBadgeProps {
 
 /**
  * Renders colored badge for finding status.
- * Per UI-SPEC: px-xs py-xs (4px inline, 2px vertical).
+ * Per UI-SPEC: inline padding 4px, vertical padding 2px.
  */
 export const FindingStatusBadge: React.FC<FindingStatusBadgeProps> = ({ status }) => {
   const styleClass = {
@@ -31,7 +31,7 @@ export const FindingStatusBadge: React.FC<FindingStatusBadgeProps> = ({ status }
 
   return (
     <span
-      className={`inline-block px-xs py-xs rounded-full text-label font-bold ${styleClass}`}
+      className={`inline-block px-1 py-1 rounded-full text-xs font-bold font-medium ${styleClass}`}
       role="status"
       aria-label={`Status: ${label}`}
     >
