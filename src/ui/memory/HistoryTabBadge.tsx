@@ -28,7 +28,7 @@ export const HistoryTabBadge: React.FC<HistoryTabBadgeProps> = ({
 
   return (
     <span
-      className={`inline-block ml-xs px-xs py-xs rounded-full text-label font-bold ${
+      className={`inline-block ml-1 px-1 py-1 rounded-full text-xs font-medium font-bold ${
         hasOpenFindings
           ? "bg-accent/20 text-accent"
           : "bg-foreground/10 text-foreground/70"

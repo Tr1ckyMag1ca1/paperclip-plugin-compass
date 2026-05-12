@@ -27,7 +27,7 @@ export const ModeBadge: React.FC<ModeBadgeProps> = ({ mode }) => {
 
   return (
     <span
-      className="inline-flex items-center gap-xs px-xs py-xs rounded-full bg-foreground/10 text-foreground text-label font-bold"
+      className="inline-flex items-center gap-1 px-1 py-1 rounded-full bg-foreground/10 text-foreground text-xs font-medium font-bold"
       role="status"
       aria-label={`Mode: ${mode}`}
     >
