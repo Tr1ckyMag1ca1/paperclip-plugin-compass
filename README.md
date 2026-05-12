@@ -41,6 +41,8 @@ Every change Compass makes is written natively into Paperclip — VISION documen
 
 Compass picks one of these four modes for you on plugin open. The dropdown in the top-right lets you override.
 
+**v1.1.0 Update (2026-05):** Fixed UI rendering bugs from v1.0. All 55+ components migrated to host tokens. Zero broken custom tokens. Verified in light and dark modes. WCAG AA contrast confirmed. See [UI_REDO_HANDOFF.md](./UI_REDO_HANDOFF.md) for migration details and [docs/WCAG_AUDIT.md](./docs/WCAG_AUDIT.md) for verification.
+
 ## Quick Start
 
 1. **Install** the plugin (see [Installation](#installation) below).
@@ -135,15 +137,35 @@ pnpm build        # esbuild → dist/
 
 The Paperclip host auto-restarts the plugin worker on bundle changes (no manual reload required).
 
+## Design Philosophy: Host Token Inheritance
+
+Compass is a plugin rendered directly in Paperclip's React tree. Rather than bundling custom Tailwind config, the plugin inherits all design tokens from the host:
+
+- **Surfaces:** bg-background, bg-card, bg-sidebar (shared host tokens)
+- **Text:** text-foreground, text-muted-foreground (host theme-aware)
+- **Semantic colors:** emerald (success/healthy states), red (error/stalled states), yellow (warning states), blue (info states)
+- **Spacing:** gap-1 through gap-4, px/py scaled to 4px, 8px, 12px, 16px, 24px
+- **Corners:** rounded-none (sharp, per host design)
+
+This design ensures Compass is visually consistent with Paperclip and automatically supports light/dark theme switching without plugin-side configuration. No custom Tailwind config required.
+
+For detailed token mapping and component conventions, see [src/ui/PATTERNS.md](./src/ui/PATTERNS.md).
+
+## Maintainers
+
+- **Nicholas Rhodes** (original author)
+- **Aron Prins** (co-maintainer, v1.0+)
+
+See [CODEOWNERS](./CODEOWNERS) for code review assignments.
+
 ## Credits
 
-- **Strategic Interview Depth:** [paperclip-vision](https://github.com/aronprins/paperclip-vision) by Aron Prins
+- **Strategic Interview Depth & Co-Maintenance:** [paperclip-vision](https://github.com/aronprins/paperclip-vision) by [Aron Prins](https://github.com/aronprins)
 - **Plugin Chassis:** [paperclip-plugin-company-wizard](https://github.com/yesterday-ai/paperclip-plugin-company-wizard) by Yesterday AI
-- **Co-Maintainer:** [Aron Prins](https://github.com/aronprins)
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for local dev setup, testing, and PR conventions. See [DECISIONS.md](./DECISIONS.md) for major design decisions.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for local dev setup, testing, and PR conventions. See [DECISIONS.md](./DECISIONS.md) for major design decisions. For component token conventions and Tailwind usage patterns, see [src/ui/PATTERNS.md](./src/ui/PATTERNS.md).
 
 ## License
 

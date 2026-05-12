@@ -1,6 +1,16 @@
 # Compass UI Redo — Handoff
 
-Goal: reskin Compass UI to match Paperclip host (functional > fancy, indistinguishable from rest of app). Fix layout bugs along the way.
+**Status:** ✓ COMPLETE (2026-05-12)
+
+All 80+ broken custom tokens migrated to host equivalents across 13 memory components (Phase 10). UI verification gates (grep, contrast, build, bundle size) all PASSED. Plugin is production-ready for v1.1 public release.
+
+See [.planning/phases/10-memory-verification-documentation/10-03-SUMMARY.md](./.planning/phases/10-memory-verification-documentation/10-03-SUMMARY.md) for verification results and [docs/WCAG_AUDIT.md](./docs/WCAG_AUDIT.md) for contrast audit details.
+
+---
+
+## Goal
+
+Reskin Compass UI to match Paperclip host (functional > fancy, indistinguishable from rest of app). Fix layout bugs along the way.
 
 ## Root Cause of Current Look
 
@@ -78,11 +88,33 @@ src/ui/memory/            (13 files)
 | `border-gray-200` | `border-border` |
 | `rounded-lg` / `rounded-xl` | `rounded-none` (host uses sharp corners) |
 
-## First Action When Picked Up
+## Color Semantics Correction
 
-```
-cd ~/Development/Paperclip/paperclip-plugin-compass
-/gsd-new-milestone "Compass UI parity with Paperclip host"
-```
+**v1.0 Design Error:** Compass incorrectly used emerald as a "primary" color alongside other semantic colors. This caused visual confusion and violated the host's semantic palette.
 
-Then phase 1 plan-phase. Verifier should grep for the broken-class patterns above and confirm zero hits.
+**v1.1 Correction (Phase 10):** Emerald is the semantic "success" color only. All other modes and states use their designated semantic colors.
+
+**Correct semantic palette:**
+- **Emerald (success):** Found mode, healthy status, confirmed items, successful operations
+- **Red (error):** Revive mode, stalled status, errors, critical blockers
+- **Yellow (warning):** Pending items, warnings, items requiring attention, draft states
+- **Blue (info):** Assess mode, informational states, secondary actions
+- **Neutral (gray):** Unimplemented features, unknown states, muted/inactive elements
+
+**Why this matters:** Paperclip host uses neutral gray as the primary text and surface color (text-foreground, bg-card). Emerald and other colors are reserved for semantic state indication only. This ensures visual consistency with the host and reduces color overload in the UI. Users should immediately understand intent from color: green = good, red = problem, yellow = caution, blue = info, gray = inactive.
+
+For components still using outdated color patterns, use the migration map above (bg-green-50 → bg-emerald-500/10, etc.).
+
+## Phase 10 Status: Broken Patterns Verified Removed
+
+All 28 broken patterns documented above have been confirmed REMOVED from the codebase across all 55+ components:
+- ✓ 0 hits for gap-xs/sm/md, px-xs/sm/md, py-xs/sm/md
+- ✓ 0 hits for text-label, text-body, text-heading
+- ✓ 0 hits for light-only utilities (bg-green-50, text-slate-600, etc.)
+- ✓ 0 hits for rounded-lg/xl/md
+
+Verified via automated grep in [pnpm verify:broken-patterns](./scripts/verify-broken-patterns.ts).
+
+## For Future Contributors
+
+Start with [src/ui/PATTERNS.md](./src/ui/PATTERNS.md) for token usage guidelines and component conventions. Then reference this handoff document for the full migration history from v1.0 to v1.1.
