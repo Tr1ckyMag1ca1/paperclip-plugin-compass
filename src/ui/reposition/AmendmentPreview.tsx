@@ -84,12 +84,12 @@ export function AmendmentPreview({
           const diff = `- ${amendment.currentContent}\n+ ${amendment.proposedContent}`;
 
           return (
-            <div key={amendment.section} className="border border-border rounded p-lg space-y-md">
-              <h3 className="text-heading font-bold text-foreground">
+            <div key={amendment.section} className="border border-border rounded p-4 space-y-3">
+              <h3 className="text-base font-semibold font-bold text-foreground">
                 {sectionLabel}
               </h3>
 
-              <div className="text-label font-normal text-foreground/70">
+              <div className="text-xs font-medium font-normal text-foreground/70">
                 {amendment.reason}
               </div>
 
@@ -101,17 +101,17 @@ export function AmendmentPreview({
 
       {/* Error message */}
       {error && (
-        <p className="text-body font-normal text-destructive p-md bg-destructive/10 rounded border border-destructive">
+        <p className="text-sm font-normal text-destructive p-3 bg-destructive/10 rounded border border-destructive">
           {error}
         </p>
       )}
 
       {/* Buttons */}
-      <div className="flex gap-md pt-md">
+      <div className="flex gap-3 pt-3">
         <button
           onClick={onBack}
           disabled={isLoading}
-          className="flex-1 px-lg py-md text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors"
+          className="flex-1 px-4 py-3 text-accent font-bold border border-border rounded hover:bg-card disabled:opacity-50 transition-colors"
         >
           <ChevronLeft className="h-4 w-4 inline mr-sm" />
           Back to interview
@@ -119,7 +119,7 @@ export function AmendmentPreview({
         <button
           onClick={handleContinue}
           disabled={isLoading}
-          className="flex-1 px-lg py-md bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 px-4 py-3 bg-accent text-white font-bold rounded hover:bg-accent/90 disabled:bg-foreground/20 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? "Loading..." : "Review cascade"}
         </button>

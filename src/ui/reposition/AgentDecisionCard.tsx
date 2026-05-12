@@ -45,14 +45,14 @@ export function AgentDecisionCard({
   return (
     <div className="bg-card rounded border border-border overflow-hidden">
       {/* Header */}
-      <div className="p-md bg-background border-b border-border">
+      <div className="p-3 bg-background border-b border-border">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-body font-bold text-foreground">
+            <h3 className="text-sm font-bold text-foreground">
               {agent.name} — {agent.role || "Agent"}
             </h3>
             {affectedSection && (
-              <p className="text-label font-normal text-foreground/70 mt-xs">
+              <p className="text-xs font-medium font-normal text-foreground/70 mt-1">
                 Current: {affectedSection}
               </p>
             )}
@@ -61,7 +61,7 @@ export function AgentDecisionCard({
       </div>
 
       {/* Body */}
-      <div className="p-md space-y-md">
+      <div className="p-3 space-y-3">
         {/* Custom override warning */}
         {hasOverride && (
           <CustomOverrideWarning
@@ -77,10 +77,10 @@ export function AgentDecisionCard({
         )}
 
         {/* Decision buttons */}
-        <div className="flex gap-md">
+        <div className="flex gap-3">
           <button
             onClick={() => onDecisionChange("keep")}
-            className={`flex-1 px-md py-sm font-bold rounded transition-colors ${
+            className={`flex-1 px-3 py-2 font-bold rounded transition-colors ${
               decision === "keep"
                 ? "bg-foreground text-background"
                 : "bg-card border border-border text-foreground hover:bg-background"
@@ -91,7 +91,7 @@ export function AgentDecisionCard({
           <button
             onClick={() => onDecisionChange("apply")}
             disabled={!canApply}
-            className={`flex-1 px-md py-sm font-bold rounded transition-colors ${
+            className={`flex-1 px-3 py-2 font-bold rounded transition-colors ${
               decision === "apply"
                 ? "bg-accent text-white"
                 : canApply
