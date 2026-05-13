@@ -11,53 +11,71 @@
 
 ---
 
-## Next Milestone: v1.2 Conversational Vision Quest + Aaron Template Parity
+## Next Milestone: v1.2 Native SDK Integration + Conversational Vision Quest + Aaron Template Parity
 
-**Status:** Filed 2026-05-12; planning not yet started
-**Phases:** TBD (estimate 3–4)
+**Status:** Filed 2026-05-12; restructured 2026-05-13 after Paperclip v2026.512.0 release
+**Phases:** 5 (12–16)
 **Granularity:** Coarse
 
 ### Why this milestone
 
-Compass v1.0/v1.1 ships Found mode as a **static 6-section form**. Original spec called for the "strategic-interview depth of `aronprins/paperclip-vision`" — i.e. a conversational, adaptive interview that asks one question at a time, follows up, and extracts VISION sections from natural-language answers.
+Three converging pressures:
 
-Additionally, Compass's current VISION.md template (`src/content/vision-template.md`) has **20 sections** while Aaron's canonical template has **13 sections** — with renames (`Org Structure` vs `Organisational Structure`, `Principles` vs `Guiding Principles`, `Success Criteria` vs `What Success Looks Like`) and 7 Compass-only additions (Voice, Issue Structure, Locality, Launch Plan, Trust Governance, Amendment Protocol, plus extras). Downstream agents and any Aaron-built tooling that reads VISION.md will not find the sections they expect → company drifts.
+1. **Conversational interview gap.** Compass v1.0/v1.1 ships Found mode as a static 6-section form. Original spec called for "strategic-interview depth of `aronprins/paperclip-vision`" — adaptive chat, one question at a time, LLM-driven follow-ups, section extraction.
+
+2. **Template format drift.** Compass's `src/content/vision-template.md` has **20 sections**; Aaron's canonical template has **13** — with renames and 7 Compass-only additions (Voice, Issue Structure, Locality, Launch Plan, Trust Governance, Amendment Protocol, extras). Any Aaron-built tooling that reads VISION.md will not find expected sections → company drifts.
+
+3. **Paperclip v2026.512.0 (2026-05-12) shipped expanded plugin host surface** (#5205, #5597). SDK jumped `2026.428.0` → `2026.512.0`. New primitives Compass should adopt:
+   - **Scoped DB namespaces** (`ctx.db`) — own schema with restricted SELECT/INSERT/UPDATE/DELETE. **This permanently retires the v1.1.7 VISION-storage hack** (synthetic issue + document key mismatch). VISION + findings + schedule state move to `compass.*` tables.
+   - **UI components**: `FileTree`, `IssuesList`, `AssigneePicker`, `ProjectPicker`, `ManagedRoutinesList`, `MarkdownEditor`
+   - **Slot types**: `PluginRouteSidebar` (Compass owns sidebar during vision-quest), `PluginProjectSidebarItem`, `PluginCommentAnnotation`, `PluginSettingsPage`
+   - **Managed routines/agents/folders**: replaces hand-rolled Schedules UI and agent-provisioning hacks
+   - **Reference implementation**: `@paperclip/plugin-llm-wiki` (#5716) — clone and study before designing Compass equivalents
 
 ### Goal
 
-1. Replace the Found-mode form with a conversational chat-style interview (paperclip-vision parity).
-2. Output VISION.md strictly matches Aaron's 13-section template, header included:
-   ```
-   # VISION.md — [Company Name]
-   ## Mission
-   ## 12-Month Goal
-   ## 3-Year Vision
-   ## Revenue Model
-   ## Target Customer
-   ## Growth Strategy
-   ## Sales Model
-   ## Product Direction
-   ## Organisational Structure
-   ## Operating Philosophy
-   ## CEO Mandate
-   ## Guiding Principles
-   ## What Success Looks Like
-   ```
-3. Provide a migration path / parser shim so existing Compass-format VISION files (v1.0/v1.1) still load in Assess/Revive/Reposition without breaking.
+1. **Adopt expanded SDK surface** to replace custom hand-rolling with native host primitives.
+2. **Persist storage in plugin-owned namespace** so VISION/findings/schedules cannot drift from reader expectations again.
+3. **VISION.md matches Aaron's 13-section template strictly**, with legacy parser shim for v1.0/v1.1 docs.
+4. **Replace static form with conversational chat-style interview** (paperclip-vision parity), backed by host LLM and MarkdownEditor live preview.
+5. **All four mode panels** (Found/Assess/Revive/Reposition) read both legacy (20-section, issue-doc storage) and new (13-section, namespaced storage) without crashing.
+
+### Aaron's canonical template (authoritative)
+
+```
+# VISION.md — [Company Name]
+## Mission
+## 12-Month Goal
+## 3-Year Vision
+## Revenue Model
+## Target Customer
+## Growth Strategy
+## Sales Model
+## Product Direction
+## Organisational Structure
+## Operating Philosophy
+## CEO Mandate
+## Guiding Principles
+## What Success Looks Like
+```
+
+Source: `~/.claude/skills/paperclip-vision/references/vision-template.md`.
 
 ### Constraints
 
-- Aaron's vision-template.md (`~/.claude/skills/paperclip-vision/references/vision-template.md`) is the authoritative format reference — copy verbatim section names + ordering
-- Chat UX must run inside plugin sidebar — no new windows, no external LLM dialog
-- LLM call path: route through Paperclip Plugin SDK `ctx.llm` (or whatever the SDK exposes) — no direct Anthropic API keys in plugin
-- Form fallback retained for accessibility / no-LLM environments
-- All four mode panels (Found/Assess/Revive/Reposition) must accept both old (20-section) and new (13-section) VISION.md without crashing
+- SDK pinned to `^2026.512.0` (latest stable) — no canaries
+- LLM call path routes through Plugin SDK (`ctx.llm` or equivalent) — no direct Anthropic API keys
+- Form fallback retained behind `?form=1` for accessibility / no-LLM envs
+- Legacy VISION (issue-doc, 20-section) must read without migration on first load; written through namespaced DB on next save
+- Aaron template names + ordering are verbatim — `## Organisational Structure` (British spelling), not `## Org Structure`
 
-### Phases (provisional)
+### Phases
 
-- [ ] **Phase 12: Vision Template Migration** — swap `src/content/vision-template.md` to Aaron's 13-section format; update `template-fill.ts`, `vision-parse.ts`, and downstream readers; ship parser shim for legacy 20-section files; tests
-- [ ] **Phase 13: Conversational Interview UI** — new ChatInterview component, message thread persistence (documents table), question state machine, LLM-driven follow-ups, section extraction
-- [ ] **Phase 14: Mode Integration + Cutover** — wire chat interview into Found panel, deprecate form (keep behind `?form=1` query for fallback), update Assess/Revive/Reposition to read new format, regression tests
+- [ ] **Phase 12: SDK Upgrade + Compatibility Audit** — bump `@paperclipai/plugin-sdk` to `2026.512.0`, run typecheck/build/tests against new types, document breaking changes, replace deprecated APIs, swap obviously-better components (`MetricCard` etc remain; `MarkdownBlock` callsites considered for `MarkdownEditor`). No new features — just surface compat.
+- [ ] **Phase 13: Storage Migration to Scoped DB Namespace** — declare `compass.*` schema in manifest, write migrations for `compass.visions`, `compass.findings`, `compass.schedules`, `compass.engagement_memory`. Add `ctx.db` writers behind feature flag. Dual-write to legacy issue-doc storage during transition. Reader prefers DB, falls back to issue-doc. Retires v1.1.7 `isVisionDoc` shim once dual-read confirmed safe.
+- [ ] **Phase 14: Aaron Template Migration + Parser Shim** — swap `src/content/vision-template.md` to Aaron's 13-section format. Update `template-fill.ts`, `vision-parse.ts`. Parser accepts both legacy 20-section and new 13-section, normalises to internal 13-section model. Mode panels (Assess/Revive/Reposition) re-tested against both shapes.
+- [ ] **Phase 15: Conversational Vision Quest** — new `ChatInterview` component, message thread persisted to `compass.interview_messages`, question state machine, LLM-driven follow-ups via `ctx.llm`, section extraction into Aaron's 13-section model. `MarkdownEditor` live preview on right. Form fallback behind `?form=1`.
+- [ ] **Phase 16: Native Slot + Cutover** — `PluginRouteSidebar` owns sidebar during vision-quest (section progress 1/13 → 13/13). `ManagedRoutinesList` replaces custom Schedules UI. `PluginSettingsPage` for approval routing config. Deprecate legacy form. Verify on alex wynn + Candlewood Beacon. Release v1.2.0.
 
 ---
 
