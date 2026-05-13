@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2026-05-12
+
+### Fixed
+
+- **Critical:** VISION.md read path never matched any stored document. The SDK adapter writes VISION docs as `title="VISION.md"` with derived `key="vision"` (lowercase, `.md` stripped), but all seven read sites in `worker.ts` did a strict `d.key === "VISION.md"` match — meaning every Assess / Revive / Reposition action on every Compass-founded company has been failing with `"VISION.md not found. Please run Found mode first."` since v1.0. The same string also blocked founder-authored VISION docs (e.g. `title="Company Vision"`, `key="vision"`) from being recognised. Introduced `src/primitives/vision-doc.ts#isVisionDoc(d)` that accepts both Compass-written shapes and the common founder-authored shapes (`key` ∈ {`vision`, `vision.md`}; `title` ∈ {`vision`, `vision.md`, `company vision`}) and routed every reader through it. Verified live against Candlewood Beacon — Assess drift audit no longer preflight-fails.
+
 ## [1.1.6] - 2026-05-12
 
 ### Changed

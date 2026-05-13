@@ -8429,6 +8429,16 @@ function classifyChatInput(input) {
   return null;
 }
 
+// src/primitives/vision-doc.ts
+function isVisionDoc(d) {
+  if (!d) return false;
+  const key = (d.key || "").toLowerCase();
+  const title = (d.title || "").toLowerCase();
+  if (key === "vision" || key === "vision.md") return true;
+  if (title === "vision.md" || title === "vision" || title === "company vision") return true;
+  return false;
+}
+
 // src/primitives/schema-validator.ts
 async function validateSchema(ctx) {
   try {
@@ -11501,7 +11511,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11556,7 +11566,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11632,7 +11642,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11841,7 +11851,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11893,7 +11903,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11938,7 +11948,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;
@@ -11980,7 +11990,7 @@ async function registerDataHandlers(ctx) {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d) => d.key === "VISION.md");
+          const visionDoc = docs.find((d) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = visionDoc.body || visionDoc.content;
             if (visionContent) break;

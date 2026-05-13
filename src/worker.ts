@@ -6,6 +6,7 @@ import {
 import manifest from "./manifest.js";
 import { loadInventory } from "./primitives/inventory.js";
 import { detectMode, classifyChatInput } from "./primitives/mode-detect.js";
+import { isVisionDoc } from "./primitives/vision-doc.js";
 import type { Mode } from "./types.js";
 import type {
   InterviewAnswers,
@@ -350,7 +351,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             // SDK returns document with body field
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
@@ -433,7 +434,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
@@ -542,7 +543,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
@@ -840,7 +841,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
@@ -914,7 +915,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
@@ -979,7 +980,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
@@ -1039,7 +1040,7 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
       for (const issue of issues) {
         try {
           const docs = await ctx.issues.documents.list(issue.id, companyId);
-          const visionDoc = docs.find((d: any) => d.key === "VISION.md");
+          const visionDoc = docs.find((d: any) => isVisionDoc(d));
           if (visionDoc) {
             visionContent = (visionDoc as any).body || (visionDoc as any).content;
             if (visionContent) break;
